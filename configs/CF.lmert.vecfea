@@ -1,0 +1,15 @@
+# LMERT - Lattice MERT practical exercise
+# Generate vector feature from rule alignment lattices
+
+nthreads=8
+ 
+[ruleflowerlattice]
+load=G/rules.shallow.vecfea.all.gz
+filterbyalilats=true
+
+[sparseweightvectorlattice]
+stripspecialepsilonlabels=yes 
+
+[lm]
+# load=M/interp.4g.arpa.newstest2012.tune.corenlp.ru.idx.union.mmap
+load=M/interp.4g.arpa.newstest2012.tune.corenlp.ru.idx.withoptions.mmap

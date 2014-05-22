@@ -1,0 +1,22 @@
+# MERT practical exercise
+# Generate vector feature n-best lists from rule alignment lattices
+
+nthreads=8
+ 
+[ruleflowerlattice]
+load=G/rules.shallow.vecfea.all.gz
+filterbyalilats=true
+featureweights=0.697263,0.396540,2.270819,-0.145200,0.038503,29.518480,-3.411896,-3.732196,0.217455,0.041551,0.060136
+# Note that this parameter vector should be updated after each iteration of MERT
+
+[sparseweightvectorlattice]
+loadalilats=output/exp.mert/nbest/ALILATS/?.fst.gz 
+storenbestfile=output/exp.mert/nbest/VECFEA/?.nbest
+storefeaturefile=output/exp.mert/nbest/VECFEA/?.vecfea
+wordmap=wmaps/wmt13.en.all.wmap
+
+[lm]
+load=M/interp.4g.arpa.newstest2012.tune.corenlp.ru.idx.union.mmap
+featureweights=1.0
+# Note that this parameter should be updated after each iteration of MERT
+

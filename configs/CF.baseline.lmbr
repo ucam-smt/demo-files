@@ -1,0 +1,38 @@
+range=1:2 
+
+### Load the evidence space. Ngram posteriors will be calculated from these lattices.
+load.evidencespace=output/exp.baseline/LATS/?.fst.gz
+### Input is lexstdarc. 
+lexstdarc=true
+### Preprune input evidence space lattices
+preprune=7
+
+### This tool will assume that evidence space and hypotheses space are the same.
+### If you want to consider a different space (e.g. a pruned version of the evidence space)
+### use load.hypothesesspace parameter
+
+### Unigram precision (p) and precision ratio (r). 
+### These are usually calculated from using bleu score ngram precisions of the mt output in a tune set.
+p=0.67 
+r=0.65 
+
+### Alpha scales the log and wps is a word penalty correctiona applied with the ngram posteriors. 
+alpha=0.4 
+wps=0.02
+
+### Note that these parameters need to be tuned jointly.
+### For this purpose we can explore several values e.g. setting as so:
+##  alpha=0.4:0.1:0.6
+##  wps=-0.05:0.01:0.05
+
+
+### Write the one best per alpha and wps values, to allow tuning.
+writeonebest=output/exp.baseline.lmbr/HYPS/%%alpha%%_%%wps%%.hyp
+
+### Not only 1-best, but lattices for your alpha,wps choice can be dumped too.
+## If input is using lexicographic semiring, the tool converts to tropical semiring, 
+## so the output lattices will always be based on tropical semiring in any case.
+writedecoder=output/exp.baseline.lmbr/LATS/?.fst.gz
+
+
+ 

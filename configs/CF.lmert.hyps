@@ -1,0 +1,18 @@
+# LMERT - Lattice MERT practical exercise
+# generate hypotheses
+
+nthreads=8
+ 
+[source]
+load=RU/RU.tune.idx
+
+[hifst]
+prune=9 
+replacefstbyarc.nonterminals=X,V 
+
+[lm]
+# load=M/interp.4g.arpa.newstest2012.tune.corenlp.ru.idx.union.mmap
+load=M/interp.4g.arpa.newstest2012.tune.corenlp.ru.idx.withoptions.mmap
+
+[grammar]
+load=G/rules.shallow.vecfea.all.gz

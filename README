@@ -1,0 +1,9 @@
+See Docs.dox directory.
+
+To generate html documentation, first install doxygen, then run the
+following commands:
+
+   cd Docs.dox
+   doxygen
+
+Then, open the Docs.dox/html/index.html file with a browser.

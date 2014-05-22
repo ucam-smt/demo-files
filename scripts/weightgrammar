@@ -1,0 +1,23 @@
+#!/usr/bin/env perl -s
+
+$w = "0.697263,0.396540,2.270819,-0.145200,0.038503,29.518480,-3.411896,-3.732196,0.217455,0.041551,0.060136" unless defined $w;
+
+@W = split(',',$w);
+
+while (<>) {
+    chomp;
+    @F = split(" ", $_);
+    $nt = shift @F;
+    $a = shift @F;
+    $b = shift @F;
+    $x = 0.0;
+    die "Bad feature vector\n" unless $#W == $#F;
+    for ($i=0; $i <= $#W; $i++) {
+	$x += $F[$i] * $W[$i];
+    }
+    print "$nt $a $b $x\n";
+}
+
+
+
+

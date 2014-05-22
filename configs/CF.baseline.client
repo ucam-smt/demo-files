@@ -1,0 +1,6 @@
+
+host=localhost
+port=1205
+
+[source]
+load=RU/RU.tune

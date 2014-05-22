@@ -1,0 +1,28 @@
+# Basic HiFST configuration for Russian-English translation
+# The output lattice is not pruned
+
+range=1:2
+
+[source]
+load=RU/RU.set1.idx
+
+[target]
+store=output/exp.baseline.outputnoprune/hyps
+
+[hifst]
+lattice.store=output/exp.baseline.outputnoprune/LATS/?.fst.gz
+
+# prune=9 
+# N.B. this option is disabled, relative to CF.baseline .
+# translation lattices are pruned using OpenFST pruning operations
+# prior to saving to disk.  The parameter provided is the pruning
+# threshold. The default is 3.40282347e+38 which effectively means
+# no pruning.
+
+replacefstbyarc.nonterminals=X,V 
+
+[lm]
+load=M/lm.4g.mmap
+
+[grammar]
+load=G/rules.shallow.gz

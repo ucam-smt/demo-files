@@ -1,0 +1,33 @@
+# MERT practical exercise
+# Generate alignment lattices for initial hypotheses
+
+nthreads=8
+ 
+[source]
+load=RU/RU.tune.idx
+
+[hifst]
+alilatsmode=yes
+# turn on alignment mode
+lattice.store=output/exp.mert/nbest/ALILATS/?.fst.gz
+# output directory for alignment lattices
+# these lattices will contain all derivations for every n-best list entry
+replacefstbyarc.nonterminals=X,V 
+# treat non-terminals X,V as usual
+
+[referencefilter]
+load=output/exp.mert/LATS/?.fst.gz 
+# perform alignment against these reference lattices containing initial hypotheses
+prunereferenceshortestpath=100
+# on loading the reference lattices, transform them to n-best lists prior to alignment.
+# uses fstshortestpath
+
+[grammar]
+load=G/rules.shallow.all.gz
+# note that only the translation grammar needs to be loaded; the language model is not needed.
+# the lattices specified by referencefilter.load will serve as (unweighted) language models
+# grammar weights/features are ignored, as well.
+
+[target]
+store=output/exp.mert/hyps
+# Note these hyps are not used, but writing them to a file prevents writing them to stderr

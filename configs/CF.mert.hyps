@@ -1,0 +1,32 @@
+# MERT practical exercise
+# Generate hypotheses from a starting-point parameter vector
+# The initial parameter vector is:
+#  1.0,0.697263,0.396540,2.270819,-0.145200,0.038503,29.518480,-3.411896,-3.732196,0.217455,0.041551,0.060136
+# The first field is the LM feature weight (since there is only one LM in this example);
+# the remaining fields are the grammmar feature weights.
+# Note that these are the values that should be updated after each iteration of MERT, 
+# e.g. through using command line options to override parameter file settings.
+
+nthreads=8
+ 
+[source]
+load=RU/RU.tune.idx
+
+[hifst]
+lattice.store=output/exp.mert/LATS/?.fst.gz
+prune=9 
+replacefstbyarc.nonterminals=X,V 
+
+[lm]
+load=M/interp.4g.arpa.newstest2012.tune.corenlp.ru.idx.union.mmap
+featureweights=1.0
+# Note that this parameter should be updated after each iteration of MERT
+
+[grammar]
+load=G/rules.shallow.vecfea.all.gz
+featureweights=0.697263,0.396540,2.270819,-0.145200,0.038503,29.518480,-3.411896,-3.732196,0.217455,0.041551,0.060136
+# Note that this parameter vector should be updated after each iteration of MERT
+
+[target]
+store=output/exp.mert/hyps
+# Note these hyps are not used, but writing them to a file prevents writing them to stderr

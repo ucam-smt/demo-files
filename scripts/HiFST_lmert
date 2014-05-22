@@ -1,0 +1,66 @@
+#!/usr/bin/env bash
+
+M=`cat RU/RU.tune.idx | wc -l`
+# N.B. uncomment the next line to only process 100 sentences
+# for debugging/demonstration. 
+# M=100
+
+# baseline params. from iteration 0.
+FW=1.0,0.697263,0.396540,2.270819,-0.145200,0.038503,29.518480,-3.411896,-3.732196,0.217455,0.041551,0.060136
+
+for it in $(seq 1 4)
+ do 
+
+# begin
+echo "==Iteration $it" > log/log.lmert.$it
+
+echo "==Step 1.  Generate translation lattices" >> log/log.lmert.$it
+# HiFST runs with either the initial parameters or the parameters from the previous iteration.
+# Translation lattices are written to output/exp.lmert/$it/LATS/?.fst.gz .
+date >> log/log.lmert.$it
+hifst.O2 --config=configs/CF.lmert.hyps --range=1:$M --featureweights=$FW \
+ --target.store=output/exp.lmert/$it/hyps \
+ --hifst.lattice.store=output/exp.lmert/$it/LATS/?.fst.gz >> log/log.lmert.$it 2>&1
+
+echo "==Step 2. Generate alilats" >> log/log.lmert.$it
+# Translation lattices in output/exp.lmert/$it/LATS/?.fst.gz are converted to 
+# alignment lattices in output/exp.lmert/$it/ALILATS/?.fst.gz .  The alignment lattices 
+# are pruned and unioned with an n-best list of 10000 (see config/CF.lmert.alilats).
+date >> log/log.lmert.$it
+hifst.O2 --config=configs/CF.lmert.alilats --range=1:$M \
+ --referencefilter.load=output/exp.lmert/$it/LATS/?.fst.gz \
+ --target.store=output/exp.lmert/$it/hyps \
+ --hifst.lattice.store=output/exp.lmert/$it/ALILATS/?.fst.gz >> log/log.lmert.$it 2>&1
+
+echo "==Step 3. Generate unweighted feature lattices" >> log/log.lmert.$it
+date >> log/log.lmert.$it
+# Alignment lattices in output/exp.lmert/$it/ALILATS/?.fst.gz are converted to
+# vectore feature lattices in output/exp.lmert/$it/VECFEA/?.fst.gz .   
+# Parameters are supplied for use in pruning and shortest path.
+alilats2splats.O2 --config=configs/CF.lmert.vecfea --range=1:$M \
+ --featureweights=$FW \
+ --sparseweightvectorlattice.loadalilats=output/exp.lmert/$it/ALILATS/?.fst.gz \
+ --sparseweightvectorlattice.store=output/exp.lmert/$it/VECFEA/?.fst.gz >> log/log.lmert.$it 2>&1
+
+echo "==Step 4. Lattice MERT" >> log/log.lmert.$it
+# estimate new parameters with lattice mert
+date >> log/log.lmert.$it
+latmert.O2 --search=random --random_axes --random_directions=28 --direction=axes \
+ --threads=24 --cache_lattices --error_function=bleu --algorithm=lmert \
+ --idxlimits=1:$M --print_precision=6 --lats=output/exp.lmert/$it/VECFEA/%idx%.fst.gz \
+ --lambda=$FW --write_parameters=output/exp.lmert/params.$it  EN/EN.tune.idx >> log/log.lmert.$it 2>&1
+
+echo "==Params" >> log/log.lmert.$it
+# set parameters for next lmert iteration
+date >> log/log.lmert.$it
+if [ -s output/exp.lmert/params.$it ] 
+then 
+    FW=`cat output/exp.lmert/params.$it`
+    echo $FW >> log/log.lmert.$it
+else
+    echo "EMPTY!" >> log/log.lmert.$it
+    exit 1
+fi
+done
+
+

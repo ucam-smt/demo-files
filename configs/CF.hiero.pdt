@@ -1,0 +1,72 @@
+# Basic HiFST configuration for Russian-English translation
+# Full hiero grammar.  Decoding with PDTs.
+# The setup uses the 'local pruning' infrastructure to implement
+# the two-pass decoding strategy described in [Iglesias2011]:
+# first the PDA is composed with a weak LM (here an entropy-pruned
+# 4gram), then expanded with a pruning threshold (here 9), and
+# then rescored with the full LM (here 4-gram) to produce the
+# final lattice.
+
+range=1:2
+
+[source]
+load=RU/RU.set1.idx
+
+[target]
+store=output/exp.hiero.pdt/hyps
+
+[hifst]
+lattice.store=output/exp.hiero.pdt/LATS/?.fst.gz
+prune=9
+replacefstbyarc.nonterminals=X,V 
+
+usepdt=yes
+# activates decoding with PDTs. The RTN is converted into a
+# PDA and efficiently composed with a first language model 
+# to produce another PDA. To obtain the output FSA, the PDA
+# is then expanded either entirely or via pruned expansion.
+
+[hifst.localprune]
+enable=yes
+# activates local pruning or pruning in search. In this case
+# local pruning is done only at the top-most cell of the CYK
+# grid (see explanation below)
+
+lm.load=M/lm.4g.eprnd.mmap
+# Loads language model for local pruning
+
+lm.wps=0.0
+# the language model word insertion penalty; setting this
+# adequately can make pruning better, that is, output lattices
+# with translation hypotheses of adequate length (see Allauzen
+# et al.2014).
+# Note: this penalty is removed from the lattice along with
+# the localprune LM score after pruning
+
+conditions=S,-1,1,9
+# controls the conditions in CYK parsing for local pruning.
+# For this setting, we specify that pruning will only be carried
+# for the non-terminal S covering the full span of the sentence
+# (as represented by the -1 number) if it has at least 1 state
+# (i.e. in all cases)
+# Pruning will be performed at threshold 9.
+
+numstates=1
+# Disallow any attempt to optimize (via determinization/minimization)
+# the FST after local pruning if it has more than 1 state.
+# This is recommended for speed in PDT mode.
+
+
+[grammar]
+load=G/rules.hiero.gz
+
+[lm]
+load=M/lm.4g.mmap
+# the language model to load and apply to the final translation
+# lattice
+
+featureweights=1
+# the language model scale factor
+
+wps=0.0
+# the language model word insertion penalty

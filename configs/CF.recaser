@@ -1,0 +1,3 @@
+[recaser]
+lm.load=M/lm.tc.gz
+unimap.load=G/tc.unimap

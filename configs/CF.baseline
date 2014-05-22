@@ -1,0 +1,57 @@
+# Basic HiFST configuration for Russian-English translation
+# Translation uses a 4gram language model with a shallow-1 grammar
+# as described in 
+#  J. Pino, et al. The University of Cambridge Russian-English System at
+#  WMT13. http://aclweb.org/anthology//W/W13/W13-2225.pdf
+ 
+range=1:2
+# range of line numbers in the source text file to be translated
+
+[source]
+load=RU/RU.set1.idx
+# path and filename of the source text file
+
+[target]
+store=output/exp.baseline/hyps
+# path and filename of the target text file; translations are written to this file
+
+[hifst]
+lattice.store=output/exp.baseline/LATS/?.fst.gz
+# specifies the path and filename into which translation lattices are
+# written.  Note the use of the placeholder '?' in the argument
+# .../LATS/?.fst.gz . The placeholder is replaced by the line
+# number of sentence being translated, e.g. so that
+# .../LATS/2.fst.gz is a WFST containing translations of the second
+# line in the source text file.  Note also the use of the '.gz'
+# extension: when this is provided, lattices are written as gzipped
+# files.
+
+prune=9 
+# translation lattices are pruned using OpenFST pruning operations
+# prior to saving to disk.  The parameter provided is the pruning
+# threshold. The default is 3.40282347e+38 which effectively means
+# no pruning.
+
+replacefstbyarc.nonterminals=X,V 
+# Specifies non-terminals in the grammar, apart from the top-level
+# non-terminal S.  HiFST will treat X and V as non-terminals;
+# in addition, other symbols Xn and Vn (e.g. X1 and V2) will be treated as non-terminals.  
+
+[lm]
+load=M/lm.4g.mmap
+# path and filename of the English n-gram language model in kenlm format
+# this particular language model is a modified Kneser-Ney 4-gram language model
+# trained on the English side of the parallel data provided for
+# the Russian-English task at WMT13 (http://statmt.org/wmt13/)
+# with the KenLM toolkit (http://kheafield.com/code/kenlm/)
+
+[grammar]
+load=G/rules.shallow.gz
+# path and filename of the Hiero translation grammar to load and use in translation
+# this particular grammar is a shallow grammar: when CYK parsing the source side,
+# hierarchical rules can only be concatenated with the glue rule and not combined
+# together with another hierarchical rules.
+# See 
+#  A. de Gispert et al.  Hierarchical phrase-based translation with weighted finite 
+#  state transducers and shallow-N grammars. Computational Linguistics, 2010.
+#  http://www.aclweb.org/anthology-new/J/J10/J10-3008.pdf)

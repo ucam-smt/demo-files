@@ -1,0 +1,46 @@
+# Basic HiFST configuration for Russian-English translation
+# Full hiero grammar.  Decoding with local pruning in search.
+
+range=1:2
+
+[source]
+load=RU/RU.set1.idx
+
+[target]
+store=output/exp.hiero.localprune/hyps
+
+[hifst]
+lattice.store=output/exp.hiero.localprune/LATS/?.fst.gz
+prune=9
+replacefstbyarc.nonterminals=X,V 
+
+[hifst.localprune]
+enable=yes
+# activates local pruning or pruning in search
+
+lm.load=M/lm.3g.mmap
+# Language model used for local pruning. More than one LM can be used for local
+# pruning, with word insertion penalties and lm scale factors specified by
+# hifst.localprune.lm.wps= and hifst.localprune.lm.featureweights= , respectively.
+
+conditions=X,5,10000,9,V,3,20000,9
+# controls the conditions in CYK parsing for local pruning.
+# For this setting, lattices associated with CYK grid cells are pruned if:
+#  - the non-terminal X covers at least 5 words in the input and
+#  the lattice at that cell has at least 10000 states; 
+#  - the non-terminal V covers at least 3 words in the input and
+#  the lattice at that cell has at least 20000 states
+# In both cases, pruning is performed at threshold 9.
+
+[grammar]
+load=G/rules.hiero.gz
+
+[lm]
+load=M/lm.4g.mmap
+# List of comma separated language models to load 
+
+featureweights=1
+# language model scale factors, separate by when there are multiple lms
+
+wps=0.0
+# language model word insertion penalties when there are multiple lms

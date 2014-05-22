@@ -1,0 +1,30 @@
+# LMERT - Lattice MERT practical exercise
+# generate alilats
+ 
+nthreads=8
+
+[source]
+load=RU/RU.tune.idx
+
+[hifst]
+prune=9 
+# output lattice pruning threshold
+
+replacefstbyarc.nonterminals=X,V 
+# treat non-terminals X,V as usual
+
+alilatsmode=yes
+# turn on alignment mode
+
+[referencefilter]
+prunereferenceweight=4 
+# pruning threshold to be applied to input lattice prior to alignment
+prunereferenceshortestpath=10000
+# extract n-best list from input lattice to use as hypotheses
+
+[lm]
+# load=M/interp.4g.arpa.newstest2012.tune.corenlp.ru.idx.union.mmap
+load=M/interp.4g.arpa.newstest2012.tune.corenlp.ru.idx.withoptions.mmap
+
+[grammar]
+load=G/rules.shallow.all.gz

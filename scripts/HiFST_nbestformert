@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+
+N=`cat RU/RU.tune.idx | wc -l`
+# N.B. comment out or remove the next line to process the entire RU/RU.tune.idx set; otherwise only process 5 sentences
+N=2 
+
+# Step 1.  Generate hyps
+hifst.O2 --config=configs/CF.mert.hyps --range=1:$N &> log/log.mert.hyps
+
+# Step 2. Generate alignment lats
+hifst.O2 --config=configs/CF.mert.alilats.nbest --range=1:$N &> log/log.mert.alilats.nbest
+
+# Step 3. Generate feature vectors
+alilats2splats.O2 --config=configs/CF.mert.vecfea.nbest --range=1:$N &> log/log.mert.nbest
+
+TGT=output/exp.mert/nbest/nbest.list
+rm -f 
+for n in `seq 1 $N`
+do
+ # strip of sentence start/end markers and translation scores from n-best lists
+ perl -ane 'shift @F; pop @F; pop @F; print join(" ",@F),"\n"' output/exp.mert/nbest/VECFEA/$n.nbest |\
+ # merge words with features
+ perl -ane 'print '$n'," ||| ",join(" ",@F)," |||\n"' | paste - output/exp.mert/nbest/VECFEA/$n.vecfea >> $TGT
+ gzip -f output/exp.mert/nbest/VECFEA/$n.nbest output/exp.mert/nbest/VECFEA/$n.vecfea
+done
