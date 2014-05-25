@@ -1,3 +1,4 @@
+\page Truecasing
 \section true_casing Fst-based True casing
 
 HiFST includes a tool typically used for  true casing the output. It relies on two models: 

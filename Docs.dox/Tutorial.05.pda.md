@@ -1,3 +1,4 @@
+\page HiPDT
 \section pda Push-Down Automata
 
 This HiFST package can also perform decoding using Push-Down Automata (PDA) as described

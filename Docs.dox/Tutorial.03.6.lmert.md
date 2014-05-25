@@ -1,4 +1,4 @@
-
+\page Lattice MERT
 \section lmert Lattice MERT
 
 This section describes how to: 

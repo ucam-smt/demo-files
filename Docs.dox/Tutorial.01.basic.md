@@ -1,4 +1,4 @@
-
+\page Basics
 \section basic Basic Translation and Lattice Generation
 
 The first demonstration exercise is to generate translations of

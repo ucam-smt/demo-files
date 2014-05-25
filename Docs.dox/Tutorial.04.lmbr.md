@@ -1,3 +1,4 @@
+\page LMBR
 \subsection lmbr Lattice Minimum Bayes Risk Decoding
 
 For a detailed discussion of LMBR, see Chapters 7 and 8 in [\ref BlackwoodPhD].

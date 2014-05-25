@@ -1,3 +1,4 @@
+\page Local Pruning
 \subsection lpruning Local pruning / pruning in search
 
 Local pruning controls processing speed and memory use during translation.  
