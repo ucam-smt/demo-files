@@ -138,15 +138,20 @@ The KenLM Toolkit<br>
 
 The code can be cloned from the following GitHub address:
 
-    https://github.com/HiFST/HiFST.git
+    > git clone https://github.com/ucam-smt/ucam-smt.git
 
 Once downloaded, go into the cloned directory and run this command:
 
-    ./build-tests.sh
+    > ./build-tests.sh
 
 This should download and install necessary dependencies,
-compile the code and run tests. The `README` in the cloned directory also
+compile the code and run tests. The `README.md` in the cloned directory also
 contains useful information for the installation.
+
+Files for this tutorial can be downloaded from the following GitHub address:
+
+    > git clone https://github.com/ucam-smt/demo-files.git
+    > gunzip wmaps/*.gz  ## Uncompress big wordmap files.
 
 There are additional Supplementary Files which can be downloaded 
 from <http://mi.eng.cam.ac.uk/~wjb31/data/hifst.release.May14/> .   
@@ -158,16 +163,16 @@ The following instructions are for the Bash shell.
 In the following, `HiFSTROOT` designates the cloned directory,
 i.e. the following should be a complete path to the cloned directory
 
-    export HiFSTROOT=complete_path_to_hifst_cloned_directory
+    > export HiFSTROOT=complete_path_to_hifst_cloned_directory
 
 After HiFST is successfully built and tested,  the file $HiFSTROOT/Makefile.inc
 will contain environment variable settings needed to run the HiFST
 binaries and the OpenFST tools using the HiFST libraries.  To set these,
 simply run
 
-    source $HiFSTROOT/Makefile.inc
-    export PATH=$HiFSTROOT/bin:$OPENFST_BIN:$PATH
-    export LD_LIBRARY_PATH=$HiFSTROOT/bin:$OPENFST_LIB
+    > source $HiFSTROOT/Makefile.inc
+    > export PATH=$HiFSTROOT/bin:$OPENFST_BIN:$PATH
+    > export LD_LIBRARY_PATH=$HiFSTROOT/bin:$OPENFST_LIB
 
 You should make sure that $HiFSTBINDIR is added first on the path and
 the library path and that it preceeds the OpenFst directories.

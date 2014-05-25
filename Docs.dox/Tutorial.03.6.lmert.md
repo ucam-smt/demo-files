@@ -91,9 +91,7 @@ The initial parameters are
 
 HiFST is run in translation mode as
 
-    > hifst.O2 --config=configs/CF.lmert.hyps --range=1:$M --featureweights=$FW \
-     --target.store=output/exp.lmert/$it/hyps \
-     --hifst.lattice.store=output/exp.lmert/$it/LATS/?.fst.gz 
+    > hifst.O2 --config=configs/CF.lmert.hyps --range=1:$M --featureweights=$FW --target.store=output/exp.lmert/$it/hyps --hifst.lattice.store=output/exp.lmert/$it/LATS/?.fst.gz      
 
 
 \subsection lmert_veclats 2. Guided Translation / Forced Alignment
@@ -110,10 +108,7 @@ HiFST is run in alignment mode.  Lattices (from `output/exp.lmert/$it/LATS/?.fst
 read and transformed into substring acceptors used to constrain the
 space of alignments
 
-    > hifst.O2 --config=configs/CF.lmert.alilats --range=1:$M \
-     --referencefilter.load=output/exp.lmert/$it/LATS/?.fst.gz \
-     --target.store=output/exp.lmert/$it/hyps \
-     --hifst.lattice.store=output/exp.lmert/$it/ALILATS/?.fst.gz 
+    > hifst.O2 --config=configs/CF.lmert.alilats --range=1:$M --referencefilter.load=output/exp.lmert/$it/LATS/?.fst.gz --target.store=output/exp.lmert/$it/hyps --hifst.lattice.store=output/exp.lmert/$it/ALILATS/?.fst.gz 
 
 Note the following parameters in the configuration file:
 
@@ -153,10 +148,7 @@ and features are written for each translation.
 
 The HiFST `alilats2splats` command is
 
-    > alilats2splats.O2 --config=configs/CF.lmert.vecfea --range=1:$M \
-     --featureweights=$FW \
-     --sparseweightvectorlattice.loadalilats=output/exp.lmert/$it/ALILATS/?.fst.gz \
-     --sparseweightvectorlattice.store=output/exp.lmert/$it/VECFEA/?.fst.gz 
+    > alilats2splats.O2 --config=configs/CF.lmert.vecfea --range=1:$M --featureweights=$FW --sparseweightvectorlattice.loadalilats=output/exp.lmert/$it/ALILATS/?.fst.gz --sparseweightvectorlattice.store=output/exp.lmert/$it/VECFEA/?.fst.gz 
 
 \subsection lmert_lmert 4. LMERT
 
@@ -170,12 +162,7 @@ The HiFST `alilats2splats` command is
 
 `latmert` runs as follows
 
-    > latmert.O2 --search=random --random_axes --random_directions=28 --direction=axes \
-     --threads=24 --cache_lattices --error_function=bleu --algorithm=lmert \
-     --idxlimits=1:$M --print_precision=6 --lats=output/exp.lmert/$it/VECFEA/%idx%.fst.gz \
-     --lambda=$FW --write_parameters=output/exp.lmert/params.$it  EN/EN.tune.idx 
-
-
+    > latmert.O2 --search=random --random_axes --random_directions=28 --direction=axes --threads=24 --cache_lattices --error_function=bleu --algorithm=lmert --idxlimits=1:$M --print_precision=6 --lats=output/exp.lmert/$it/VECFEA/%idx%.fst.gz --lambda=$FW --write_parameters=output/exp.lmert/params.$it  EN/EN.tune.idx 
 
 \subsection lmert_veclats_tst Notes on Tropical Sparse Tuple Vector Weights
 

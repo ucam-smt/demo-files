@@ -173,8 +173,9 @@ where the `pdt_parentheses' option indicates that the open/close parentheses sym
 Then the PDA is composed with the weak language model. This is done via the standard composition algorithm, but making sure that open/close parentheses symbols are treated as epsilons by the composition algorithm. To accomplish this, their respective output symbols need to be relabel to 0 before applying the LM:
 
     > for f in 1 2; do cat output/exp.hiero/rtn-tp/1/parens.txt | tr '\t' '\n' | sed 's/$/\t0/' > output/exp.hiero/rtn-tp/$f/parens-to-epsilon.txt ; 
-    cat output/exp.hiero/rtn-tp/$f/T.pdt | fstrelabel -relabel_opairs=output/exp.hiero/rtn-tp/$f/parens-to-epsilon.txt > output/exp.hiero/rtn-tp/$f/Tb.pdt 
-    applylm.O2 --lm.load=M/lm.4g.eprnd.mmap --lattice.load=output/exp.hiero/rtn-tp/$f/Tb.pdt --lattice.store=output/exp.hiero/rtn-tp/$f/TG.pdt ; done
+    > cat output/exp.hiero/rtn-tp/$f/T.pdt | fstrelabel -relabel_opairs=output/exp.hiero/rtn-tp/$f/parens-to-epsilon.txt > output/exp.hiero/rtn-tp/$f/Tb.pdt 
+    > applylm.O2 --lm.load=M/lm.4g.eprnd.mmap --lattice.load=output/exp.hiero/rtn-tp/$f/Tb.pdt --lattice.store=output/exp.hiero/rtn-tp/$f/TG.pdt ; 
+    > done
 
 Then the resulting PDT is expanded into an FSA while applying a pruning weight of 9:
 

@@ -168,10 +168,8 @@ By comparison, translation is much faster with much more aggressive local prunin
 via command line options to override the settings in the configuration
 file:
 
-     > (time hifst.O2 --config=configs/CF.hiero.localprune \
-     --range=3:3 --hifst.lattice.store=output/exp.hiero.localprunemore/LATS/?.fst.gz \
-     --target.store=output/exp.hiero.localprunemore/hyps --hifst.localprune.conditions=X,3,10,1,V,3,10,1) &> log/log.hiero.localprune3
-
+     > (time hifst.O2 --config=configs/CF.hiero.localprune --range=3:3 --hifst.lattice.store=output/exp.hiero.localprunemore/LATS/?.fst.gz --target.store=output/exp.hiero.localprunemore/hyps --hifst.localprune.conditions=X,3,10,1,V,3,10,1) &> log/log.hiero.localprune3
+     
 Translation finishes in less than 6 seconds, but this more aggressive local pruning 
 changes the translation hypothesis:
 
