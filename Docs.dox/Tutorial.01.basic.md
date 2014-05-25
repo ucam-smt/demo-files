@@ -1,14 +1,16 @@
+Basic Translation                {#basic}
+=================
 
-\section basic Basic Translation and Lattice Generation
+\section Basic Translation and Lattice Generation
 
 The first demonstration exercise is to generate translations of
 integer-mapped Russian text using the translation grammar and English
 n-gram language model provided.  HiFST is configured to generate
 one-best translation hypotheses as well as translation lattices.
 
-The baseline configuration file is 
+The baseline configuration file is
 
-    configs/CF.baseline 
+    configs/CF.baseline
 
 See the
 comments in that file for brief explanations of the HiFST options.
@@ -28,11 +30,11 @@ The log file output can be viewed as:
     Fri May  9 11:04:37 2014: run.INF:loading LM=M/lm.4g.mmap
     Fri May  9 11:04:37 2014: run.INF:Stats for Sentence 1: local pruning, number of times=0
     Fri May  9 11:04:37 2014: run.INF:End Sentence ******************************************************
-    Fri May  9 11:04:37 2014: run.INF:Translation 1best is: 1 9121 384 6 2756 7 3 4144 6 1458528 1341 2 
+    Fri May  9 11:04:37 2014: run.INF:Translation 1best is: 1 9121 384 6 2756 7 3 4144 6 1458528 1341 2
     Fri May  9 11:04:37 2014: run.INF:=====Translate sentence 2:1 1716 20196 95123 154 1049 6778 996 9 239837 7 1799 4 2
     Fri May  9 11:04:37 2014: run.INF:Stats for Sentence 2: local pruning, number of times=0
     Fri May  9 11:04:38 2014: run.INF:End Sentence ******************************************************
-    Fri May  9 11:04:38 2014: run.INF:Translation 1best is: 1 3 1119 6 3 9121 1711 63 355 85 7 369 24 3 13907 17 3 628 5 2 
+    Fri May  9 11:04:38 2014: run.INF:Translation 1best is: 1 3 1119 6 3 9121 1711 63 355 85 7 369 24 3 13907 17 3 628 5 2
     Fri May  9 11:04:38 2014: main.INF:hifst.O2 ends!
 
 The best scoring translation hypotheses are given in integer-mapped
@@ -41,7 +43,7 @@ hypothesis is
 
     run.INF:Translation 1best is: 1 3 1119 6 3 9121 1711 63 355 85 7 369 24 3 13907 17 3 628 5 2
 
-\subsection basic_latshyps Translation Lattices and 1-Best Hypotheses
+\section basic_latshyps Translation Lattices and 1-Best Hypotheses
 
 The baseline configuration file instructs HiFST to write its 1-best
 translations to the output file `output/exp.baseline/hyps`
@@ -50,8 +52,8 @@ this file should agree with the *Translation 1best* entries in the log file
 (compare these results  to above):
 
      > cat output/exp.baseline/hyps
-     1 9121 384 6 2756 7 3 4144 6 1458528 1341 2 
-     1 3 1119 6 3 9121 1711 63 355 85 7 369 24 3 13907 17 3 628 5 2 
+     1 9121 384 6 2756 7 3 4144 6 1458528 1341 2
+     1 3 1119 6 3 9121 1711 63 355 85 7 369 24 3 13907 17 3 628 5 2
 
 The configuration file also directs HiFST to write translation
 lattices to `output/exp.baseline/LATS/?.fst.gz` (see the
@@ -165,7 +167,7 @@ will do this:
     <s> republican strategy of resistance to the renewal of obamas election </s>
     <s> the leaders of the republican justified their policies need to deal with the spin on the elections . </s>
 
-\subsection basic_nbest N-Best Lists
+\section basic_nbest N-Best Lists
 
 The `printstrings` tool provided with this tutorial combines the above operations into a single programme.  It also can print the top-N hypotheses, as the following example shows
 
@@ -195,7 +197,7 @@ With the English wordmap,  `printstrings` will map the integer representation to
     <s> the republican strategy resistance to the renewal of obama 's election </s>		59.8376,-7.41309
     <s> the republican opposition strategy the renewal of obamas election </s> 		59.8382,-0.804688
 
-\subsection basic_scores Scores, Costs, and Semirings
+\section basic_scores Scores, Costs, and Semirings
 
 HiFST follows the formalism in which rule probabilities are represented as arc weights (see Section 2 of [\ref deGispert2010]).
 
@@ -203,7 +205,7 @@ A rule with probability *p* is represented as a negative log probability, i.e.
 
      X -> < A , B > / - log(p)
 
-with n-gram language model scores encoded similarly, 
+with n-gram language model scores encoded similarly,
 i.e. as costs  -log P(w|h)  
 for word *w* with LM history *h*. Costs are accumulated at the
 path level, so that the shortest path through the output FSA accepts
@@ -240,7 +242,7 @@ The lexicographic semiring is such that these scores
 are computed correctly at the path level:  
 
 - The cost of the shortest path found by [ShortestPath](http://openfst.cs.nyu.edu/twiki/bin/view/FST/ShortestPathDoc) is that of the best hypothesis under the sum of the translation grammar and language model scores
-- In the lexicographic semiring, when the path weight is pushed to the final state: 
+- In the lexicographic semiring, when the path weight is pushed to the final state:
     - the first weight component is the correct combined translation and language model score
     - the second weight component is the best translation score over all possible derivations that could have generated this hypothesis
 
@@ -250,9 +252,9 @@ model](#lmrescore) simply by mapping the second component of the
 lexicographic weight to a plain tropical weight prior to composition
 with a weighted finite state automaton (WFSA) containing the new language model scores.  
 
-- N.B. Also see (\ref lmert_veclats_tst) 
+- N.B. Also see (\ref lmert_veclats_tst)
 
-\subsection basic_toplevelpruning Admissible pruning / top-level pruning
+\section basic_toplevelpruning Admissible pruning / top-level pruning
 
 HiFST can prune translation lattices prior to saving them to disk.  Pruning is
 done using the \ref OpenFst [Prune](http://openfst.cs.nyu.edu/twiki/bin/view/FST/PruneDoc) operation.
@@ -312,15 +314,15 @@ by this form of pruning, as is the case in this example:
 
     > head output/exp.baseline/hyps output/exp.baseline.outputnoprune/hyps
     ==> output/exp1/hyps <==
-    1 9121 384 6 2756 7 3 4144 6 1458528 1341 2 
-    1 3 1119 6 3 9121 1711 63 355 85 7 369 24 3 13907 17 3 628 5 2 
+    1 9121 384 6 2756 7 3 4144 6 1458528 1341 2
+    1 3 1119 6 3 9121 1711 63 355 85 7 369 24 3 13907 17 3 628 5 2
 
     ==> output/exp.baseline.outputnoprune/hyps <==
-    1 9121 384 6 2756 7 3 4144 6 1458528 1341 2 
-    1 3 1119 6 3 9121 1711 63 355 85 7 369 24 3 13907 17 3 628 5 2 
+    1 9121 384 6 2756 7 3 4144 6 1458528 1341 2
+    1 3 1119 6 3 9121 1711 63 355 85 7 369 24 3 13907 17 3 628 5 2
 
 
-\subsection multithread Multithreading 
+\section multithread Multithreading
 
 (* note that the timing results here are illustrative only.)
 
@@ -335,7 +337,7 @@ shared memory.
 To see the effects of multithreading on speed and memory use,
 the baseline configuration is run over the first twenty sentences without multithreading:
 
-     > time hifst.O2 --config=configs/CF.baseline --range=1:20 
+     > time hifst.O2 --config=configs/CF.baseline --range=1:20
 
 Processing time is 140 seconds and maximum memory use is about 0.3GB.  
 In the same decoder configuration but with 2 threads
@@ -348,15 +350,15 @@ In these examples, both the LM and translation grammar are relatively
 small, and so there is not a great deal of gain from keeping them in
 shared memory.   But in larger tasks,  multithreading can be a significant advantage.
 
-\subsection server Client-Server Mode (Experimental)
+\section server Client-Server Mode (Experimental)
 
-HiFST can run in server mode. 
+HiFST can run in server mode.
 
      > hifst.O2 --config=configs/CF.baseline.server &> log/log.server &
-     > pid=$! # catch the server pid 
+     > pid=$! # catch the server pid
 
-Note that in this particular configuration, both source and target wordmaps are loaded,
-so Hifst can read tokenized Russian text and produce tokenized English translations
+Note that in this particular configuration, both source and target wordmaps are loaded.
+Hifst can read tokenized Russian text and produce tokenized English translations
 (see options `--prepro.wordmap.load` and `--postpro.wordmap.load`).
 Also, to ensure that CYK parser never fails, out of vocabulary (OOV) words must be detected (`--ssgrammar.addoovs.enable`) and sentence markers (`<s>`,`</s>`)
 have to be added on the fly, as the shallow grammar relies on them (i.e. `S 1 1`).
@@ -368,14 +370,14 @@ The output is stored in a file specified by the client tool (`--target.store`).
     > hifst-client.O2 --config=configs/CF.baseline.client --range=200:5:300 --target.store=output/exp.clientserver/translation1.txt &> log/log.client1 &
     # Connect to localhost, port=1205 and translate a bunch of sentences. Lets do this in background, just for fun
     # Note that the localhost setting is in the config file; this can point to another machine, of course
-    > pid2=$! 
+    > pid2=$!
 
     > hifst-client.O2 --config=configs/CF.baseline.client --range=1:50,100,1300 --target.store=output/exp.clientserver/translation2.txt &> log/log.client2 &
     # In the meantime, we request another 52 translations...
     > wait $pid2
 
-    > kill -9 $pid      
-    # We are finished -- kill the server 
+    > kill -9 $pid
+    # We are finished -- kill the server
 
     > head -5 output/exp.clientserver/translation2.txt
     parliament supports amendment giving freedom tymoshenko

@@ -1,4 +1,6 @@
-\section Intro Introduction
+
+Introduction {#mainpage}
+========================
 
 This tutorial presents various tools and techniques developed in
 the [Statistical Machine Translation](http://divf.eng.cam.ac.uk/smt) group at
@@ -57,7 +59,7 @@ C. Allauzen, W. Byrne, A. de Gispert, G. Iglesias, and M. Riley. Computational L
 <http://mi.eng.cam.ac.uk/~wjb31/ppubs/cl2013.final.pdf>
 
 \anchor Iglesias2009 [Iglesias2009]
-*Hierarchical phrase-based translation with weighted finite state transducers.*<br> 
+*Hierarchical phrase-based translation with weighted finite state transducers.*<br>
 G. Iglesias, A. de Gispert, E. R. Banga, and W. Byrne. Proceedings of HLT. 2009.<br>
 <http://aclweb.org/anthology//N/N09/N09-1049.pdf> <br>
 <http://mi.eng.cam.ac.uk/~wjb31/ppubs/naaclhlt2009presentation.pdf>
@@ -80,9 +82,9 @@ Computational Linguistics. 2007 <br>
 \subsection Refs_systems CUED SMT System Descriptions
 
 \anchor Pino2013 [Pino2013]
-*The University of Cambridge Russian-English System at WMT13*. <br> J. Pino, A. Waite, T. Xiao, A. de Gispert, F. Flego, and W. Byrne. 
+*The University of Cambridge Russian-English System at WMT13*. <br> J. Pino, A. Waite, T. Xiao, A. de Gispert, F. Flego, and W. Byrne.
 Proceedings of the Eighth Workshop on Statistical Machine Translation. 2013. <br>
-<http://aclweb.org/anthology//W/W13/W13-2225.pdf> 
+<http://aclweb.org/anthology//W/W13/W13-2225.pdf>
 
 \subsection Refs_fsts OpenFST and Related Modelling Techniques
 
@@ -96,7 +98,7 @@ The OpenFST Toolkit <http://www.openfst.org/>
 \subsection Refs_lmbr Lattice Minimum Bayes Risk Decoding using WFSAs
 
 \anchor BlackwoodPhD [BlackwoodPhD]
-*Lattice rescoring methods for statistical machine translation*.<br> G. Blackwood.  Ph.D. Thesis. Cambridge University Engineering Department and Clare College. 2010. <br> 
+*Lattice rescoring methods for statistical machine translation*.<br> G. Blackwood.  Ph.D. Thesis. Cambridge University Engineering Department and Clare College. 2010. <br>
 <http://mi.eng.cam.ac.uk/~gwb24/publications/phd.thesis.pdf>
 
 \anchor Blackwood2010 [Blackwood2010]
@@ -117,7 +119,7 @@ W. Macherey, F. Och, I. Thayer, J. Uszkoreit.  Proceedings of EMNLP, 2008. <br>
 <http://aclweb.org/anthology/D/D08/D08-1076.pdf>
 
 \anchor Waite2012 [Waite2012]
-*Lattice-based minimum error rate training using weighted finite-state transducers with tropical polynomial weights.* 
+*Lattice-based minimum error rate training using weighted finite-state transducers with tropical polynomial weights.*
 <br> A. Waite, G. Blackwood, and W. Byrne. Proceedings of FSMNLP, 2012.<br>
 <http://aclweb.org/anthology-new/W/W12/W12-6219.pdf>
 
@@ -131,10 +133,8 @@ The KenLM Toolkit<br>
 <http://kheafield.com/code/kenlm/>
 
 
-
-\section general Overview
-
-\subsection build Installation
+\page start Getting Started
+\section build Installation
 
 The code can be cloned from the following GitHub address:
 
@@ -148,15 +148,7 @@ This should download and install necessary dependencies,
 compile the code and run tests. The `README.md` in the cloned directory also
 contains useful information for the installation.
 
-Files for this tutorial can be downloaded from the following GitHub address:
-
-    > git clone https://github.com/ucam-smt/demo-files.git
-    > gunzip wmaps/*.gz  ## Uncompress big wordmap files.
-
-There are additional Supplementary Files which can be downloaded 
-from <http://mi.eng.cam.ac.uk/~wjb31/data/hifst.release.May14/> .   
-
-\subsection paths Paths and Environment Variables
+\section paths Paths and Environment Variables
 
 The following instructions are for the Bash shell.
 
@@ -182,7 +174,12 @@ If the LD\_LIBRARY\_PATH variable is not set correctly, you will see the message
     ERROR: ReadFst : unknown arc type "tropical_LT_tropical" : standard input
 
 
-\subsection Setup_files Directory Structure
+\section Setup_files Tutorial Files
+
+Files for this tutorial can be downloaded from the following GitHub address:
+
+    > git clone https://github.com/ucam-smt/demo-files.git
+    > cd demo-files; gunzip wmaps/*.gz  ## Uncompress big wordmap files.
 
 The following directories contain the data files, configuration files, and model files needed for this tutorial.
 
@@ -190,7 +187,7 @@ The following directories contain the data files, configuration files, and model
      |-configs/ # Configuration files
      |-EN/      # English reference text
      |-G/       # Translation grammars
-     |-M/       # Language models 
+     |-M/       # Language models
      |-RU/      # Russian input text
      |-scripts/ # Scripts for these demonstration exercises
      |-wmaps/   # Word maps, to map English and Russian text to integers
@@ -201,6 +198,9 @@ The following directories will be created after running this tutorial.
      |-log/     # Translation process log files
      |-output/  # Translation output, as 1-best hypotheses and lattices
 
+
+There are additional Supplementary Files which can be downloaded
+from <http://mi.eng.cam.ac.uk/~wjb31/data/hifst.release.May14/> .
 
 \subsection Setup_configs Configuration Files and Command Line Options
 
@@ -215,14 +215,14 @@ The following configuration files are provided for the tutorial.
      # full Hiero grammar with 4-gram LM
      configs/CF.hiero : full Hiero grammar without pruning in search
      configs/CF.hiero.chopping : methods for dealing with long source sentences
-     configs/CF.hiero.localprune  : full Hiero grammar with pruning in search 
+     configs/CF.hiero.localprune  : full Hiero grammar with pruning in search
      configs/CF.hiero.pdt : full Hiero grammar, decoding with push-down automata (HiPDT)
-     # full, iterative lattice MERT script 
+     # full, iterative lattice MERT script
      configs/CF.lmert.alilats : Lattice MERT example, alignment lattices
      configs/CF.lmert.hyps : Lattice MERT example, initial hypotheses
      configs/CF.lmert.vecfea : Lattice MERT example, vector feature lattices
      # example feature generation for MERT and LMERT
-     configs/CF.mert.alilats.nbest : MERT features, derivation-to-translation transducers, restricted to N-Best lists 
+     configs/CF.mert.alilats.nbest : MERT features, derivation-to-translation transducers, restricted to N-Best lists
      configs/CF.mert.hyps : MERT features, initial hypotheses
      configs/CF.mert.vecfea.nbest  : MERT features, N-Best feature lists for MERT
      # misc
@@ -231,24 +231,24 @@ The following configuration files are provided for the tutorial.
      configs/CF.baseline.server : HiFST client-server example, server
 
 
-HiFST uses the Boost libraries which provide support for 
+HiFST uses the Boost libraries which provide support for
 [configuration files](http://www.boost.org/doc/libs/1_55_0/doc/html/program_options/overview.html).
 
 Parameters can be supplied either on the command line or in the config files.  For example, the
 following options could be provided on the command line:
 
-     --hifst.prune=9 --hifst.replacefstbyarc.nonterminals=X,V 
+     --hifst.prune=9 --hifst.replacefstbyarc.nonterminals=X,V
 
 Alternatively, they could be specified in a configuration file either as
 
      hifst.prune=9
-     hifst.replacefstbyarc.nonterminals=X,V 
+     hifst.replacefstbyarc.nonterminals=X,V
 
 or as
 
      [hifst]
      prune=9
-     replacefstbyarc.nonterminals=X,V 
+     replacefstbyarc.nonterminals=X,V
 
 \subsection wmaps Word Maps and Integer Mapped Files
 
@@ -260,7 +260,7 @@ discussion of the use of symbol tables.
 
 Integer mappings for English and Russian are in the directory wmaps/ :
 
-     wmaps/wmt13.en.wmap 
+     wmaps/wmt13.en.wmap
      wmaps/wmt13.en.all.wmap (a much larger version of wmaps/wmt13.en.wmap)
      wmaps/wmt13.ru.wmap
      wmaps/wmt13.ru.all.wmap (a much larger version of wmaps/wmt13.ru.wmap)
@@ -269,7 +269,7 @@ Note that HiFST reserves the integers 1 and 2 for the sentence-start and sentenc
 
 The format of the wordmap files is straightforward, e.g.
 
-     > head wmaps/wmt13.en.wmap 
+     > head wmaps/wmt13.en.wmap
      <epsilon>		      0
      <s>		      1
      </s>		      2
@@ -286,7 +286,7 @@ Source text files are provided in integer format :
 
      RU/RU.set1.idx : integer mapped Russian text
 
-     > head -2 RU/RU.set1.idx 
+     > head -2 RU/RU.set1.idx
      1 20870 2447 5443 50916 78159 3621 2
      1 1716 20196 95123 154 1049 6778 996 9 239837 7 1799 4 2
 
@@ -313,9 +313,9 @@ of the tuning set RU.set1.idx . This is done so that the LMs are small
 and quickly and easily loaded into memory.  
 *Do not use these models except for the first few sentences in this tutorial.*
 
-     M/lm.3g.arpa.gz : Kneser-Ney 3-gram language model in ARPA format 
+     M/lm.3g.arpa.gz : Kneser-Ney 3-gram language model in ARPA format
      M/lm.3g.mmap : Kneser-Ney 3-gram language model in KenLM format
-     M/lm.4g.arpa.gz : Kneser-Ney 4-gram language model in ARPA format 
+     M/lm.4g.arpa.gz : Kneser-Ney 4-gram language model in ARPA format
      M/lm.4g.mmap : Kneser-Ney 4-gram language model in KenLM format
      M/lm.4g.eprnd.mmap : entropy pruned KN 4-gram LM in KenLM format
      M/lm.tc.gz : true-casing language model
@@ -351,10 +351,10 @@ Language models are in integer mapped format, e.g. for the ARPA files:
 We also provide an *entropy pruned* [\ref SRILM] version of the 4-gram language model
 as used for decoding with Push-Down Automata [\ref Allauzen2014] ; this is described below in \ref pda .
 
-     M/lm.4g.eprnd.arpa.gz : Entropy-pruned Kneser-Ney 4-gram language model in ARPA format 
+     M/lm.4g.eprnd.arpa.gz : Entropy-pruned Kneser-Ney 4-gram language model in ARPA format
      M/lm.4g.eprnd.mmap : Entropy-pruned Kneser-Ney 4-gram language model in KenLM format
 
-\subsection tgrammars Translation Grammars 
+\subsection tgrammars Translation Grammars
 HiFST uses Synchronous Context-Free Grammars (SCFGs) for translation.
 A full Hiero and a Shallow-1 translation grammar are provided in the `G/` directory:
 
@@ -372,41 +372,41 @@ to the entire `RU/RU.tune.idx` tune set are provided:
      G/rules.shallow.all.gz : larger Shallow-1 hiero grammar with scalar translation scores
      G/rules.shallow.vecfea.allgz : larger Shallow-1 hiero grammar with feature vectors
 
-There is also a grammar provided for the true-casing example (\ref true_casing) 
-  
+There is also a grammar provided for the true-casing example (\ref true_casing)
+
       G/tc.unimap
 
 \subsubsection rules Grammar File Formats
 
 In the grammar file, each line represents a rule. The rule format is:
-  
+
      LHS RHS_SOURCE RHS_TARGET FEA_1 [FEA_2 FEA_3 FEA_4 ...]
 
-where 
+where
 
      LHS = the left hand side of the rule
      RHS_SOURCE = the source-language part of the right hand side of the rule
      RHS_TARGET = the target-language part of the right hand side of the rule
      FEA_i = the i-th component of the feature vector associated with the rule
 
-The left hand side of a rule is a non-terminal symbol (in uppercase). 
+The left hand side of a rule is a non-terminal symbol (in uppercase).
 The right hand side is a pair of terminal and non-terminal
 symbol sequences in the source and target languages.  
 
 \paragraph tgrammars_formats_fea Feature Vectors
 
-Scores are assigned to rules as the dot product of a rule-specific feature vector 
+Scores are assigned to rules as the dot product of a rule-specific feature vector
 and a weight vector (see the discussion in \ref mert).  This
 computation can be done offline, in which case the feature for every rule in the grammar is a
-1-dimensional scalar. Alternatively, the decoder can be provided with a weight vector which is applied 
+1-dimensional scalar. Alternatively, the decoder can be provided with a weight vector which is applied
 to the feature vectors while loading the grammar.
 
 For example, the grammar `G/rules.shallow.gz` provided in this tutorial the following set of weights was found via LMERT tuning (see \ref mert ):
- 
+
     0.697263,0.396540,2.270819,-0.145200,0.038503,29.518480,-3.411896,-3.732196,0.217455,0.041551,0.060136
 
 These can be applied to the Shallow-1 grammar, as follows:
-    
+
     > WV=0.697263,0.396540,2.270819,-0.145200,0.038503,29.518480,-3.411896,-3.732196,0.217455,0.041551,0.060136
     > zcat G/rules.shallow.vecfea.gz | scripts/weightgrammar -w=$WV | head -3
     V 3 4 -2.046860955276
@@ -433,32 +433,32 @@ pruning in translation and for translation grammar pruning.
 
 Here is a small sample translation grammar
 
-     M 434_M 1462_8_M -1.81842                
-     M 7_M 9_3_M -0.735445                    
-     M V V -0                                 
-     S S_X S_X 0.05768                        
-     S X X -0                                 
-     V 10806 1411 1.16623                     
-     V 164_M_60 78_M_8 -0.226464              
-     V 164_M2_60_M1 78_M1_8_M2 -0.226464      
-     V 21_591 39_258_8 -0.510102              
-     V 24 3_54 -2.50252                       
-     V 274_M_4 709_9_3_M -0.589246            
-     V 5 6 -1.81729                           
-     V 7_1689 9_741_8 0.438945                
-     V 8 23 -1.46604                          
-     X 1 1 -2.5598                            
-     X 2 2 -2.5598                            
-     X V V -0                                 
-     D 1775 <dr> 10.4327                      
-     S S_D_X S_D_X 0.11536                    
+     M 434_M 1462_8_M -1.81842
+     M 7_M 9_3_M -0.735445
+     M V V -0
+     S S_X S_X 0.05768
+     S X X -0
+     V 10806 1411 1.16623
+     V 164_M_60 78_M_8 -0.226464
+     V 164_M2_60_M1 78_M1_8_M2 -0.226464
+     V 21_591 39_258_8 -0.510102
+     V 24 3_54 -2.50252
+     V 274_M_4 709_9_3_M -0.589246
+     V 5 6 -1.81729
+     V 7_1689 9_741_8 0.438945
+     V 8 23 -1.46604
+     X 1 1 -2.5598
+     X 2 2 -2.5598
+     X V V -0
+     D 1775 <dr> 10.4327
+     S S_D_X S_D_X 0.11536
 
 
 This grammar has four non-terminal symbols: `S`, `M`, `V` and `D`, and a 1-dimensional weight.  The terminal symbols are integers, corresponding to words in the source and target language word maps (\ref wmaps).  The symbol  `<dr>`
 is a special symbol used by HiFST to represent an empty word, to indicate deletion.
 
 
-As an example, for rule 
+As an example, for rule
 
      V 164_M_60 78_M_8 -0.226464
 
@@ -477,7 +477,7 @@ replaces `V` by the word "5" in the source-language and with the word
 "6" in the target-language, with a score of -1.81729.
 
 Indices on non-terminals indicate alignment within rules with more than one non-terminal. For example, for rule
-  
+
     V 164_M2_6_M1 78_M1_8_M2 -0.226464
 
 the `M` non-terminals on both language sides are indexed by 1 or 2; that is, `M1` in the source
@@ -516,47 +516,36 @@ For example, for a Shallow-1 Grammar, variables in a rule can be substituted onl
 hierarchical rules can be used only once to generate words; once a hierarchical rule is used, translation relies on glue rules to cover longer source spans.
 
 Formally, we use W to denote the set of terminals, and S
-and X to denote two non-terminals. A simple 
+and X to denote two non-terminals. A simple
 Hiero-style grammar can be defined to be:
 
-     S -> X, X                                           
-     S -> S X, S X                                       
+     S -> X, X
+     S -> S X, S X
      X -> a, b        where a, b \in ({X} union W)^+
 
 We can transform this into a Shallow-1 grammar as
-  
-     S -> X, X                                           
-     S -> S X, S X                                       
-     Y -> a, b        where a, b \in {W}^+               
-     X -> u, v        where u, v \in {{Y} union W}^+ 
+
+     S -> X, X
+     S -> S X, S X
+     Y -> a, b        where a, b \in {W}^+
+     X -> u, v        where u, v \in {{Y} union W}^+
 
 Here `Y` is introduced to handle phrasal translations. The variables in rule `X -> u, v` can only be substituted with the `Y` rules.
 
-In some cases it is desirable to allow more complex movement in 
+In some cases it is desirable to allow more complex movement in
 translation, such as complex structure movements in Chinese-English
 translation. For this we can use a generalisation of the simple
 Shallow-1 grammar, called Shallow-N grammars.  These grammars allow hierarchical
 rules to be applied up to N times.
 For example, below is the form of a Shallow-2 grammar.
 
-     S -> X, X                                           
-     S -> S X, S X                                       
-     Y^0 -> a^0, b^0  where a^0, b^0 \in {W}^+           
-     Y^1 -> a^1, b^1  where a^1, b^1 \in {{Y^0} union W}^+ 
-     X -> u, v        where u, v \in {{Y^1} union W}^+     
-  
+     S -> X, X
+     S -> S X, S X
+     Y^0 -> a^0, b^0  where a^0, b^0 \in {W}^+
+     Y^1 -> a^1, b^1  where a^1, b^1 \in {{Y^0} union W}^+
+     X -> u, v        where u, v \in {{Y^1} union W}^+
+
 
 The Shallow-2 grammar introduces `Y^0` and `Y^1` to handle hierarchical
 rule application at two levels within a derivation. For more detailed
 description of Shallow-n grammars, please refer to the HiFST paper [\ref deGispert2010].
-
-
-
-
-
-
-
-
- 
-
-

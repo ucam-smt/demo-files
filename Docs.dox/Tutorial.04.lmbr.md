@@ -1,4 +1,7 @@
-\subsection lmbr Lattice Minimum Bayes Risk Decoding
+Rescoring Procedures {#rescoring}
+====================
+
+\section lmbr Lattice Minimum Bayes Risk Decoding
 
 For a detailed discussion of LMBR, see Chapters 7 and 8 in [\ref BlackwoodPhD].
 
@@ -18,7 +21,7 @@ The following steps are carried out in LMBR decoding:
 7. The result for LMBR decoding is a WFSA; each weighted path represents a hypothesis and its risk.
 
 The weighted hypothesis space can be save as a WFSA, or the minimum risk hypothesis can be
-generated via the \ref OpenFst 
+generated via the \ref OpenFst
 [ShortestPath](http://www.openfst.org/twiki/bin/view/FST/ShortestPathDoc)
 operation.
 
@@ -35,16 +38,16 @@ the hypothesis follows the colon
 
 LMBR can be optimised by tuning the grammar scale factor and word insertion penalty.
 Once lattices are loaded into memory and n-grams are extracted (steps 1 - 5), rescoring is fast enough that
-it is practical and efficient to perform a grid search over a range of 
+it is practical and efficient to perform a grid search over a range of
 parameter values (see config file).
 
 Hypotheses are written to different files, with names based on parameter values (e.g. as
  `--writeonebest=output/exp.baseline.lmbr/HYPS/%%alpha%%_%%wps%%.hyp` ).
-The best set of values can be selected based on BLEU score, after 
+The best set of values can be selected based on BLEU score, after
 mapping each integer mapped output back to words, detokenizing, and scoring on against references.
 
 LMBR relies on a unigram precision (p) and precision ratio (r) that are computed over a development set,
-e.g. with verbose logs of a BLEU scorer such as NIST mteval1. 
+e.g. with verbose logs of a BLEU scorer such as NIST mteval1.
 The script `$HiFSTROOT/scripts/lmbr/compute-testset-precisions.pl` is included for this purpose.
 
 

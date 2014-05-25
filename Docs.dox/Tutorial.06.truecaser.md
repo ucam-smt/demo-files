@@ -1,9 +1,11 @@
+Truecasing
+===========
 \section true_casing Fst-based True casing
 
-HiFST includes a tool typically used for  true casing the output. It relies on two models: 
+HiFST includes a tool typically used for  true casing the output. It relies on two models:
 
 - A true-case integer-mapped language model in ARPA or KenLM format.
-- A flower transducer that transduces uncased words to every true case alternative. 
+- A flower transducer that transduces uncased words to every true case alternative.
   This model is loaded from a file with the following format per line, one for each uncased word:
      - uncased-case-word true-case-word1 prob1 true-case-word2 prob2 ...
      - This format is compatible with the unigram model for \ref SRILM [disambig](http://www.speech.sri.com/projects/srilm/manpages/disambig.1.html) tool (see `--map` option).
@@ -29,7 +31,7 @@ The uncased word 3 ("the") has three upper-case alternatives: "the", "THE", and 
      P(THE | the) = 0.00002
      P(The | the) = 0.13628
 
-To generate these probabilities, you just need counts of truecased words. You can extract these unigrams 
+To generate these probabilities, you just need counts of truecased words. You can extract these unigrams
 with \ref SRILM [ngram-count] (http://www.speech.sri.com/projects/srilm/manpages/ngram-count.1.html) tool,
 and calculate the probability of each particular true-cased form given the aggregated number of lower-cased instances.
 
@@ -42,7 +44,7 @@ These models are provided to the recaser module via the following configuration 
     unimap.load=G/tc.unimap
 
 The true casing procedure is very similar to that of \ref SRILM [disambig](http://www.speech.sri.com/projects/srilm/manpages/disambig.1.html) tool.
-In our case this is accomplished with two subsequent compositions, followed by exact pruning. 
+In our case this is accomplished with two subsequent compositions, followed by exact pruning.
 An acceptable performance vs speed/memory trade-off can be achieved e.g. with offline entropy pruning of the language model.
 
 A range of input lattices can be true-cased in the following way with our fst-based disambig tool:
@@ -69,6 +71,3 @@ However, the output lattices are left in uncased form:
 
     > zcat output/exp.hiero.pdt/LATS/1.fst.gz | printstrings.O2 --semiring=lexstdarc --label-map=wmaps/wmt13.en.wmap -w 2>/dev/null
     <s> the republican strategy of resistance to the renewal of obama 's election </s> 		     55.2515,-11.6445
-
-
-

@@ -1,4 +1,6 @@
-\subsection lpruning Local pruning / pruning in search
+Pruning
+=============
+\section lpruning Local pruning / pruning in search
 
 Local pruning controls processing speed and memory use during translation.  
 Only enough details are reviewed here to describe how HiFST performs pruning in search;
@@ -7,8 +9,8 @@ for a detailed discussion of local pruning and pruning in search, see Section 2.
 Given a translation grammar and a source language sentence, HiFST first
 constructs a Recursive Transition Network (RTN) representing
 the translation hypotheses [\ref Iglesias2009, \ref Iglesias2011].
-This is done as part of a modified CYK algorithm used to parse the 
-source sentence under the translation grammar. 
+This is done as part of a modified CYK algorithm used to parse the
+source sentence under the translation grammar.
 The RTN is then *expanded* to an equivalent WFSA via the \ref OpenFst [Replace](http://openfst.cs.nyu.edu/twiki/bin/view/FST/ReplaceDoc)
 operation. This WFSA contains the translation hypotheses along with their scores under the translation grammar.  
 We refer to this as the `top-level' WFSA, because it is associated with the top-most cell in the CYK grid.
@@ -21,7 +23,7 @@ Exact translation can be done under some combinations of translation grammars, l
 In particular, the \ref tgrammars_shallow  were designed for exact search.
 However attempting exact translation under many translation grammars would cause
 either the [Replace](http://openfst.cs.nyu.edu/twiki/bin/view/FST/ReplaceDoc)
-operation or the subsequent language model composition to 
+operation or the subsequent language model composition to
 become computationally intractable.
 We therefore have developed a pruning strategy that prunes the RTN during its construction.
 
@@ -32,7 +34,7 @@ The RTN created by HiFST can be described as follows:
   - A new set of non-terminals is defined as \f$N = \{ (x,i,j) : x \in X , 0 <= i <= j < I \}\f$
      - Note that \f$(S,0,I-1) \in N\f$
   - \f$(T_u)_{u \in N}\f$, is a family of WFSAs with input alphabet \f$\Sigma \cup N\f$
-     - Each \f$T_u\f$ with \f$u = (x, i, j)\f$, is a WFSA that describes all applications of translation rules with left-hand side non-terminal \f$x\f$ that 
+     - Each \f$T_u\f$ with \f$u = (x, i, j)\f$, is a WFSA that describes all applications of translation rules with left-hand side non-terminal \f$x\f$ that
 span the substring \f$s_i ... s_j\f$
      - \f$T_u\f$ is associated with the CYK grid cell associated with source space \f$[i,j]\f$ and headed by non-terminal \f$x\f$
   - The top-level RTN is defined as \f$R_{(S,0,I-1)} = (N, \Sigma, (T_u)_{u \in N}, (S,0,I-1))\f$.
@@ -51,7 +53,7 @@ that each of the WFSAs \f$T_{u'}\f$, \f$u' = (x', i', j')\f$, also defines an RT
       - The root symbol of this RTN is \f$(x', i', j')\f$
 
 The [Replace](http://openfst.cs.nyu.edu/twiki/bin/view/FST/ReplaceDoc)
-operation can be applied to the RTNs \f$R_{u'}\f$ to produce an WFSA 
+operation can be applied to the RTNs \f$R_{u'}\f$ to produce an WFSA
 containing all translations of the source string \f$S_{i'} ... S_{j'}\f$ using
 derivations rooted in the non-terminal \f$x'\f$.  This WFSA can be pruned and used in place of the original \f$T_{u'}\f$.
 
@@ -68,11 +70,11 @@ translation and the language model scores, rather than under the translation gra
 alone. However, the LM used in local pruning can be relatively weak. For
 example, if the main language model used in translation is a 4-gram,
 perhaps a 3-gram or even a bigram language model could be used in
-local pruning.  Using a smaller language model will make pruning faster, as 
+local pruning.  Using a smaller language model will make pruning faster, as
 will an efficient scheme to remove the scores of the language models used in pruning.  
 The lexicographic semiring, see \ref basic_scores, makes this last operation easy.
 
-\subsubsection local_prune Local Pruning Algorithm
+\section local_prune Local Pruning Algorithm
 
 HiFST monitors the size of the \f$T_u\f$ during translation. Any of these automata that exceed specified thresholds
 are converted to WFSAs and pruned.  Subsequent expansion of the RTN  \f$R_{(S,0,I-1)}\f$ is then done with respect to the pruned
@@ -83,9 +85,9 @@ Local pruning is controlled via the following HiFST parameters:
 
     hifst.localprune.enable=yes # must be set to activate local pruning
     hifst.localprune.conditions=NT_1,span_1,size_1,threshold_1,...,NT_N,span_N,size_N,threshold_N
-    hifst.localprune.lm.load=lm_1,...lm_K 
-    hifst.localprune.lm.featureweights=scale_1,...,scale_K 
-    hifst.localprune.lm.wps=wp_1,...,wp_K 
+    hifst.localprune.lm.load=lm_1,...lm_K
+    hifst.localprune.lm.featureweights=scale_1,...,scale_K
+    hifst.localprune.lm.wps=wp_1,...,wp_K
 
 In the above, an arbitrary number N of tuples (`NT_n`, `span_n`, `size_n`, `threshold_n`) can be provided;
 similarly, an arbitrary number K of language model parameters (`lm_k`, `scale_k`, `wp_k`) can also be used in pruning.
@@ -106,11 +108,11 @@ Pruning is applied during construction of the RTN, as follows:
       - [RmEpsilon](http://www.openfst.org/twiki/bin/view/FST/RmEpsilonDoc),[Deteminize](http://www.openfst.org/twiki/bin/view/FST/DeterminizeDoc), and [Minimize](http://www.openfst.org/twiki/bin/view/FST/MinimizeDoc), yielding a pruned WFSA \f$T_u\f$ with only translation scores and target language symbols
   - The pruned version of \f$T_u\f$ is then used in place of the original version in the RTN
 
-\subsubsection lpruning_effects Effect on Speed, Memory, Scores
+\section lpruning_effects Effect on Speed, Memory, Scores
 
 Pruning in search is particularly important when running HiFST with
 grammars that are more powerful than the shallow grammar used in
-earlier examples. 
+earlier examples.
 
 For example, HiFST can be run with a full Hiero grammar,
 while monitoring memory consumption via the UNIX top command:
@@ -137,29 +139,29 @@ second sentence:
      Fri May  9 15:20:38 2014: run.INF:loading LM=M/lm.3g.mmap
      Fri May  9 15:20:38 2014: run.INF:Stats for Sentence 1: local pruning, number of times=0
      Fri May  9 15:20:38 2014: run.INF:End Sentence ******************************************************
-     Fri May  9 15:20:38 2014: run.INF:Translation 1best is: 1 3 9121 384 6 2756 7 3 4144 6 159312 42 1341 2 
+     Fri May  9 15:20:38 2014: run.INF:Translation 1best is: 1 3 9121 384 6 2756 7 3 4144 6 159312 42 1341 2
      Fri May  9 15:20:38 2014: run.INF:=====Translate sentence 2:1 1716 20196 95123 154 1049 6778 996 9 239837 7 1799 4 2
      Fri May  9 15:20:47 2014: run.INF:Stats for Sentence 2: local pruning, number of times=18
      Fri May  9 15:20:55 2014: run.INF:End Sentence ******************************************************
-     Fri May  9 15:20:56 2014: run.INF:Translation 1best is: 1 3 1119 6 3 9121 1711 63 355 85 7 369 24 3 13907 17 3 628 5 2 
+     Fri May  9 15:20:56 2014: run.INF:Translation 1best is: 1 3 1119 6 3 9121 1711 63 355 85 7 369 24 3 13907 17 3 628 5 2
      Fri May  9 15:20:56 2014: main.INF:hifst.O2 ends!
 
 In this case, local pruning has no effect on the translations produced:
 
      > head output/exp.hiero.localprune/hyps output/exp.hiero/hyps
      ==> output/exp.hiero.localprune/hyps <==
-     1 3 9121 384 6 2756 7 3 4144 6 159312 42 1341 2 
-     1 3 1119 6 3 9121 1711 63 355 85 7 369 24 3 13907 17 3 628 5 2 
+     1 3 9121 384 6 2756 7 3 4144 6 159312 42 1341 2
+     1 3 1119 6 3 9121 1711 63 355 85 7 369 24 3 13907 17 3 628 5 2
 
      ==> output/exp.hiero/hyps <==
-     1 3 9121 384 6 2756 7 3 4144 6 159312 42 1341 2 
-     1 3 1119 6 3 9121 1711 63 355 85 7 369 24 3 13907 17 3 628 5 2 
+     1 3 9121 384 6 2756 7 3 4144 6 159312 42 1341 2
+     1 3 1119 6 3 9121 1711 63 355 85 7 369 24 3 13907 17 3 628 5 2
 
 The effect of pruning can be more dramatic on longer, more difficult
 to translate sentences.  For example, the third sentence in this set
 is difficult to translate under the full Hiero grammar without
 pruning, although it can be translated using local pruning as
-   
+
      > (time hifst.O2 --config=configs/CF.hiero.localprune --range=3:3) &> log/log.hiero.localprune2
 
 Even with local pruning, the processing time for this one sentence is over 4 minutes.
@@ -169,8 +171,8 @@ via command line options to override the settings in the configuration
 file:
 
      > (time hifst.O2 --config=configs/CF.hiero.localprune --range=3:3 --hifst.lattice.store=output/exp.hiero.localprunemore/LATS/?.fst.gz --target.store=output/exp.hiero.localprunemore/hyps --hifst.localprune.conditions=X,3,10,1,V,3,10,1) &> log/log.hiero.localprune3
-     
-Translation finishes in less than 6 seconds, but this more aggressive local pruning 
+
+Translation finishes in less than 6 seconds, but this more aggressive local pruning
 changes the translation hypothesis:
 
      > zcat output/exp.hiero.localprune/LATS/3.fst.gz | printstrings.O2 -w --semiring=lexstdarc -m wmaps/wmt13.en.wmap 2>/dev/null
@@ -207,7 +209,7 @@ can prevent the search procedure from finding good hypothesis under
 the grammar, and care must be taken to correctly apply the target
 language model at the sentence level.
 
-\subsection chopping_gb Grammar-based Sentence Chopping
+\section chopping_gb Grammar-based Sentence Chopping
 
 Chopping can be done by inserting the special 'chop' symbol
 '0' in the source sentence, and then translating with a modified
@@ -217,7 +219,7 @@ space of translation that are generated.  Conceptually, translation proceeds as:
    -# the translation grammar is applied separately to source sentence segments demarcated by chop symbols
    -# local pruning can be applied to the translations of these segments
    -# the resulting WFSAs containing translations of the segments are concatenated under the chopping grammar, possibly with local pruning
-   -# the language model is applied 
+   -# the language model is applied
    -# top-level, admissible pruning is done under the translation and languaage model scores
 
 In this way the FSTs produced by translating the segments are
@@ -225,7 +227,7 @@ concatenated prior to application of the target language model; in
 this way the language model context is not broken by the source
 sentence chopping.
 
-As an example, a grammar modified for chopping contains the following rules (without 
+As an example, a grammar modified for chopping contains the following rules (without
 weights):
 
      R 1 1
@@ -281,14 +283,14 @@ with LHS '`X`' or '`V`' can be kept as pointers rather then expanded in
 the FST (RTN) that is built for a higher CYK cell. This is achieved
 setting
 
-      hifst.replacefstbyarc=X,V 
+      hifst.replacefstbyarc=X,V
       hifst.replacefstbyarc.exceptions=S,R,T
 
 The second line above prevents substitution for rules with LHS
 '`S`', '`R`' and '`T`'.  It is better to have a fully expanded FST for these
 rules for more effective optimisation (Determinization and Minimisation).
 
-\subsubsection chopping_eg Converting Grammars and Input Text for Chopping
+\section chopping_eg Converting Grammars and Input Text for Chopping
 
 The usual Hiero grammar can be converted for chopping, as follows; note that no-cost, 0 valued, weights are added to rules :
 
@@ -344,7 +346,7 @@ Comparing the time and memory consumption of the two experiments shows that sour
      Input      Tot time      Max memory    Sent 3    Sent 12   Sent 19
      --------   --------      ----------    ------    -------   -------
      Unchopped  22m 37s         5.4Gb	     92        106       168
-     Chopped	 3m 57s         0.8Gb	     34         46        20        	  	    	      
+     Chopped	 3m 57s         0.8Gb	     34         46        20
 
 However, chopping restricts the space of translations.  Looking at the
 scores of the best translation hypotheses, chopping the source
@@ -363,7 +365,7 @@ than the hypothesis produced with chopping (130.309):
 
 
 
-\subsection chopping_sseg Chopping by Explicit Source Sentence Segmentation
+\section chopping_sseg Chopping by Explicit Source Sentence Segmentation
 
 It is also possible to segment and translate each segment completely independently, as shown in
 this example for sentence 3. Here, the original Russian sentence is
@@ -388,7 +390,7 @@ independently, as follows:
      > cat output/exp.chopping/sent3/LATS/sent.fst | printstrings.O2 --semiring=lexstdarc -m wmaps/wmt13.en.wmap -w 2>/dev/null
      <s> however , in the middle of the last myth , believe </s> <s> by saying , </s> <s> the cases of fraud in elections in the united states , a rare </s> <s> the deaths of a lightning strike . </s>  141.166,-12.5742
 
-In the above example,  the language model is applied separately to the translations of each segment leading to the substrings "</s> <s>" 
+In the above example,  the language model is applied separately to the translations of each segment leading to the substrings "</s> <s>"
 in the hypothesis.  A transducer can be built to remove these from the output lattice, as follows
 
      > mkdir tmp
@@ -398,7 +400,7 @@ in the hypothesis.  A transducer can be built to remove these from the output la
      > echo -e "2\t2\t0\t0" >> tmp/strip_1_2.txt
      > echo -e "1\t3\t2\t2" >> tmp/strip_1_2.txt
      > echo -e "3" >> tmp/strip_1_2.txt
-     > awk '$2 != 1 && $2 != 2 {printf "1\t1\t%d\t%d\n", $2,$2}' wmaps/wmt13.en.wmap >> tmp/strip_1_2.txt   
+     > awk '$2 != 1 && $2 != 2 {printf "1\t1\t%d\t%d\n", $2,$2}' wmaps/wmt13.en.wmap >> tmp/strip_1_2.txt
      > fstcompile  --arc_type=tropical_LT_tropical tmp/strip_1_2.txt | fstarcsort > tmp/strip_1_2.fst
 
      # apply the strip_1_2.fst transducer to the fst for sentence 3
@@ -417,16 +419,10 @@ language model scores from
 output/exp.chopping/sent3/LATS/sent_no12.fst and then reapplies them
 via composition
 
-     > applylm.O2 --lm.load=M/lm.4g.mmap --lm.featureweights=1 --lm.wps=0.0 --semiring=lexstdarc --lattice.load=output/exp.chopping/sent3/LATS/sent_no12.fst --lattice.store=output/exp.chopping/sent?/LATS/sent_no12_rescore.fst --lattice.load.deletelmcost --range=3:3     
+     > applylm.O2 --lm.load=M/lm.4g.mmap --lm.featureweights=1 --lm.wps=0.0 --semiring=lexstdarc --lattice.load=output/exp.chopping/sent3/LATS/sent_no12.fst --lattice.store=output/exp.chopping/sent?/LATS/sent_no12_rescore.fst --lattice.load.deletelmcost --range=3:3
 
 The rescored output is written to `output/exp.chopping/sent3/LATS/sent_no12_rescore.fst`
 with correctly applied language model scores.  The total translation cost is much lower (better) than when segment hypotheses are simply combined (i.e. 115.855 vs. 141.166):
 
      > cat output/exp.chopping/sent3/LATS/sent_no12_rescore.fst | printstrings.O2 --semiring=lexstdarc -m wmaps/wmt13.en.wmap -w 2>/dev/null
      <s> however , in the heart of the take the last myth , arguing that the rare cases of fraud in elections in the united states , the deaths of a lightning strike . </s> 	   115.855,-13.1377
-
-
-
-
-
-

@@ -1,11 +1,11 @@
-
-\section mert MERT - Features Only
+MERT - Features Only {#mert}
+============================
 
 This section describes how to generate N-Best lists of features for
 use with MERT
 [[Och 2003](http://aclweb.org/anthology/P/P03/P03-1021.pdf)].
 
-\subsection mert_nblists  HiFST_nbestformert
+\section mert_nblists  HiFST_nbestformert
 
 A script named `scripts/HiFST_nbestformert` is provided which can generate hypotheses and feature vectors
 that can be used by MERT. We use N-Best lists of depth N = 100 , set by
@@ -26,7 +26,7 @@ to process the entire file.   The output is written to the file `output/exp.mert
 
 The steps carried out in the `HiFST_nbestformert` script are described next.
 
-\subsection mert_hyps 1. Hypotheses for MERT
+\section mert_hyps 1. Hypotheses for MERT
 
 (note that this step is also done in \ref lmert)
 
@@ -86,7 +86,7 @@ semiring as described earlier.
     <s> parliament does not support the amendment , which gives you the freedom of tymoshenko </s>	43.093,-19.4512
 
 
-\subsection mert_nblist_derivations 2. Guided Translation / Forced Alignment
+\section mert_nblist_derivations 2. Guided Translation / Forced Alignment
 
 - Input:
    - `RU/RU.tune.idx` -- tuning set source language sentences
@@ -158,7 +158,7 @@ translation rule (with its non-terminals).  This leads to the
 bottom-up ordering after Replacement.
 
 
-\subsection mert_alilats 3. Hypotheses with Unweighted Feature Vectors
+\section mert_alilats 3. Hypotheses with Unweighted Feature Vectors
 
 - Input:
    - `G/rules.shallow.vecfea.all.gz` -- translation grammar, rules with (unweighted) feature vectors
