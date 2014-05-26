@@ -1,7 +1,5 @@
-Truecasing
-===========
-
-\section true_casing Fst-based True casing
+Fst-based True Casing {#true_casing}
+=====================
 
 HiFST includes a tool typically used for  true casing the output. It relies on two models:
 

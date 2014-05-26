@@ -209,7 +209,7 @@ can prevent the search procedure from finding good hypothesis under
 the grammar, and care must be taken to correctly apply the target
 language model at the sentence level.
 
-\section chopping_gb Grammar-based Sentence Chopping
+\subsection chopping_gb Grammar-based Sentence Chopping
 
 Chopping can be done by inserting the special 'chop' symbol
 '0' in the source sentence, and then translating with a modified
@@ -290,7 +290,7 @@ The second line above prevents substitution for rules with LHS
 '`S`', '`R`' and '`T`'.  It is better to have a fully expanded FST for these
 rules for more effective optimisation (Determinization and Minimisation).
 
-\section chopping_eg Converting Grammars and Input Text for Chopping
+\subsection chopping_eg Converting Grammars and Input Text for Chopping
 
 The usual Hiero grammar can be converted for chopping, as follows; note that no-cost, 0 valued, weights are added to rules :
 
@@ -365,7 +365,7 @@ than the hypothesis produced with chopping (130.309):
 
 
 
-\section chopping_sseg Chopping by Explicit Source Sentence Segmentation
+\subsection chopping_sseg Chopping by Explicit Source Sentence Segmentation
 
 It is also possible to segment and translate each segment completely independently, as shown in
 this example for sentence 3. Here, the original Russian sentence is

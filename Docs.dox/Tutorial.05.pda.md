@@ -1,7 +1,5 @@
-HiPDT
+Translation with Push-Down Automata {#pda}
 =====
-
-\section pda Translation with Push-Down Automata
 
 This HiFST package can also perform decoding using Push-Down Automata (PDA) as described
 in [\ref Iglesias2011, \ref Allauzen2014]. We call this the HiPDT decoder. A brief overview of it and an example on how to use it is given next.
@@ -29,7 +27,7 @@ sentences is identical to the baseline Hiero case (with translation
 via RTN replacement followed by composition). However, the output lattices differ as they contain
 different hypotheses (due to the different pruning strategy).
 
-\subsection pda_rtns Recursive Transition Networks
+\section pda_rtns Recursive Transition Networks
 
 As already discussed with respect to \ref lpruning,
 HiFST generates an initial representation of the space of translation in the form of an RTN,
@@ -79,7 +77,7 @@ source sentence under this grammar, as can be seen by printing its paths (here t
 As can be seen, the symbols are a mix of target language symbols (1,2,11,384,...) and pointers to other automata (1004001000, 1004003000, ...).
 Conversion of the RTN is done by recursive substitution of these symbols by the FSTs to which they point, starting from the root automata.
 
-\subsection pda_replace Replacement: Translation by Converting RTNs to WFSAs
+\section pda_replace Replacement: Translation by Converting RTNs to WFSAs
 
      > fstreplace | head -n 3
      Recursively replaces FST arcs with other FST(s).
@@ -104,7 +102,7 @@ The following will expand the RTN into an FSA:
 
 The WFSA T is the replacement of the RTN that was generated in translation.
 
-\subsubsection rtn_lm_app Composition and Shortest Path
+\section rtn_lm_app Composition and Shortest Path
 
 The applylm tool can be used to apply the baseline 4-gram language model to T via composition.  This generates a new WFSA containing both translation and language model scores:
 
@@ -149,7 +147,7 @@ which should agree with the previously generated contents of output/exp.baseline
     > zcat output/exp.baseline/LATS/1.fst.gz | printstrings.O2 --semiring=lexstdarc -w -m wmaps/wmt13.en.wmap 2>/dev/null
     <s> republican strategy of resistance to the renewal of obamas election </s> 	     57.4707,-8.03809
 
-\subsection pda_expand Expansion: Translation by Composition of PDAs and WFSAs followed by Pruned Expansion
+\section pda_expand Expansion: Translation by Composition of PDAs and WFSAs followed by Pruned Expansion
 
 
 When using PDTs, the decoding process differs from the above in that the RTN is not expanded to an FSA prior to composition with the LM. Instead, HiPDT replaces the RTN by a PDA, which is efficiently composed with the LM to produce another PDA. Finally, this resulting PDA is converted to the final translation FSA via pruned expansion.
