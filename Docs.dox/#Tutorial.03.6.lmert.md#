@@ -1,8 +1,15 @@
+
 Lattice MERT {#lmert}
 =====================
 
 This section describes how to:
- 
+=======
+\page Lattice MERT
+\section lmert Lattice MERT
+
+This section describes how to: 
+>>>>>>> 7997cc32bc5d66dbffc464dadb4ca4cb40eb52db
+
 - generate lattices for use with LMERT [\ref Macherey2008]
 - run the HiFST implementations of LMERT for iterative parameter estimation  [\ref Waite2012]
 

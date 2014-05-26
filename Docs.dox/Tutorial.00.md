@@ -1,6 +1,6 @@
-
 Introduction {#mainpage}
 ========================
+
 
 This tutorial presents various tools and techniques developed in
 the [Statistical Machine Translation](http://divf.eng.cam.ac.uk/smt) group at
@@ -134,7 +134,7 @@ The KenLM Toolkit<br>
 
 
 \page start Getting Started
-\section build Installation
+\section build Installation of UCAM-SMT package
 
 The code can be cloned from the following GitHub address:
 
