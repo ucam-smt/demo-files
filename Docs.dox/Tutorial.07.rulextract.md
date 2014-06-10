@@ -12,6 +12,7 @@ hadoop knowledge.
 This tutorial is available at (http://ucam-smt.github.io/tutorial/).
 You can also clone the tutorial code and generate the html as follows,
 provided you have doxygen 1.8+ and latex installed:
+
     git clone https://github.com/ucam-smt/demo-files.git
     cd demo-files/Docs.dox
     doxygen
@@ -26,7 +27,7 @@ Requirements for building/running the rule extraction code:
   + java 1.7+
 
 To get the code, use the following command:
-   git clone https://github.com/ucam-smt/ucam-smt.git
+    git clone https://github.com/ucam-smt/ucam-smt.git
 
 The rule extraction code will be in the `ucam-smt/java/ruleXtract`
 directory. The variable `$RULEXTRACT` designates this directory
