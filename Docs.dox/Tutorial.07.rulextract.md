@@ -96,13 +96,13 @@ have a look at the commands and comments inside the script for more info.
 
 Note that this hadoop cluster installation is for tutorial purposes.
 If you have a multi-core machine and enough memory (say 16G-32G), then
-this cluster may be sufficient for extracting relatively large grammar.
+this cluster may be sufficient for extracting relatively large grammars.
 However, a proper installation will use several nodes and a different
 username for the Hadoop administrator.
 
 In the remainder of this tutorial, the `$HADOOP_ROOT` variable
 designates the Hadoop installation directory, for example
-`home/mary/sandbox/hadoop-1.2.1` .
+`/home/mary/sandbox/hadoop-1.2.1` .
 
 \section For the Impatient
 
