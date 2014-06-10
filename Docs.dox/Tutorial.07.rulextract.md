@@ -9,7 +9,7 @@ hadoop knowledge.
 
 \section Preliminaries
 
-This tutorial is available at (http://ucam-smt.github.io/tutorial/).
+This tutorial is available at http://ucam-smt.github.io/tutorial/ .
 You can also clone the tutorial code and generate the html as follows,
 provided you have doxygen 1.8+ and latex installed:
 
@@ -27,6 +27,7 @@ Requirements for building/running the rule extraction code:
   + java 1.7+
 
 To get the code, use the following command:
+
     git clone https://github.com/ucam-smt/ucam-smt.git
 
 The rule extraction code will be in the `ucam-smt/java/ruleXtract`
@@ -50,18 +51,19 @@ extraction and retrieval cli/config.
 
 \section Hadoop Cluster Setup
 
-Note: a user already having access to a Hadoop cluster
+**Note**: a user already having access to a Hadoop cluster
 may wish to skip this section.
 
 We give instructions on how to set up a single
 node Hadoop cluster. Specifically, we follow instructions
 for the pseudo-distributed single node setup
-from (http://hadoop.apache.org/docs/r1.2.1/single_node_setup.html) .
-More information is available at (http://hadoop.apache.org) and
+from http://hadoop.apache.org/docs/r1.2.1/single_node_setup.html .
+More information is available at http://hadoop.apache.org and
 in the book "Hadoop, The Definitive Guide" by Tom White.
 
 First, choose a working directory, for example `/home/mary/sandbox`, then
 run the following commands:
+
     cd /home/mary/sandbox
     $RULEXTRACT/scripts/hadoopClusterSetup.bash
 
@@ -88,6 +90,7 @@ have a look at the commands and comments inside the script for more info.
   + The cluster is shut down to avoid having java processes lying around.
   You will need to restart the cluster to run MapReduce jobs with the following
   command:
+
 	`hadoop-1.2.1/bin/start-all.sh`
 
 
