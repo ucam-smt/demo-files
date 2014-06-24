@@ -173,7 +173,7 @@ set or a given input sentence to be translated.
 
   \subsection
 
-  The first step in grammar extraction is to extract the rules.
+  Once the training data has been loaded to HDFS, rules can be extracted.
   This is done via the following command:
 
        hadoop jar $RULEXTRACTJAR uk.ac.cam.eng.extraction.hadoop.extraction.ExtractorJob \
@@ -186,7 +186,17 @@ set or a given input sentence to be translated.
 	      --max_nonterminal_length=10 \
 	      --provenance=cc,nc,yx,web \
 
+  \subsection
 
+  The output of the previous job is the input to feature computation.
+  We start by computing source-to-target rule probabilities for each
+  provenance. This is done via the following command:
+
+       hadoop jar $RULEXTRACTJAR uk.ac.cam.eng.extraction.hadoop.features.phrase.Source2TargetJob \
+       	      --input=/user/jmp84/0124-RUEN-WMT13-corenlp/rules \
+	      --output=/user/jmp84/0124-RUEN-WMT13-corenlp/phrase-s2t \
+	      --provenance cc,nc,yx,web \
+	      --mapreduce_features=source2target_probability,target2source_probability,source2target_lexical_probability,target2source_lexical_probability,provenance_source2target_lexical_probability,provenance_target2source_lexical_probability,provenance_source2target_probability,provenance_target2source_probability
 
 Similar to the previous section, this section
 is divided in two subsections.
