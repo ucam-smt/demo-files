@@ -195,7 +195,19 @@ set or a given input sentence to be translated.
        hadoop jar $RULEXTRACTJAR uk.ac.cam.eng.extraction.hadoop.features.phrase.Source2TargetJob \
        	      --input=/user/jmp84/0124-RUEN-WMT13-corenlp/rules \
 	      --output=/user/jmp84/0124-RUEN-WMT13-corenlp/phrase-s2t \
-	      --provenance cc,nc,yx,web \
+	      --provenance=cc,nc,yx,web \
+	      --mapreduce_features=source2target_probability,target2source_probability,source2target_lexical_probability,target2source_lexical_probability,provenance_source2target_lexical_probability,provenance_target2source_lexical_probability,provenance_source2target_probability,provenance_target2source_probability
+
+  \subsection
+
+  Computation of other features can be done simultaneously.
+  Computing target-to-source probabilities for each provenance
+  can be done as follows:
+
+       hadoop jar $RULEXTRACTJAR uk.ac.cam.eng.extraction.hadoop.features.phrase.Target2SourceJob \
+       	      --input=/user/jmp84/0124-RUEN-WMT13-corenlp/rules \
+	      --output=/user/jmp84/0124-RUEN-WMT13-corenlp/phrase-t2s \
+	      --provenance=cc,nc,yx,web \
 	      --mapreduce_features=source2target_probability,target2source_probability,source2target_lexical_probability,target2source_lexical_probability,provenance_source2target_lexical_probability,provenance_target2source_lexical_probability,provenance_source2target_probability,provenance_target2source_probability
 
 Similar to the previous section, this section
