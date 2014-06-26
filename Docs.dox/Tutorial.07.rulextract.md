@@ -193,10 +193,11 @@ set or a given input sentence to be translated.
   provenance. This is done via the following command:
 
        hadoop jar $RULEXTRACTJAR uk.ac.cam.eng.extraction.hadoop.features.phrase.Source2TargetJob \
+	   		  -D mapred.reduce.tasks=16 \
        	      --input=/user/jmp84/0124-RUEN-WMT13-corenlp/rules \
-	      --output=/user/jmp84/0124-RUEN-WMT13-corenlp/phrase-s2t \
-	      --provenance=cc,nc,yx,web \
-	      --mapreduce_features=source2target_probability,target2source_probability,source2target_lexical_probability,target2source_lexical_probability,provenance_source2target_lexical_probability,provenance_target2source_lexical_probability,provenance_source2target_probability,provenance_target2source_probability
+			  --output=/user/jmp84/0124-RUEN-WMT13-corenlp/phrase-s2t \
+			  --provenance=cc,nc,yx,web \
+			  --mapreduce_features=source2target_probability,target2source_probability,source2target_lexical_probability,target2source_lexical_probability,provenance_source2target_lexical_probability,provenance_target2source_lexical_probability,provenance_source2target_probability,provenance_target2source_probability
 
   \subsection
 
@@ -205,10 +206,22 @@ set or a given input sentence to be translated.
   can be done as follows:
 
        hadoop jar $RULEXTRACTJAR uk.ac.cam.eng.extraction.hadoop.features.phrase.Target2SourceJob \
-       	      --input=/user/jmp84/0124-RUEN-WMT13-corenlp/rules \
-	      --output=/user/jmp84/0124-RUEN-WMT13-corenlp/phrase-t2s \
-	      --provenance=cc,nc,yx,web \
-	      --mapreduce_features=source2target_probability,target2source_probability,source2target_lexical_probability,target2source_lexical_probability,provenance_source2target_lexical_probability,provenance_target2source_lexical_probability,provenance_source2target_probability,provenance_target2source_probability
+	   		  -D mapred.reduce.tasks=16 \
+			  --input=/user/jmp84/0124-RUEN-WMT13-corenlp/rules \
+			  --output=/user/jmp84/0124-RUEN-WMT13-corenlp/phrase-t2s \
+			  --provenance=cc,nc,yx,web \
+			  --mapreduce_features=source2target_probability,target2source_probability,source2target_lexical_probability,target2source_lexical_probability,provenance_source2target_lexical_probability,provenance_target2source_lexical_probability,provenance_source2target_probability,provenance_target2source_probability
+
+  \subsection
+
+  Once all features have been computed, rules and features
+  are merged into a single output. This can be done via the
+  following command:
+
+       hadoop jar $RULEXTRACTJAR uk.ac.cam.eng.extraction.hadoop.merge.MergeJob \
+	   		  -D mapred.reduce.tasks=10 \
+			  --input=0124-RUEN-WMT13-corenlp-new/phrase-s2t,0124-RUEN-WMT13-corenlp-new/phrase-t2s \
+			  --output=0124-RUEN-WMT13-corenlp-new/merge
 
 Similar to the previous section, this section
 is divided in two subsections.
