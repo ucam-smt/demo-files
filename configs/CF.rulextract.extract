@@ -1,0 +1,8 @@
+--input=RUEN-WMT13/training_data
+--output=RUEN-WMT13/rules
+--remove_monotonic_repeats=true
+--max_source_phrase=9
+--max_source_elements=5
+--max_terminal_length=5
+--max_nonterminal_length=10
+--provenance=cc,nc,yx,web

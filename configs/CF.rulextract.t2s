@@ -1,0 +1,4 @@
+--input=RUEN-WMT13/rules
+--output=RUEN-WMT13/t2s
+--provenance=cc,nc,yx,web
+--mapreduce_features=source2target_probability,target2source_probability,provenance_source2target_probability,provenance_target2source_probability
