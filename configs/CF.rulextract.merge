@@ -1,0 +1,2 @@
+--input=RUEN-WMT13/s2t,RUEN-WMT13/t2s
+--output=RUEN-WMT13/merge

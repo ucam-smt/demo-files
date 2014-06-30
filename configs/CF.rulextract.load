@@ -1,0 +1,5 @@
+--source=train/ru.sample.gz
+--target=train/en.sample.gz
+--alignment=train/align.berkeley.sample.gz
+--provenance=train/provenance.sample.gz
+--hdfsout=RUEN-WMT13/training_data
