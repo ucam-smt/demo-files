@@ -344,6 +344,14 @@ The next section details the various steps for grammar extraction.
 
 \section rulextract_retrieval Grammar Filtering
 
+  \subsection lex_model Lexical Models Download
+
+  Lexical models are available as a separate download
+  as they take some space. Run these commands:
+
+      wget http://mi.eng.cam.ac.uk/~jmp84/share/align_giza.tar.gz
+      tar -xvf align_giza.tar.gz
+
   \subsection lex_prob_server Lexical Probability Servers
 
   A preliminary step prior to grammar filtering is to launch lexical
@@ -404,14 +412,6 @@ The next section details the various steps for grammar extraction.
       cat $HADOOP_ROOT/conf/core-site.xml | \
           $RULEXTRACT/scripts/makeHadoopLocalConfig.pl \
           > configs/hadoopLocalConf/core-site.xml
-
-  \subsection lex_model Lexical Models Download
-
-  Lexical models are available as a separate download
-  as they take some space. Run these commands:
-
-      wget http://mi.eng.cam.ac.uk/~jmp84/share/align_giza.tar.gz
-      tar -xvf align_giza.tar.gz
 
   \subsection retrieval Grammar Filtering
 
