@@ -19,9 +19,9 @@ If you don't know how to install java, here's one way to install
 java 7 on Ubuntu, as described
 [here](http://www.webupd8.org/2012/01/install-oracle-java-jdk-7-in-ubuntu-via.html) (for java 8, see [here](http://www.webupd8.org/2012/09/install-oracle-java-8-in-ubuntu-via-ppa.html)):
 
-	sudo add-apt-repository ppa:webupd8team/java
-	sudo apt-get update
-	sudo apt-get install oracle-java7-installer
+    sudo add-apt-repository ppa:webupd8team/java
+    sudo apt-get update
+    sudo apt-get install oracle-java7-installer
 
 **Note**: the java version used to run your Hadoop cluster should be
 greater or equal to the java version used to compile the code; otherwise
@@ -54,6 +54,20 @@ To get the tutorial files, run this command:
 
     git clone https://github.com/ucam-smt/demo-files.git
 
+The tutorial files and sources for this tutorial will be
+in the `demo-files` directory. The variable `$DEMO`
+designates this directory from now on. As an optional
+step, if you wish to regenerate the HTML code for this
+tutorial, make sure you have doxygen (1.8+
+for markdown support) and
+latex (for formulas) installed and run the following commands:
+
+    cd $DEMO/Docs.dox
+    doxygen
+
+For this tutorial, it is assumed that rule extraction commands
+are run from the `$DEMO` directory.
+
 \section rulextract_cluster_setup Hadoop Cluster Setup
 
 **Note**: a user already having access to a Hadoop cluster
@@ -79,7 +93,9 @@ run the following commands:
     cd $HOME/hadoopcluster
     $RULEXTRACT/scripts/hadoopClusterSetup.bash
 
-This should install the cluster. We now
+This should install the cluster in the `/home/$USER/hadoopcluster/hadoop-1.2.1`
+directory. In the remainder of this tutorial, the `$HADOOP_ROOT`
+variable designates the Hadoop installation directory. We now
 detail the steps in the `hadoopClusterSetup.bash` script. You can also
 have a look at the commands and comments inside the script for more information.
   + The java version is checked. If java 1.7+ is not installed, then
@@ -106,17 +122,25 @@ have a look at the commands and comments inside the script for more information.
   You will need to restart the cluster to run MapReduce jobs with the following
   command:
 
-	`hadoop-1.2.1/bin/start-all.sh`
+      $HADOOP_ROOT/bin/start-all.sh
 
-Note that this hadoop cluster installation is for tutorial purposes.
+Once you are done with this tutorial, you can shut down the Hadoop
+cluster with this command:
+
+      $HADOOP_ROOT/bin/stop-all.sh
+
+When running rule extraction commands, if you see a similar looking
+log message:
+
+      14/07/09 16:56:55 INFO ipc.Client: Retrying connect to server: localhost/127.0.0.1:9000. Already tried 0 time(s); retry policy is RetryUpToMaximumCountWithFixedSleep(maxRetries=10, sleepTime=1 SECONDS)
+
+this means that the Hadoop cluster is not running and needs to be started.
+
+Note that this Hadoop cluster installation is for tutorial purposes.
 If you have a multi-core machine and enough memory (say 16G-32G), then
 this cluster may be sufficient for extracting relatively large grammars.
 However, a proper installation will use several nodes and a different
 username for the Hadoop administrator.
-
-In the remainder of this tutorial, the `$HADOOP_ROOT` variable
-designates the Hadoop installation directory, for example
-`/home/$USER/hadoopcluster/hadoop-1.2.1` .
 
 \section rulextract_pipeline_overview Pipeline Overview
 
@@ -147,10 +171,14 @@ The next section details the various steps for grammar extraction.
   \subsection rulextract_commands Running Commands
 
   In the remainder of this tutorial, it is assumed that commands
-  are run from the `demo-files` directory. All commands
-  look like:
+  are run from the `$DEMO` directory. Please change to that
+  directory:
 
-  	   $HADOOP_ROOT/bin/hadoop jar $RULEXTRACTJAR class args
+      cd $DEMO
+
+  All commands look like:
+
+       $HADOOP_ROOT/bin/hadoop jar $RULEXTRACTJAR class args
 
   where `class` is a particular java class with a main method and
   `args` are the command line arguments. We use [JCommander](http://jcommander.org/)
@@ -160,18 +188,18 @@ The next section details the various steps for grammar extraction.
 
   Create a directory to store logs:
 
-  		 mkdir logs
+         mkdir -p logs
 
   \subsection rulextract_load_data Data Loading
 
   The first step in grammar extraction is to load the training data onto HDFS.
   This is done via the following command:
 
-  	   $HADOOP_ROOT/bin/hadoop \
-	       jar $RULEXTRACTJAR \
-		   uk.ac.cam.eng.extraction.hadoop.util.ExtractorDataLoader \
-		   @configs/CF.rulextract.load \
-		   >& logs/log.loaddata
+       $HADOOP_ROOT/bin/hadoop \
+           jar $RULEXTRACTJAR \
+           uk.ac.cam.eng.extraction.hadoop.util.ExtractorDataLoader \
+           @configs/CF.rulextract.load \
+           >& logs/log.loaddata
 
   You can see the following options in the `configs/CF.rulextract.load`
   configuration file:
@@ -187,7 +215,15 @@ The next section details the various steps for grammar extraction.
     + `--hdfsout` : the location of the training data on HDFS.
 
   For `--hdfsout`, you can specify a relative or absolute path. The relative path is relative
-  to your home directory on HDFS.
+  to your home directory on HDFS, that is `/user/$USER`.
+  Once the command is completed, you will find the training data at the following
+  location on HDFS:
+
+      /user/$USER/RUEN-WMT13/training_data
+
+  You can verify this by running the Hadoop ls command:
+
+      $HADOOP_ROOT/bin/hadoop fs -ls RUEN-WMT13
 
   \subsection rulextract_extract Rule Extraction
 
@@ -195,10 +231,10 @@ The next section details the various steps for grammar extraction.
   This is done via the following command:
 
        $HADOOP_ROOT/bin/hadoop \
-	       jar $RULEXTRACTJAR \
-		   uk.ac.cam.eng.extraction.hadoop.extraction.ExtractorJob \
-		   @configs/CF.rulextract.extract \
-		   >& logs/log.extract
+           jar $RULEXTRACTJAR \
+           uk.ac.cam.eng.extraction.hadoop.extraction.ExtractorJob \
+           @configs/CF.rulextract.extract \
+           >& logs/log.extract
 
   You can see the following options in the `configs/CF.rulextract.extract`
   configuration file:
@@ -216,6 +252,14 @@ The next section details the various steps for grammar extraction.
     + `--max_nonterminal_length` : the maximum number of terminals covered by a source nonterminal.
     + `--provenance` : comma-separated list of provenances.
 
+  Once the extraction is complete, you will find the rules
+  in the `/user/$USER/RUEN-WMT13/rules/` HDFS directory.
+  In this directory, you should see the following files:
+
+    + `_SUCCESS` : this file indicates that the job successfully completed.
+    + `_logs` : this directory contains metatdata about the job that has been run.
+    + `part-r-*` : these files are the output of the Hadoop job.
+
   \subsection rulextract_s2t Source-to-target Probability
 
   The output of the previous job is the input to feature computation.
@@ -223,11 +267,11 @@ The next section details the various steps for grammar extraction.
   provenance. This is done via the following command:
 
        $HADOOP_ROOT/bin/hadoop \
-	       jar $RULEXTRACTJAR \
-		   uk.ac.cam.eng.extraction.hadoop.features.phrase.Source2TargetJob \
-		   -D mapred.reduce.tasks=16 \
-		   @configs/CF.rulextract.s2t \
-		   >& logs/log.s2t
+           jar $RULEXTRACTJAR \
+           uk.ac.cam.eng.extraction.hadoop.features.phrase.Source2TargetJob \
+           -D mapred.reduce.tasks=16 \
+           @configs/CF.rulextract.s2t \
+           >& logs/log.s2t
 
   You can see the following options in the `configs/CF.rulextract.s2t`
   configuration file:
@@ -244,6 +288,9 @@ The next section details the various steps for grammar extraction.
   in the command line (see [this example](http://hadoopi.wordpress.com/2013/06/05/hadoop-implementing-the-tool-interface-for-mapreduce-driver/)
   and the [API documentation](https://hadoop.apache.org/docs/r1.2.1/api/org/apache/hadoop/util/Tool.html) for more detail).
 
+  Once the job is complete, you will find the source-to-target probabilities
+  in the `/user/$USER/RUEN-WMT13/s2t` HDFS directory.
+
   \subsection rulextract_t2s Target-to-source Probability
 
   Computation of other features can be done simultaneously.
@@ -251,11 +298,11 @@ The next section details the various steps for grammar extraction.
   can be done as follows:
 
        $HADOOP_ROOT/bin/hadoop \
-	       jar $RULEXTRACTJAR \
-		   uk.ac.cam.eng.extraction.hadoop.features.phrase.Target2SourceJob \
-		   -D mapred.reduce.tasks=16 \
-		   @configs/CF.rulextract.t2s \
-		   >& logs/log.t2s
+           jar $RULEXTRACTJAR \
+           uk.ac.cam.eng.extraction.hadoop.features.phrase.Target2SourceJob \
+           -D mapred.reduce.tasks=16 \
+           @configs/CF.rulextract.t2s \
+           >& logs/log.t2s
 
   You can see the following options in the `configs/CF.rulextract.t2s`
   configuration file:
@@ -265,6 +312,9 @@ The next section details the various steps for grammar extraction.
     + `--provenance` : comma-separated list of provenances.
     + `--mapreduce_features` : comma-separated list of features.
 
+  Once the job is complete, you will find the target-to-source probabilities
+  in the `/user/$USER/RUEN-WMT13/t2s` HDFS directory.
+
   \subsection rulextract_merge Feature Merging
 
   Once all features have been computed, rules and features
@@ -272,11 +322,11 @@ The next section details the various steps for grammar extraction.
   following command:
 
        $HADOOP_ROOT/bin/hadoop \
-	       jar $RULEXTRACTJAR \
-		   uk.ac.cam.eng.extraction.hadoop.merge.MergeJob \
-	   	   -D mapred.reduce.tasks=10 \
-		   @configs/CF.rulextract.merge \
-		   >& logs/log.merge
+           jar $RULEXTRACTJAR \
+           uk.ac.cam.eng.extraction.hadoop.merge.MergeJob \
+           -D mapred.reduce.tasks=10 \
+           @configs/CF.rulextract.merge \
+           >& logs/log.merge
 
   You can see the following options in the `configs/CF.rulextract.merge`
   configuration file:
@@ -284,13 +334,157 @@ The next section details the various steps for grammar extraction.
     + `--input` : comma separated list of output from feature computation
     + `--output` : merged output
 
+  Once this step is completed, there will be 10 output hfiles
+  in the `/user/$USER/RUEN-WMT13/merge` HDFS directory. For backup purposes
+  and in order to make the subsequent retrieval step faster, it
+  is advised to copy these hfiles to local disk as follows:
+
+      mkdir -p hfile
+      $HADOOP_ROOT/bin/hadoop fs -copyToLocal RUEN-WMT13/merge/*.hfile hfile/
 
 \section rulextract_retrieval Grammar Filtering
 
-The same applies for retrieval/filtering: lex prob server/client,
-retrieval, special rules (oov, dr, glue, etc.) explained
-in detail. Possibly conversions from shallow grammars to
-hiero grammars also explained.
+  \subsection lex_prob_server Lexical Probability Servers
+
+  A preliminary step prior to grammar filtering is to launch lexical
+  probability servers. These servers load IBM Model 1 probabilities
+  for various provenances and for source-to-target and
+  target-to-source directions. These probabilities have
+  been obtained by the GIZA++ toolkit. For convenience, for this
+  tutorial, we provide pretrained models. The source-to-target
+  and target-to-source servers are launched as follows:
+
+      export HADOOP_HEAPSIZE=30000
+      export HADOOP_OPTS="-XX:+UseConcMarkSweepGC -verbose:gc -server -Xms30000M"
+      $HADOOP_ROOT/bin/hadoop \
+          jar $RULEXTRACTJAR \
+          uk.ac.cam.eng.extraction.hadoop.features.lexical.TTableServer \
+          @configs/CF.rulextract.lexserver \
+          --ttable_direction=s2t \
+          --ttable_language_pair=en2ru
+      $HADOOP_ROOT/bin/hadoop \
+          jar $RULEXTRACTJAR \
+          uk.ac.cam.eng.extraction.hadoop.features.lexical.TTableServer \
+          @configs/CF.rulextract.lexserver \
+          --ttable_direction=t2s \
+          --ttable_language_pair=ru2en
+
+  Both servers should be launched in a separate terminal and without
+  trailing ampersand to the commands. Once the servers are ready, a message
+  similar to `"TTable server ready on port: 4949"` will be printed out.
+
+  You can see the following options in the `configs/CF.rulextract.lexserver`
+  configuration file:
+
+    + `--ttable_s2t_server_port` : the port for the source-to-target server.
+    + `--ttable_s2t_host` : the host for the source-to-target server.
+    + `--ttable_t2s_server_port` : the port for the target-to-source server.
+    + `--ttable_t2s_host` : the host for the target-to-source server.
+    + `--ttable_server_template` : indicates a templated path to the lexical model
+    where the templates `$GENRE` and `$DIRECTION` are replaced by their actual
+	value.
+    + `--provenance` : comma-separated provenances. This is used to search
+    for the lexical models in the template.
+
+  \subsection hadoop_local_conf Hadoop Local Configuration
+
+  We have mentioned that retrieval is faster from local disk than
+  from HDFS. In order to run Hadoop commands locally, we need
+  to use a local configuration. This can be done by modifying
+  the Hadoop configuration file that was prepared when setting
+  up the Hadoop cluster:
+
+      cp -r $HADOOP_ROOT/conf configs/hadoopLocalConf
+      cat $HADOOP_ROOT/conf/mapred-site.xml | \
+          $RULEXTRACT/scripts/makeHadoopLocalConfig.pl \
+          > configs/hadoopLocalConf/mapred-site.xml
+      cat $HADOOP_ROOT/conf/hdfs-site.xml | \
+          $RULEXTRACT/scripts/makeHadoopLocalConfig.pl \
+          > configs/hadoopLocalConf/hdfs-site.xml
+      cat $HADOOP_ROOT/conf/core-site.xml | \
+          $RULEXTRACT/scripts/makeHadoopLocalConfig.pl \
+          > configs/hadoopLocalConf/core-site.xml
+
+  \subsection lex_model Lexical Models Download
+
+  Lexical models are available as a separate download
+  as they take some space. Run these commands:
+
+      wget http://mi.eng.cam.ac.uk/~jmp84/share/align_giza.tar.gz
+      tar -xvf align_giza.tar.gz
+
+  \subsection retrieval Grammar Filtering
+
+  Once the lexical probability servers are up, the Hadoop local
+  configuration has been prepared and the lexical
+  models have been downloaded, one can proceed to
+  actual grammar filtering. This is done via the following
+  command:
+
+      $HADOOP_ROOT/bin/hadoop \
+          --config configs/hadoopLocalConf \
+          jar $RULEXTRACTJAR \
+          uk.ac.cam.eng.rule.retrieval.RuleRetriever \
+          @configs/CF.rulextract.retrieval \
+          >& logs/log.retrieval
+
+  You can see the following options in the `configs/CF.rulextract.retrieval`
+  configuration file:
+
+    + `--max_source_phrase` : the maximum source phrase length for a phrase-based rule.
+    This option is used to control how source patterns are generated from the
+	test file. The value for this option should be at most the value
+	chosen when extracting rules. Otherwise, no rules will be found for certain
+	patterns.
+    + `--max_source_elements` : the maximum number of source elements (terminal
+    or nonterminal) for a hiero rule.
+    + `--max_terminal_length` : the maximum number of consecutive source terminals
+    for a hiero rule.
+    + `--max_nonterminal_length` : the maximum number of terminals covered by a
+    source nonterminal.
+    + `--hr_max_height` : the maximum number of terminals covered by the entire
+    source side of a rule. The value for this option should be at most the value
+    chosen for the `--cykparser.hrmaxheight` option in the HiFST decoder, otherwise
+    some rules will never be used in decoding.
+    + `--mapreduce_features` : comma-separated list of mapreduce features. Note that
+    for the value for this option, we have used the value from the extraction phase
+    and added lexical features.
+    + `--provenance` : comma-separated list of provenances.
+    + `--features`: comma-separated list of features.
+    + `--pass_through_rules` : file containing special translation rules
+    that copy source words or source word sequences to the target.
+    + `--filter_config` : file with additional filter options.
+    + `--source_patterns` : list of source patterns to be used in order to
+    generate source pattern instances.
+    + `--ttable_s2t_server_port` : the port for the source-to-target server. The
+    value for this option should be same as the one used to launch the servers.
+    + `--ttable_s2t_host` : the host for the source-to-target server.
+    + `--ttable_t2s_server_port` : the port for the target-to-source server.
+    + `--ttable_t2s_host` : the host for the target-to-source server.
+    + `--retrieval_threads` : the number of threads. The value for this option
+    should be equal to the number of HFiles obtained in the merge step.
+    + `--hfile` : the directory containing the HFiles.
+    + `--test_file` : the test set to be translated.
+    + `--rules` : the output file containing relevant rules for the test set.
+
+  Once this step is completed, you should obtain a rule file
+  at this location: `$DEMO/G/rules.RU.tune.idx.gz`
+
+  \subsection grammar_conversion Grammar Formatting
+
+  In order to obtain a shallow grammar ready to use by the HiFST
+  decoder, a postprocessing step is needed. This can be
+  achieved via the following command:
+
+      zcat -f G/rules.RU.tune.idx.gz | \
+          $RULEXTRACT/scripts/prepareShallow.pl | \
+          $RULEXTRACT/scripts/shallow2hifst.pl | \
+          $RULEXTRACT/scripts/sparse2nonsparse.pl 27 | \
+          gzip > G/rules.shallow.vecfea.all.prov.gz
+
+  The `G/rules.shallow.vecfea.all.prov.gz` should
+  contain the same rules as the `G/rules.shallow.vecfea.all.gz`
+  used for the HiFST decoding tutorial and additional provenance features.
 
 \section rulextract_impatient For the Impatient
 
