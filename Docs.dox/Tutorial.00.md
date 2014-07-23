@@ -142,7 +142,7 @@ The code can be cloned from the following GitHub address:
 
 Once downloaded, go into the cloned directory and run this command:
 
-    > ./build-tests.sh
+    > ./build-test.sh
 
 This should download and install necessary dependencies,
 compile the code and run tests. The `README.md` in the cloned directory also
