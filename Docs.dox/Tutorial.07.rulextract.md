@@ -226,9 +226,16 @@ The next section details the various steps for grammar extraction.
       $HADOOP_ROOT/bin/hadoop \
           jar $RULEXTRACTJAR \
           uk.ac.cam.eng.extraction.hadoop.util.SequenceFilePrint \
-		  RUEN-WMT13/rules/part-r-00000
+          RUEN-WMT13/rules/part-r-00000
 
   This will print the first chunk of rules extracted.
+  After the merging step, you can visualize rules, alignments and features
+  as follows:
+
+      $HADOOP_ROOT/bin/hadoop \
+          jar $RULEXTRACTJAR \
+          uk.ac.cam.eng.extraction.hadoop.util.HFilePrint \
+          RUEN-WMT13/merge/part-r-00000.hfile
 
   \subsection rulextract_load_data Data Loading
 
@@ -279,17 +286,11 @@ The next section details the various steps for grammar extraction.
   For the full data, we give indicative timing measurements obtained
   on our cluster:
 
-  Step       | Time
-  -----------------
-  extraction | 106m
-  -----------------
-  s2t        | 12m
-  -----------------
-  t2s        | 13m
-  -----------------
-  merge      | 41m
-  -----------------
-  retrieval  | 11m
+    + extraction: 106m
+    + s2t : 12m
+    + t2s : 13m
+    + merge : 41m
+    + retrieval : 11m
 
   \subsection rulextract_extract Rule Extraction
 
@@ -632,10 +633,13 @@ For IntelliJ IDEA, follow these [instructions](https://github.com/mpeltonen/sbt-
     + For merging, change the `--input_features` option to be the following:
 
         --input_features=RUEN-WMT13/s2t,RUEN-WMT13/t2s,RUEN-WMT13/s2taddone
+
     + Since there is a new feature, you need to run a command analogous to
     the one run to obtain source-to-target probabilities
-    + For retrieval, modify the `mapreduce_features` and the `features`
+    + For retrieval, modify the `--mapreduce_features` and the `--features`
     options to be as follows:
 
         --mapreduce_features=source2target_probability,target2source_probability,provenance_source2target_probability,provenance_target2source_probability,source2target_addonesmoothed_probability,provenance_source2target_addonesmoothed_probability,source2target_lexical_probability,target2source_lexical_probability,provenance_source2target_lexical_probability,provenance_target2source_lexical_probability
         --features=source2target_probability,target2source_probability,word_insertion_penalty,rule_insertion_penalty,glue_rule,insert_scale,rule_count_1,rule_count_2,rule_count_greater_than_2,source2target_lexical_probability,target2source_lexical_probability,provenance_source2target_probability,provenance_target2source_probability,provenance_source2target_lexical_probability,provenance_target2source_lexical_probability,source2target_addonesmoothed_probability,provenance_source2target_addonesmoothed_probability
+
+  The code modifications are [here](https://github.com/ucam-smt/ucam-smt/commit/7cba14a596f5e428ce69fe2620e411ecfe0e8d71).
