@@ -33,7 +33,6 @@ allowed_source_pattern=W_X2_W_X1_W nocc=2 ntrans=10
 # rules with nonterminal swapping have the swap on the target side (so the extraction reducer
 # works properly). There is no need to duplicate pattern. But when we extract rules to get
 # target to source probabilities, we may reuse this config file without change.
-# TODO cleaner way to do this.
 # 1.2
 allowed_pattern=W_X-W_X
 allowed_pattern=W_X-X_W

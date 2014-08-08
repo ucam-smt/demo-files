@@ -123,6 +123,18 @@ W. Macherey, F. Och, I. Thayer, J. Uszkoreit.  Proceedings of EMNLP, 2008. <br>
 <br> A. Waite, G. Blackwood, and W. Byrne. Proceedings of FSMNLP, 2012.<br>
 <http://aclweb.org/anthology-new/W/W12/W12-6219.pdf>
 
+\subsection rulextract_refs [Rule Extraction]
+
+\anchor Chiang2007 [Chiang2007]
+*Hierarchical Phrase-Based Translation*. <br>
+D. Chiang. Proceedings of Computational Linguistics, 2007. <br>
+<http://aclweb.org/anthology/J/J07/J07-2003.pdf>
+
+\anchor Pino2012 [Pino2012]
+*Simple and Efficient Model Filtering in Statistical Machine Translation*. <br>
+J. Pino, A. Waite, W. Byrne. Proceedings of PBML, 2012. <br>
+<http://ufal.mff.cuni.cz/pbml/98/art-pino-waite-byrne.pdf>
+
 \subsection othertools Language Modelling Toolkits
 \anchor SRILM [SRILM]
 SRI Language Model Toolkit<br>

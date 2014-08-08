@@ -15,6 +15,9 @@ on Ubuntu:
     wget http://dl.bintray.com/sbt/debian/sbt-0.13.5.deb
     sudo dpkg -i sbt-0.13.5.deb
 
+If you're not root or sudo, you can follow these
+[instructions](http://www.scala-sbt.org/0.13/tutorial/Manual-Installation.html)
+
 If you don't know how to install java, here's one way to install
 java 7 on Ubuntu, as described
 [here](http://www.webupd8.org/2012/01/install-oracle-java-jdk-7-in-ubuntu-via.html) (for java 8, see [here](http://www.webupd8.org/2012/09/install-oracle-java-8-in-ubuntu-via-ppa.html)):
@@ -22,6 +25,10 @@ java 7 on Ubuntu, as described
     sudo add-apt-repository ppa:webupd8team/java
     sudo apt-get update
     sudo apt-get install oracle-java7-installer
+
+If you're not root or sudo, simply download
+JDK and update the `PATH` and `JAVA_HOME`
+accordingly.
 
 **Note**: the java version used to run your Hadoop cluster should be
 greater or equal to the java version used to compile the code; otherwise
@@ -71,11 +78,13 @@ are run from the `$DEMO` directory.
 \section rulextract_cluster_setup Hadoop Cluster Setup
 
 **Note**: a user already having access to a Hadoop cluster
-may wish to skip this section.
+may wish to skip this section, after adding these dependencies
+to the `HADOOP_CLASSPATH` : `jcommander-1.35`, `hbase-0.92.0` and
+`guava-r09` .
 
 **Note**: we use Hadoop 1 as opposed to Hadoop 2
 (see [this discussion](http://hadoop.apache.org/docs/r2.3.0/hadoop-mapreduce-client/hadoop-mapreduce-client-core/MapReduce_Compatibility_Hadoop1_Hadoop2.html)).
-We also used the more recent API of Hadoop, which means
+We also use the more recent API of Hadoop, which means
 that in general the import statements use the `org.apache.hadoop.mapreduce`
 package instead of the `org.apache.hadoop.mapred` package.
 
@@ -93,7 +102,7 @@ run the following commands:
     cd $HOME/hadoopcluster
     $RULEXTRACT/scripts/hadoopClusterSetup.bash
 
-This should install the cluster in the `/home/$USER/hadoopcluster/hadoop-1.2.1`
+This should install the cluster in the `$HOME/hadoopcluster/hadoop-1.2.1`
 directory. In the remainder of this tutorial, the `$HADOOP_ROOT`
 variable designates the Hadoop installation directory. We now
 detail the steps in the `hadoopClusterSetup.bash` script. You can also
@@ -101,9 +110,9 @@ have a look at the commands and comments inside the script for more information.
   + The java version is checked. If java 1.7+ is not installed, then
   a recent version of jdk is downloaded in the current directory, specifically
   jdk1.8.0_05 .
-  + A recent version of hadoop is downloaded, specifically version 1.2.1 .
+  + A recent version of Hadoop is downloaded, specifically version 1.2.1 .
   + Libraries on which the code is dependent are downloaded.
-  + The configuration files in the hadoop directory are modified to allow
+  + The configuration files in the Hadoop directory are modified to allow
   pseudo-distributed mode and point to the correct `JAVA_HOME` . The
   `HADOOP_CLASSPATH` is also modified to point to libraries that the code
   depends on.
@@ -113,7 +122,7 @@ have a look at the commands and comments inside the script for more information.
   + The Hadoop Distributed File System (HDFS) is formatted.
   + Hadoop deamons are started. When this is done, you should
   be able to check the status of HDFS and MapReduce with a browser
-  at the localhost:50070 and localhost:50030 respective addresses.
+  at the `localhost:50070` and `localhost:50030` respective addresses.
   + The HDFS `ls` command is tested.
   + The directory for your username (`/user/$USER`)
   is created. Is is better to store your HDFS data in that directory rather
@@ -134,13 +143,23 @@ log message:
 
       14/07/09 16:56:55 INFO ipc.Client: Retrying connect to server: localhost/127.0.0.1:9000. Already tried 0 time(s); retry policy is RetryUpToMaximumCountWithFixedSleep(maxRetries=10, sleepTime=1 SECONDS)
 
-this means that the Hadoop cluster is not running and needs to be started.
+this means that the Hadoop cluster is not running and needs to be (re)started.
 
 Note that this Hadoop cluster installation is for tutorial purposes.
 If you have a multi-core machine and enough memory (say 16G-32G), then
 this cluster may be sufficient for extracting relatively large grammars.
 However, a proper installation will use several nodes and a different
 username for the Hadoop administrator.
+
+After running the installation script, if you still run into
+trouble while running the rule extraction commands, you may run
+the following commands as a last resort (note that this
+will delete all your HDFS data):
+
+    $HADOOP_ROOT/bin/stop-all.sh
+    rm -rf /tmp/hadoop*
+    $HADOOP_ROOT/bin/hadoop namenode -format
+	$HADOOP_ROOT/bin/start-all.sh
 
 \section rulextract_pipeline_overview Pipeline Overview
 
@@ -163,6 +182,14 @@ are merged so that a rule can be associated to multiple scores.
 Rule retrieval, or rule filtering, consists in obtaining
 rules and scores that are only relevant to a given input test
 set or a given input sentence to be translated.
+Rule retrieval is decomposed into the following steps:
+ + launch lexical probability servers: lexical features
+are computed with a client/server architecture rather than
+with MapReduce because lexical models take a fair amount of memory.
+ + rule retrieval: rules relevant to a test set are looked up
+in the HFiles produced by the extraction phase.
+ + grammar formatting: a grammar with a format suitable for the HiFST
+decoder is produced.
 
 The next section details the various steps for grammar extraction.
 
@@ -189,6 +216,19 @@ The next section details the various steps for grammar extraction.
   Create a directory to store logs:
 
          mkdir -p logs
+
+  After running rule extraction commands that produce an output
+  on HDFS, you can visualize the output using either the SequenceFile
+  printer or the HFile printer provided. For example, after having
+  run the extraction step (see below), you can see the extracted rules
+  as follows:
+
+      $HADOOP_ROOT/bin/hadoop \
+          jar $RULEXTRACTJAR \
+          uk.ac.cam.eng.extraction.hadoop.util.SequenceFilePrint \
+		  RUEN-WMT13/rules/part-r-00000
+
+  This will print the first chunk of rules extracted.
 
   \subsection rulextract_load_data Data Loading
 
@@ -225,9 +265,35 @@ The next section details the various steps for grammar extraction.
 
       $HADOOP_ROOT/bin/hadoop fs -ls RUEN-WMT13
 
+  **Note**: for this tutorial, we use a sample of the training data available
+  for the Russian-English
+  [translation task at WMT13](http://statmt.org/wmt13/translation-task.html).
+  If you wish to test rule extraction with the entire data, modify
+  `$DEMO/configs/CF.rulextract.load` with the following options:
+
+    + `--source=train/ru.gz`
+    + `--target=train/en.gz`
+    + `--alignment=train/align.berkeley.gz`
+    + `--provenance=train/provenance.gz`
+
+  For the full data, we give indicative timing measurements obtained
+  on our cluster:
+
+  Step       | Time
+  -----------------
+  extraction | 106m
+  -----------------
+  s2t        | 12m
+  -----------------
+  t2s        | 13m
+  -----------------
+  merge      | 41m
+  -----------------
+  retrieval  | 11m
+
   \subsection rulextract_extract Rule Extraction
 
-  Once the training data has been loaded to HDFS, rules can be extracted.
+  Once the training data has been loaded onto HDFS, rules can be extracted.
   This is done via the following command:
 
        $HADOOP_ROOT/bin/hadoop \
@@ -283,9 +349,14 @@ The next section details the various steps for grammar extraction.
     to give the correct index to each feature.
 
   Note that the command line also has the option `-D mapred.reduce.tasks=16` .
-  This specifies the number of reducers at runtime. Because main classes
+  This specifies the number of reducers at runtime. Unfortunately, the number
+  of reducers is not determined automatically by the Hadoop framework. You
+  can also specify the number of reducers in the `mapred-site.xml`
+  Hadoop cluster configuration file with the `mapred.reduce.tasks`
+  property.
+  Because main classes
   all implement the `Tool` interface, you can specify generic options
-  in the command line (see [this example](http://hadoopi.wordpress.com/2013/06/05/hadoop-implementing-the-tool-interface-for-mapreduce-driver/)
+  at the command line (see [this example](http://hadoopi.wordpress.com/2013/06/05/hadoop-implementing-the-tool-interface-for-mapreduce-driver/)
   and the [API documentation](https://hadoop.apache.org/docs/r1.2.1/api/org/apache/hadoop/util/Tool.html) for more detail).
 
   Once the job is complete, you will find the source-to-target probabilities
@@ -331,26 +402,35 @@ The next section details the various steps for grammar extraction.
   You can see the following options in the `configs/CF.rulextract.merge`
   configuration file:
 
-    + `--input` : comma separated list of output from feature computation
+    + `--input_features` : comma separated list of output from feature computation
+    + `--input_rules` : the extracted rules on HDFS
     + `--output` : merged output
 
+  We need both rules and features as input because the merge job adds word alignment
+  information into the output using the rules.
   Once this step is completed, there will be 10 output hfiles
   in the `/user/$USER/RUEN-WMT13/merge` HDFS directory. For backup purposes
-  and in order to make the subsequent retrieval step faster, it
-  is advised to copy these hfiles to local disk as follows:
+  and in order to make the subsequent retrieval step faster,
+  copy these hfiles to local disk as follows:
 
       mkdir -p hfile
       $HADOOP_ROOT/bin/hadoop fs -copyToLocal RUEN-WMT13/merge/*.hfile hfile/
+
+  If you are using NFS, it's better to copy the hfiles to local disk, e.g.
+  `/tmp` or `/scratch` .
 
 \section rulextract_retrieval Grammar Filtering
 
   \subsection lex_model Lexical Models Download
 
   Lexical models are available as a separate download
-  as they take some space. Run these commands:
+  as they take a fair amount of disk space. Run these commands:
 
-      wget http://mi.eng.cam.ac.uk/~jmp84/share/align_giza.tar.gz
-      tar -xvf align_giza.tar.gz
+      wget http://mi.eng.cam.ac.uk/~jmp84/share/giza_ibm_model1.tar.gz
+      tar -xvf giza_ibm_model1.tar.gz
+
+  **Note**: the tarball size is 2.6G so you may want to take a break
+  while it's being downloaded.
 
   \subsection lex_prob_server Lexical Probability Servers
 
@@ -416,8 +496,7 @@ The next section details the various steps for grammar extraction.
   \subsection retrieval Grammar Filtering
 
   Once the lexical probability servers are up, the Hadoop local
-  configuration has been prepared and the lexical
-  models have been downloaded, one can proceed to
+  configuration has been prepared, one can proceed to
   actual grammar filtering. This is done via the following
   command:
 
@@ -433,15 +512,18 @@ The next section details the various steps for grammar extraction.
 
     + `--max_source_phrase` : the maximum source phrase length for a phrase-based rule.
     This option is used to control how source patterns are generated from the
-	test file. The value for this option should be at most the value
-	chosen when extracting rules. Otherwise, no rules will be found for certain
-	patterns.
+    test file. The value for this option should be at most the value
+    chosen when extracting rules. Otherwise, no rules will be found for certain
+    patterns.
     + `--max_source_elements` : the maximum number of source elements (terminal
-    or nonterminal) for a hiero rule.
+    or nonterminal) for a hiero rule. Same remarks as for `--max_source_phrase`
+    apply.
     + `--max_terminal_length` : the maximum number of consecutive source terminals
-    for a hiero rule.
+    for a hiero rule. Same remarks as for `--max_source_phrase` apply.
     + `--max_nonterminal_length` : the maximum number of terminals covered by a
-    source nonterminal.
+    source nonterminal. Usually we set the value for this option to be equal
+    to the one used in the extraction phase but it's possible to choose any
+    value smaller that the value of `--hr_max_height` .
     + `--hr_max_height` : the maximum number of terminals covered by the entire
     source side of a rule. The value for this option should be at most the value
     chosen for the `--cykparser.hrmaxheight` option in the HiFST decoder, otherwise
@@ -453,7 +535,10 @@ The next section details the various steps for grammar extraction.
     + `--features`: comma-separated list of features.
     + `--pass_through_rules` : file containing special translation rules
     that copy source words or source word sequences to the target.
-    + `--filter_config` : file with additional filter options.
+    + `--filter_config` : file with additional filter options. This configuration
+    file determines what patterns are allowed, minimum source-to-target and target-to-source
+    probabilities for phrase-based and hierarchical rules, etc. See the
+    comments in `$DEMO/configs/CF.rulextract.filter` for details.
     + `--source_patterns` : list of source patterns to be used in order to
     generate source pattern instances.
     + `--ttable_s2t_server_port` : the port for the source-to-target server. The
@@ -480,37 +565,77 @@ The next section details the various steps for grammar extraction.
           $RULEXTRACT/scripts/prepareShallow.pl | \
           $RULEXTRACT/scripts/shallow2hifst.pl | \
           $RULEXTRACT/scripts/sparse2nonsparse.pl 27 | \
-          gzip > G/rules.shallow.vecfea.all.prov.gz
+          gzip > G/rules.shallow.vecfea.sample.prov.gz
 
-  The `G/rules.shallow.vecfea.all.prov.gz` should
-  contain the same rules as the `G/rules.shallow.vecfea.all.gz`
-  used for the HiFST decoding tutorial and additional provenance features.
-
-\section rulextract_impatient For the Impatient
-
-ruleXtract provides two commands, one for
-extraction and one for retrieval. This section
-walks the advanced user very quickly through
-a description of the input data (source text,
-target text, word alignment) and the two
-main commands.
+  The `G/rules.shallow.vecfea.sample.prov.gz` file should
+  be ready to be used by the HiFST decoder with the
+  `--grammar.load` option. If you've changed
+  the `configs/CF.rulextract.load` configuration
+  file to use the entire training data, then you should
+  obtain a file with the same rules as in
+  `G/rules.shallow.vecfea.all.gz` with the same
+  first 11 features and additional provenance features.
 
 \section Development
 
-Instructions on how to modify the software.
-Instructions for generating and Eclipse or
-IntelliJ IDEA project.
-Instructions on how to add a feature, either
-a mapreduce or a local feature.
+  \subsection ide IDE Development
 
-\section References
+In order to generate a project file for Eclipse,
+please follow these [instructions](https://github.com/typesafehub/sbteclipse).
+For IntelliJ IDEA, follow these [instructions](https://github.com/mpeltonen/sbt-idea).
 
-List of relevant papers. Can also be added
-with all the HiFST papers.
+  \subsection local_feature Adding a Local Feature
 
-\section rulextract_files Description of Files
+  We give instructions on how to add a local feature to rule extraction.
+  In order to compute a local feature for a rule, we only need to consider
+  that rule. For example, the number of target terminals in a rule is a
+  local feature. Let's add that feature:
 
-Pretty much like what's done in the
-main tutorial. Simply describe the format
-for the source text, target text, word alignment and
-extraction and retrieval cli/config.
+    + In the `uk.ac.cam.eng.rulebuilding.features` package, create
+    a new class called `NumberTargetElements` . Its featureName
+    field can be for example "number_target_elements".
+    + This class should implement the `Feature` class from the same
+    package.
+    + Implement the required methods for that class. You can
+    look at the WordInsertionPenalty class in the same package for an example.
+    + In the constructor of the FeatureCreator class in the same package,
+    add the following line:
+
+        features.put("number_target_elements", new NumberTargetElements());
+
+    + Modify the `--features` option to include `number_target_elements`
+    in the comma-separated list of features. If you follow the tutorial
+    commands, you can modify the `configs/CF.rulextract.retrieval` configuration
+    file.
+
+  If you get stuck, you can see what modifications are needed
+  [here](https://github.com/ucam-smt/ucam-smt/commit/09f697d1e7e6f35e9e04c37e3f00b0c7780b6d67)
+
+  \subsection mapreduce_feature Adding a MapReduce Feature
+
+  We now give instructions on how to add a MapReduce feature.
+  In order to compute a MapReduce feature, we need to consider
+  all rules extracted from the training data rather than
+  a single rule at a time. For example, let's add source-to-target
+  and provenance source-to-target probabilities with add-one smoothing:
+
+    + In the `uk.ac.cam.eng.extraction.hadoop.features.phrase` package, create
+	a new class called `Source2TargetAddOneSmoothedJob` . This class
+	is very similar to `Source2TargetJob` except that the mapper
+	adds one to the rule counts.
+    + Modify the `MapReduceFeature` class to add the new feature.
+    + Follow the steps to add a local feature.
+    + Change the `--mapreduce_feature` option to be the following:
+
+        --mapreduce_features=source2target_probability,target2source_probability,provenance_source2target_probability,provenance_target2source_probability,source2target_addonesmoothed_probability,provenance_source2target_addonesmoothed_probability
+
+    + For merging, change the `--input_features` option to be the following:
+
+        --input_features=RUEN-WMT13/s2t,RUEN-WMT13/t2s,RUEN-WMT13/s2taddone
+    + Since there is a new feature, you need to run a command analogous to
+    the one run to obtain source-to-target probabilities
+    + For retrieval, modify the `mapreduce_features` and the `features`
+    options to be as follows:
+
+        --mapreduce_features=source2target_probability,target2source_probability,provenance_source2target_probability,provenance_target2source_probability,source2target_addonesmoothed_probability,provenance_source2target_addonesmoothed_probability,source2target_lexical_probability,target2source_lexical_probability,provenance_source2target_lexical_probability,provenance_target2source_lexical_probability
+        --features=source2target_probability,target2source_probability,word_insertion_penalty,rule_insertion_penalty,glue_rule,insert_scale,rule_count_1,rule_count_2,rule_count_greater_than_2,source2target_lexical_probability,target2source_lexical_probability,provenance_source2target_probability,provenance_target2source_probability,provenance_source2target_lexical_probability,provenance_target2source_lexical_probability,source2target_addonesmoothed_probability,provenance_source2target_addonesmoothed_probability
