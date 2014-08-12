@@ -422,11 +422,17 @@ The next section details the various steps for grammar extraction.
   Lexical models are available as a separate download
   as they take a fair amount of disk space. Run these commands:
 
-      > wget http://mi.eng.cam.ac.uk/~jmp84/share/giza_ibm_model1.tar.gz
-      > tar -xvf giza_ibm_model1.tar.gz
+      > wget http://mi.eng.cam.ac.uk/~jmp84/share/giza_ibm_model1_filtered.tar.gz
+      > tar -xvf giza_ibm_model1_filtered.tar.gz
 
-  **Note**: the tarball size is 2.6G so you may want to take a break
-  while it's being downloaded.
+  These lexical models were filtered with the source vocabulary and
+  target vocabulary of the test set for this tutorial to obtain
+  a reasonable size for these models (the source vocabulary is easily
+  obtained from the test set, the target vocabulary is obtained by taking
+  target words from relevant translation rules for that test set).
+  If you wish, you can also download
+  the [full models](http://mi.eng.cam.ac.uk/~jmp84/share/giza_ibm_model1_filtered.tar.gz)
+  but you will require a machine with about 30G RAM to load the servers.
 
   \subsection lex_prob_server Lexical Probability Servers
 
