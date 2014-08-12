@@ -1,89 +1,9 @@
 Rule Extraction                {#rulextract}
 =================
 
-\section rulextract_start Getting started
+\section rulextract_start_reminder Getting started
 
-Requirements for building/running the rule extraction code:
-  + an Internet connection
-  + preferably 64-bit linux
-  + [sbt](http://www.scala-sbt.org/)
-  + java 1.7+
-
-If you don't know how to install sbt, here's one way to do it
-on Ubuntu:
-
-    > wget http://dl.bintray.com/sbt/debian/sbt-0.13.5.deb
-    > sudo dpkg -i sbt-0.13.5.deb
-
-If you're not root or sudo, you can follow these
-[instructions](http://www.scala-sbt.org/0.13/tutorial/Manual-Installation.html)
-
-If you don't know how to install java, here's one way to install
-java 7 on Ubuntu, as described
-[here](http://www.webupd8.org/2012/01/install-oracle-java-jdk-7-in-ubuntu-via.html) (for java 8, see [here](http://www.webupd8.org/2012/09/install-oracle-java-8-in-ubuntu-via-ppa.html)):
-
-    > sudo add-apt-repository ppa:webupd8team/java
-    > sudo apt-get update
-    > sudo apt-get install oracle-java7-installer
-
-If you're not root or sudo, simply download
-JDK and update the `PATH` and `JAVA_HOME`
-accordingly.
-
-**Note**: the java version used to run your Hadoop cluster should be
-greater or equal to the java version used to compile the code; otherwise
-you may get an "Unsupported major.minor version" error.
-
-To get the code, use the following command:
-
-    > git clone https://github.com/ucam-smt/ucam-smt.git
-
-or:
-
-    > git clone git@github.com:ucam-smt/ucam-smt.git
-
-The rule extraction code will be in the `ucam-smt/java/ruleXtract`
-directory. The variable `$RULEXTRACT` designates this directory
-from now on.
-
-To build the rule extraction software, simply run the
-following commands:
-
-    > cd $RULEXTRACT
-    > sbt package
-
-You will obtain a jar file named `ruleXtract.jar`
-located at `$RULEXTRACT/target/ruleXtract.jar` .
-The variable `$RULEXTRACTJAR` designates this
-jar from now on.
-
-To run unit tests, simply run:
-
-    > cd $RULEXTRACT
-    > sbt test
-
-If all goes well, you should see a similar looking output:
-
-    [info] Passed: Total 1, Failed 0, Errors 0, Passed 1
-    [success] Total time: 3 s, completed 12-Aug-2014 10:49:51
-
-To get the tutorial files, run this command:
-
-    > git clone https://github.com/ucam-smt/demo-files.git
-
-The tutorial files and sources for this tutorial will be
-in the `demo-files` directory. The variable `$DEMO`
-designates this directory from now on. As an optional
-step, if you wish to regenerate the HTML code for this
-tutorial, make sure you have doxygen (1.8+
-for markdown support) and
-latex (for formulas) installed and run the following commands:
-
-    > cd $DEMO/Docs.dox
-    > doxygen
-
-For this tutorial, it is assumed that rule extraction commands
-are run from the `$DEMO` directory.
+See (\ref rulextract_start)
 
 \section rulextract_cluster_setup Hadoop Cluster Setup
 
@@ -114,7 +34,11 @@ run the following commands:
 
 This should install the cluster in the `$HOME/hadoopcluster/hadoop-1.2.1`
 directory. In the remainder of this tutorial, the `$HADOOP_ROOT`
-variable designates the Hadoop installation directory. We now
+variable designates the Hadoop installation directory:
+
+    > HADOOP_ROOT=$HOME/hadoopcluster/hadoop-1.2.1
+
+We now
 detail the steps in the `hadoopClusterSetup.bash` script. You can also
 have a look at the commands and comments inside the script for more information.
   + The java version is checked. If java 1.7+ is not installed, then
