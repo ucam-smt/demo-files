@@ -316,7 +316,7 @@ The next section details the various steps for grammar extraction.
     + `--max_source_elements` : the maximum number of source elements (terminal or nonterminal)
     for a hiero rule.
     + `--max_terminal_length` : the maximum number of consecutive source terminals for a hiero rule.
-    + `--max_nonterminal_length` : the maximum number of terminals covered by a source nonterminal.
+    + `--max_nonterminal_span` : the maximum number of terminals covered by a source nonterminal.
     + `--provenance` : comma-separated list of provenances.
 
   Once the extraction is complete, you will find the rules
@@ -521,7 +521,7 @@ The next section details the various steps for grammar extraction.
     apply.
     + `--max_terminal_length` : the maximum number of consecutive source terminals
     for a hiero rule. Same remarks as for `--max_source_phrase` apply.
-    + `--max_nonterminal_length` : the maximum number of terminals covered by a
+    + `--max_nonterminal_span` : the maximum number of terminals covered by a
     source nonterminal. Usually we set the value for this option to be equal
     to the one used in the extraction phase but it's possible to choose any
     value smaller that the value of `--hr_max_height` .

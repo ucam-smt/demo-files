@@ -4,5 +4,5 @@
 --max_source_phrase=9
 --max_source_elements=5
 --max_terminal_length=5
---max_nonterminal_length=10
+--max_nonterminal_span=10
 --provenance=cc,nc,yx,web
