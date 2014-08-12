@@ -57,6 +57,16 @@ located at `$RULEXTRACT/target/ruleXtract.jar` .
 The variable `$RULEXTRACTJAR` designates this
 jar from now on.
 
+To run unit tests, simply run:
+
+    cd $RULEXTRACT
+    sbt test
+
+If all goes well, you should see a similar looking output:
+
+    [info] Passed: Total 1, Failed 0, Errors 0, Passed 1
+    [success] Total time: 3 s, completed 12-Aug-2014 10:49:51
+
 To get the tutorial files, run this command:
 
     git clone https://github.com/ucam-smt/demo-files.git
@@ -226,7 +236,7 @@ The next section details the various steps for grammar extraction.
       $HADOOP_ROOT/bin/hadoop \
           jar $RULEXTRACTJAR \
           uk.ac.cam.eng.extraction.hadoop.util.SequenceFilePrint \
-          RUEN-WMT13/rules/part-r-00000
+          RUEN-WMT13/rules/part-r-00000 2>/dev/null
 
   This will print the first chunk of rules extracted.
   After the merging step, you can visualize rules, alignments and features
@@ -235,7 +245,7 @@ The next section details the various steps for grammar extraction.
       $HADOOP_ROOT/bin/hadoop \
           jar $RULEXTRACTJAR \
           uk.ac.cam.eng.extraction.hadoop.util.HFilePrint \
-          RUEN-WMT13/merge/part-r-00000.hfile
+          RUEN-WMT13/merge/part-r-00000.hfile 2>/dev/null
 
   \subsection rulextract_load_data Data Loading
 
@@ -327,6 +337,24 @@ The next section details the various steps for grammar extraction.
     + `_logs` : this directory contains metatdata about the job that has been run.
     + `part-r-*` : these files are the output of the Hadoop job.
 
+  You can visualize the output by running the SequenceFile printing command:
+
+      $HADOOP_ROOT/bin/hadoop \
+          jar $RULEXTRACTJAR \
+          uk.ac.cam.eng.extraction.hadoop.util.SequenceFilePrint \
+          RUEN-WMT13/rules/part-r-00000 2>/dev/null | head -n 3
+
+  You should see a similar looking output:
+
+      0 -1_10 -1_138_20  {0=1, 1=1}	   {0-0 1-2=1}
+      0 -1_100 -1_4_77   {0=2, 1=2}	   {0-0 1-2=2}
+      0 -1_100288_3 -1_1672_4	 {0=1, 1=1}		{0-0 1-1 2-2=1}
+
+  The first three fields correspond to the left-hand side, source side
+  and target side of a rule. The fourth field gives rule counts for
+  various provenances. The last field gives the word alignment for
+  the rule and its count.
+
   \subsection rulextract_s2t Source-to-target Probability
 
   The output of the previous job is the input to feature computation.
@@ -363,6 +391,27 @@ The next section details the various steps for grammar extraction.
   Once the job is complete, you will find the source-to-target probabilities
   in the `/user/$USER/RUEN-WMT13/s2t` HDFS directory.
 
+  You can visualize the output by running the SequenceFile printing command:
+
+      $HADOOP_ROOT/bin/hadoop \
+          jar $RULEXTRACTJAR \
+          uk.ac.cam.eng.extraction.hadoop.util.SequenceFilePrint \
+          RUEN-WMT13/s2t/part-r-00000 2>/dev/null | head -n 3
+
+  You should see a similar looking output:
+
+      0 -1_10003_1428_3_1752 -1_6_3_1106_784_4_911	{0=1.0, 1=1.0, 4=1.0, 5=1.0}
+      0 -1_100521_277 -1_3191_471_151					{0=1.0, 1=1.0, 4=1.0, 5=1.0}
+      0 -1_100529_360070_9 -1_8906_41685_40			{0=1.0, 1=1.0, 4=1.0, 5=1.0}
+
+  The first three fields correspond to the left-hand side, source side
+  and target side of a rule. The last field represents the computed
+  features. In this example, the index 0 corresponds to the source-to-target
+  probability, the index 1 corresponds to the rule count, the index 4 correponds
+  to the "cc" provenance specific probability and the index 5 corresponds to the
+  "cc" provenance specific rule count. In the sample provided, "cc" is the only
+  provenance so features for indices 0, 1, 4 and 5 should be the same.
+
   \subsection rulextract_t2s Target-to-source Probability
 
   Computation of other features can be done simultaneously.
@@ -385,7 +434,17 @@ The next section details the various steps for grammar extraction.
     + `--mapreduce_features` : comma-separated list of features.
 
   Once the job is complete, you will find the target-to-source probabilities
-  in the `/user/$USER/RUEN-WMT13/t2s` HDFS directory.
+  in the `/user/$USER/RUEN-WMT13/t2s` HDFS directory. The output is very similar
+  to the output of the source-to-target job but the features have indices
+  2, 3, 12 and 13:
+
+      $HADOOP_ROOT/bin/hadoop \
+          jar $RULEXTRACTJAR \
+          uk.ac.cam.eng.extraction.hadoop.util.SequenceFilePrint \
+          RUEN-WMT13/t2s/part-r-00000 2>/dev/null | head -n 3
+      0 -1_1985 -1_100090			  {2=1.0, 3=1.0, 12=1.0, 13=1.0}
+      0 -1_1985_8_6 -1_100090_215_8		  {2=1.0, 3=1.0, 12=1.0, 13=1.0}
+      0 -1_234783_5289 -1_100148_3442		  {2=1.0, 3=1.0, 12=1.0, 13=1.0}
 
   \subsection rulextract_merge Feature Merging
 
@@ -419,6 +478,18 @@ The next section details the various steps for grammar extraction.
 
   If you are using NFS, it's better to copy the hfiles to local disk, e.g.
   `/tmp` or `/scratch` .
+
+  To visualize the output, run the HFile printing command:
+
+      $HADOOP_ROOT/bin/hadoop \
+          jar $RULEXTRACTJAR \
+          uk.ac.cam.eng.extraction.hadoop.util.HFilePrint \
+          RUEN-WMT13/merge/part-r-00000.hfile 2>/dev/null | head -n 3
+      0 12 3	  {0-0=7}							  {0=0.01728395061728395, 1=7.0, 2=0.002145922746781116, 3=7.0, 4=0.01728395061728395, 5=7.0, 12=0.002145922746781116, 13=7.0}
+      0 12 6	  {0-0=5}							  {0=0.012345679012345678, 1=5.0, 2=0.010438413361169102, 3=5.0, 4=0.012345679012345678, 5=5.0, 12=0.010438413361169102, 13=5.0}
+      0 12 7	  {0-0=84}							  {0=0.2074074074074074, 1=84.0, 2=0.10218978102189781, 3=84.0, 4=0.2074074074074074, 5=84.0, 12=0.10218978102189781, 13=84.0}
+
+  The first three fields correspond to the rule, the fourth field to the word alignment and the last field to the computed features.
 
 \section rulextract_retrieval Grammar Filtering
 
