@@ -284,7 +284,7 @@ The next section details the various steps for grammar extraction.
     + `--provenance=train/provenance.gz`
 
   For the full data, we give indicative timing measurements obtained
-  on our cluster:
+  on our cluster of 12 machines with 16 cores and 47G RAM each:
 
     + extraction: 106m
     + s2t : 12m
