@@ -1,2 +1,3 @@
---input=RUEN-WMT13/s2t,RUEN-WMT13/t2s
+--input_features=RUEN-WMT13/s2t,RUEN-WMT13/t2s
+--input_rules=RUEN-WMT13/rules
 --output=RUEN-WMT13/merge
