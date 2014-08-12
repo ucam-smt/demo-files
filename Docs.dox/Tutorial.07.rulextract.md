@@ -12,8 +12,8 @@ Requirements for building/running the rule extraction code:
 If you don't know how to install sbt, here's one way to do it
 on Ubuntu:
 
-    wget http://dl.bintray.com/sbt/debian/sbt-0.13.5.deb
-    sudo dpkg -i sbt-0.13.5.deb
+    > wget http://dl.bintray.com/sbt/debian/sbt-0.13.5.deb
+    > sudo dpkg -i sbt-0.13.5.deb
 
 If you're not root or sudo, you can follow these
 [instructions](http://www.scala-sbt.org/0.13/tutorial/Manual-Installation.html)
@@ -22,9 +22,9 @@ If you don't know how to install java, here's one way to install
 java 7 on Ubuntu, as described
 [here](http://www.webupd8.org/2012/01/install-oracle-java-jdk-7-in-ubuntu-via.html) (for java 8, see [here](http://www.webupd8.org/2012/09/install-oracle-java-8-in-ubuntu-via-ppa.html)):
 
-    sudo add-apt-repository ppa:webupd8team/java
-    sudo apt-get update
-    sudo apt-get install oracle-java7-installer
+    > sudo add-apt-repository ppa:webupd8team/java
+    > sudo apt-get update
+    > sudo apt-get install oracle-java7-installer
 
 If you're not root or sudo, simply download
 JDK and update the `PATH` and `JAVA_HOME`
@@ -36,11 +36,11 @@ you may get an "Unsupported major.minor version" error.
 
 To get the code, use the following command:
 
-    git clone https://github.com/ucam-smt/ucam-smt.git
+    > git clone https://github.com/ucam-smt/ucam-smt.git
 
 or:
 
-    git clone git@github.com:ucam-smt/ucam-smt.git
+    > git clone git@github.com:ucam-smt/ucam-smt.git
 
 The rule extraction code will be in the `ucam-smt/java/ruleXtract`
 directory. The variable `$RULEXTRACT` designates this directory
@@ -49,8 +49,8 @@ from now on.
 To build the rule extraction software, simply run the
 following commands:
 
-    cd $RULEXTRACT
-    sbt package
+    > cd $RULEXTRACT
+    > sbt package
 
 You will obtain a jar file named `ruleXtract.jar`
 located at `$RULEXTRACT/target/ruleXtract.jar` .
@@ -59,8 +59,8 @@ jar from now on.
 
 To run unit tests, simply run:
 
-    cd $RULEXTRACT
-    sbt test
+    > cd $RULEXTRACT
+    > sbt test
 
 If all goes well, you should see a similar looking output:
 
@@ -69,7 +69,7 @@ If all goes well, you should see a similar looking output:
 
 To get the tutorial files, run this command:
 
-    git clone https://github.com/ucam-smt/demo-files.git
+    > git clone https://github.com/ucam-smt/demo-files.git
 
 The tutorial files and sources for this tutorial will be
 in the `demo-files` directory. The variable `$DEMO`
@@ -79,8 +79,8 @@ tutorial, make sure you have doxygen (1.8+
 for markdown support) and
 latex (for formulas) installed and run the following commands:
 
-    cd $DEMO/Docs.dox
-    doxygen
+    > cd $DEMO/Docs.dox
+    > doxygen
 
 For this tutorial, it is assumed that rule extraction commands
 are run from the `$DEMO` directory.
@@ -108,9 +108,9 @@ in the book "Hadoop, The Definitive Guide" by Tom White.
 First, choose a working directory, for example `$HOME/hadoopcluster`, then
 run the following commands:
 
-    mkdir -p $HOME/hadoopcluster
-    cd $HOME/hadoopcluster
-    $RULEXTRACT/scripts/hadoopClusterSetup.bash
+    > mkdir -p $HOME/hadoopcluster
+    > cd $HOME/hadoopcluster
+    > $RULEXTRACT/scripts/hadoopClusterSetup.bash
 
 This should install the cluster in the `$HOME/hadoopcluster/hadoop-1.2.1`
 directory. In the remainder of this tutorial, the `$HADOOP_ROOT`
@@ -141,12 +141,12 @@ have a look at the commands and comments inside the script for more information.
   You will need to restart the cluster to run MapReduce jobs with the following
   command:
 
-      $HADOOP_ROOT/bin/start-all.sh
+      > $HADOOP_ROOT/bin/start-all.sh
 
 Once you are done with this tutorial, you can shut down the Hadoop
 cluster with this command:
 
-      $HADOOP_ROOT/bin/stop-all.sh
+      > $HADOOP_ROOT/bin/stop-all.sh
 
 When running rule extraction commands, if you see a similar looking
 log message:
@@ -166,10 +166,10 @@ trouble while running the rule extraction commands, you may run
 the following commands as a last resort (note that this
 will delete all your HDFS data):
 
-    $HADOOP_ROOT/bin/stop-all.sh
-    rm -rf /tmp/hadoop*
-    $HADOOP_ROOT/bin/hadoop namenode -format
-	$HADOOP_ROOT/bin/start-all.sh
+    > $HADOOP_ROOT/bin/stop-all.sh
+    > rm -rf /tmp/hadoop*
+    > $HADOOP_ROOT/bin/hadoop namenode -format
+	> $HADOOP_ROOT/bin/start-all.sh
 
 \section rulextract_pipeline_overview Pipeline Overview
 
@@ -211,11 +211,11 @@ The next section details the various steps for grammar extraction.
   are run from the `$DEMO` directory. Please change to that
   directory:
 
-      cd $DEMO
+      > cd $DEMO
 
   All commands look like:
 
-       $HADOOP_ROOT/bin/hadoop jar $RULEXTRACTJAR class args
+       > $HADOOP_ROOT/bin/hadoop jar $RULEXTRACTJAR class args
 
   where `class` is a particular java class with a main method and
   `args` are the command line arguments. We use [JCommander](http://jcommander.org/)
@@ -225,7 +225,7 @@ The next section details the various steps for grammar extraction.
 
   Create a directory to store logs:
 
-         mkdir -p logs
+      > mkdir -p logs
 
   After running rule extraction commands that produce an output
   on HDFS, you can visualize the output using either the SequenceFile
@@ -233,7 +233,7 @@ The next section details the various steps for grammar extraction.
   run the extraction step (see below), you can see the extracted rules
   as follows:
 
-      $HADOOP_ROOT/bin/hadoop \
+      > $HADOOP_ROOT/bin/hadoop \
           jar $RULEXTRACTJAR \
           uk.ac.cam.eng.extraction.hadoop.util.SequenceFilePrint \
           RUEN-WMT13/rules/part-r-00000 2>/dev/null
@@ -242,7 +242,7 @@ The next section details the various steps for grammar extraction.
   After the merging step, you can visualize rules, alignments and features
   as follows:
 
-      $HADOOP_ROOT/bin/hadoop \
+      > $HADOOP_ROOT/bin/hadoop \
           jar $RULEXTRACTJAR \
           uk.ac.cam.eng.extraction.hadoop.util.HFilePrint \
           RUEN-WMT13/merge/part-r-00000.hfile 2>/dev/null
@@ -252,11 +252,11 @@ The next section details the various steps for grammar extraction.
   The first step in grammar extraction is to load the training data onto HDFS.
   This is done via the following command:
 
-       $HADOOP_ROOT/bin/hadoop \
-           jar $RULEXTRACTJAR \
-           uk.ac.cam.eng.extraction.hadoop.util.ExtractorDataLoader \
-           @configs/CF.rulextract.load \
-           >& logs/log.loaddata
+      > $HADOOP_ROOT/bin/hadoop \
+          jar $RULEXTRACTJAR \
+          uk.ac.cam.eng.extraction.hadoop.util.ExtractorDataLoader \
+          @configs/CF.rulextract.load \
+          >& logs/log.loaddata
 
   You can see the following options in the `configs/CF.rulextract.load`
   configuration file:
@@ -280,7 +280,7 @@ The next section details the various steps for grammar extraction.
 
   You can verify this by running the Hadoop ls command:
 
-      $HADOOP_ROOT/bin/hadoop fs -ls RUEN-WMT13
+      > $HADOOP_ROOT/bin/hadoop fs -ls RUEN-WMT13
 
   **Note**: for this tutorial, we use a sample of the training data available
   for the Russian-English
@@ -307,11 +307,11 @@ The next section details the various steps for grammar extraction.
   Once the training data has been loaded onto HDFS, rules can be extracted.
   This is done via the following command:
 
-       $HADOOP_ROOT/bin/hadoop \
-           jar $RULEXTRACTJAR \
-           uk.ac.cam.eng.extraction.hadoop.extraction.ExtractorJob \
-           @configs/CF.rulextract.extract \
-           >& logs/log.extract
+      > $HADOOP_ROOT/bin/hadoop \
+          jar $RULEXTRACTJAR \
+          uk.ac.cam.eng.extraction.hadoop.extraction.ExtractorJob \
+          @configs/CF.rulextract.extract \
+          >& logs/log.extract
 
   You can see the following options in the `configs/CF.rulextract.extract`
   configuration file:
@@ -339,7 +339,7 @@ The next section details the various steps for grammar extraction.
 
   You can visualize the output by running the SequenceFile printing command:
 
-      $HADOOP_ROOT/bin/hadoop \
+      > $HADOOP_ROOT/bin/hadoop \
           jar $RULEXTRACTJAR \
           uk.ac.cam.eng.extraction.hadoop.util.SequenceFilePrint \
           RUEN-WMT13/rules/part-r-00000 2>/dev/null | head -n 3
@@ -361,12 +361,12 @@ The next section details the various steps for grammar extraction.
   We start by computing source-to-target rule probabilities for each
   provenance. This is done via the following command:
 
-       $HADOOP_ROOT/bin/hadoop \
-           jar $RULEXTRACTJAR \
-           uk.ac.cam.eng.extraction.hadoop.features.phrase.Source2TargetJob \
-           -D mapred.reduce.tasks=16 \
-           @configs/CF.rulextract.s2t \
-           >& logs/log.s2t
+      > $HADOOP_ROOT/bin/hadoop \
+          jar $RULEXTRACTJAR \
+          uk.ac.cam.eng.extraction.hadoop.features.phrase.Source2TargetJob \
+          -D mapred.reduce.tasks=16 \
+          @configs/CF.rulextract.s2t \
+          >& logs/log.s2t
 
   You can see the following options in the `configs/CF.rulextract.s2t`
   configuration file:
@@ -393,7 +393,7 @@ The next section details the various steps for grammar extraction.
 
   You can visualize the output by running the SequenceFile printing command:
 
-      $HADOOP_ROOT/bin/hadoop \
+      > $HADOOP_ROOT/bin/hadoop \
           jar $RULEXTRACTJAR \
           uk.ac.cam.eng.extraction.hadoop.util.SequenceFilePrint \
           RUEN-WMT13/s2t/part-r-00000 2>/dev/null | head -n 3
@@ -418,12 +418,12 @@ The next section details the various steps for grammar extraction.
   Computing target-to-source probabilities for each provenance
   can be done as follows:
 
-       $HADOOP_ROOT/bin/hadoop \
-           jar $RULEXTRACTJAR \
-           uk.ac.cam.eng.extraction.hadoop.features.phrase.Target2SourceJob \
-           -D mapred.reduce.tasks=16 \
-           @configs/CF.rulextract.t2s \
-           >& logs/log.t2s
+      > $HADOOP_ROOT/bin/hadoop \
+          jar $RULEXTRACTJAR \
+          uk.ac.cam.eng.extraction.hadoop.features.phrase.Target2SourceJob \
+          -D mapred.reduce.tasks=16 \
+          @configs/CF.rulextract.t2s \
+          >& logs/log.t2s
 
   You can see the following options in the `configs/CF.rulextract.t2s`
   configuration file:
@@ -438,7 +438,7 @@ The next section details the various steps for grammar extraction.
   to the output of the source-to-target job but the features have indices
   2, 3, 12 and 13:
 
-      $HADOOP_ROOT/bin/hadoop \
+      > $HADOOP_ROOT/bin/hadoop \
           jar $RULEXTRACTJAR \
           uk.ac.cam.eng.extraction.hadoop.util.SequenceFilePrint \
           RUEN-WMT13/t2s/part-r-00000 2>/dev/null | head -n 3
@@ -452,12 +452,12 @@ The next section details the various steps for grammar extraction.
   are merged into a single output. This can be done via the
   following command:
 
-       $HADOOP_ROOT/bin/hadoop \
-           jar $RULEXTRACTJAR \
-           uk.ac.cam.eng.extraction.hadoop.merge.MergeJob \
-           -D mapred.reduce.tasks=10 \
-           @configs/CF.rulextract.merge \
-           >& logs/log.merge
+      > $HADOOP_ROOT/bin/hadoop \
+          jar $RULEXTRACTJAR \
+          uk.ac.cam.eng.extraction.hadoop.merge.MergeJob \
+          -D mapred.reduce.tasks=10 \
+          @configs/CF.rulextract.merge \
+          >& logs/log.merge
 
   You can see the following options in the `configs/CF.rulextract.merge`
   configuration file:
@@ -473,15 +473,15 @@ The next section details the various steps for grammar extraction.
   and in order to make the subsequent retrieval step faster,
   copy these hfiles to local disk as follows:
 
-      mkdir -p hfile
-      $HADOOP_ROOT/bin/hadoop fs -copyToLocal RUEN-WMT13/merge/*.hfile hfile/
+      > mkdir -p hfile
+      > $HADOOP_ROOT/bin/hadoop fs -copyToLocal RUEN-WMT13/merge/*.hfile hfile/
 
   If you are using NFS, it's better to copy the hfiles to local disk, e.g.
   `/tmp` or `/scratch` .
 
   To visualize the output, run the HFile printing command:
 
-      $HADOOP_ROOT/bin/hadoop \
+      > $HADOOP_ROOT/bin/hadoop \
           jar $RULEXTRACTJAR \
           uk.ac.cam.eng.extraction.hadoop.util.HFilePrint \
           RUEN-WMT13/merge/part-r-00000.hfile 2>/dev/null | head -n 3
@@ -498,8 +498,8 @@ The next section details the various steps for grammar extraction.
   Lexical models are available as a separate download
   as they take a fair amount of disk space. Run these commands:
 
-      wget http://mi.eng.cam.ac.uk/~jmp84/share/giza_ibm_model1.tar.gz
-      tar -xvf giza_ibm_model1.tar.gz
+      > wget http://mi.eng.cam.ac.uk/~jmp84/share/giza_ibm_model1.tar.gz
+      > tar -xvf giza_ibm_model1.tar.gz
 
   **Note**: the tarball size is 2.6G so you may want to take a break
   while it's being downloaded.
@@ -514,15 +514,15 @@ The next section details the various steps for grammar extraction.
   tutorial, we provide pretrained models. The source-to-target
   and target-to-source servers are launched as follows:
 
-      export HADOOP_HEAPSIZE=30000
-      export HADOOP_OPTS="-XX:+UseConcMarkSweepGC -verbose:gc -server -Xms30000M"
-      $HADOOP_ROOT/bin/hadoop \
+      > export HADOOP_HEAPSIZE=30000
+      > export HADOOP_OPTS="-XX:+UseConcMarkSweepGC -verbose:gc -server -Xms30000M"
+      > $HADOOP_ROOT/bin/hadoop \
           jar $RULEXTRACTJAR \
           uk.ac.cam.eng.extraction.hadoop.features.lexical.TTableServer \
           @configs/CF.rulextract.lexserver \
           --ttable_direction=s2t \
           --ttable_language_pair=en2ru
-      $HADOOP_ROOT/bin/hadoop \
+      > $HADOOP_ROOT/bin/hadoop \
           jar $RULEXTRACTJAR \
           uk.ac.cam.eng.extraction.hadoop.features.lexical.TTableServer \
           @configs/CF.rulextract.lexserver \
@@ -554,14 +554,14 @@ The next section details the various steps for grammar extraction.
   the Hadoop configuration file that was prepared when setting
   up the Hadoop cluster:
 
-      cp -r $HADOOP_ROOT/conf configs/hadoopLocalConf
-      cat $HADOOP_ROOT/conf/mapred-site.xml | \
+      > cp -r $HADOOP_ROOT/conf configs/hadoopLocalConf
+      > cat $HADOOP_ROOT/conf/mapred-site.xml | \
           $RULEXTRACT/scripts/makeHadoopLocalConfig.pl \
           > configs/hadoopLocalConf/mapred-site.xml
-      cat $HADOOP_ROOT/conf/hdfs-site.xml | \
+      > cat $HADOOP_ROOT/conf/hdfs-site.xml | \
           $RULEXTRACT/scripts/makeHadoopLocalConfig.pl \
           > configs/hadoopLocalConf/hdfs-site.xml
-      cat $HADOOP_ROOT/conf/core-site.xml | \
+      > cat $HADOOP_ROOT/conf/core-site.xml | \
           $RULEXTRACT/scripts/makeHadoopLocalConfig.pl \
           > configs/hadoopLocalConf/core-site.xml
 
@@ -572,7 +572,7 @@ The next section details the various steps for grammar extraction.
   actual grammar filtering. This is done via the following
   command:
 
-      $HADOOP_ROOT/bin/hadoop \
+      > $HADOOP_ROOT/bin/hadoop \
           --config configs/hadoopLocalConf \
           jar $RULEXTRACTJAR \
           uk.ac.cam.eng.rule.retrieval.RuleRetriever \
@@ -633,7 +633,7 @@ The next section details the various steps for grammar extraction.
   decoder, a postprocessing step is needed. This can be
   achieved via the following command:
 
-      zcat -f G/rules.RU.tune.idx.gz | \
+      > zcat -f G/rules.RU.tune.idx.gz | \
           $RULEXTRACT/scripts/prepareShallow.pl | \
           $RULEXTRACT/scripts/shallow2hifst.pl | \
           $RULEXTRACT/scripts/sparse2nonsparse.pl 27 | \
