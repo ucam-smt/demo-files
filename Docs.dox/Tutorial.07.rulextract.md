@@ -578,7 +578,9 @@ The next section details the various steps for grammar extraction.
   be ready to be used by the HiFST decoder with the
   `--grammar.load` option. If you've changed
   the `configs/CF.rulextract.load` configuration
-  file to use the entire training data, then you should
+  file to use the entire training data, and if you have
+  used the option `--min_lex_prob` set to zero for the
+  lexical probability servers, then you should
   obtain a file with the same rules as in
   `G/rules.shallow.vecfea.all.gz` with the same
   first 11 features and additional provenance features.
