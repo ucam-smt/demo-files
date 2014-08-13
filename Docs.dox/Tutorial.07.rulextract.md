@@ -444,20 +444,22 @@ The next section details the various steps for grammar extraction.
   tutorial, we provide pretrained models. The source-to-target
   and target-to-source servers are launched as follows:
 
-      > export HADOOP_HEAPSIZE=30000
-      > export HADOOP_OPTS="-XX:+UseConcMarkSweepGC -verbose:gc -server -Xms30000M"
+      > export HADOOP_HEAPSIZE=3000
+      > export HADOOP_OPTS="-XX:+UseConcMarkSweepGC -verbose:gc -server -Xms3000M"
       > $HADOOP_ROOT/bin/hadoop \
           jar $RULEXTRACTJAR \
           uk.ac.cam.eng.extraction.hadoop.features.lexical.TTableServer \
           @configs/CF.rulextract.lexserver \
           --ttable_direction=s2t \
-          --ttable_language_pair=en2ru
+          --ttable_language_pair=en2ru \
+          --min_lex_prob=0.001
       > $HADOOP_ROOT/bin/hadoop \
           jar $RULEXTRACTJAR \
           uk.ac.cam.eng.extraction.hadoop.features.lexical.TTableServer \
           @configs/CF.rulextract.lexserver \
           --ttable_direction=t2s \
-          --ttable_language_pair=ru2en
+          --ttable_language_pair=ru2en \
+          --min_lex_prob=0.001
 
   Both servers should be launched in a separate terminal and without
   trailing ampersand to the commands. Once the servers are ready, a message
@@ -475,6 +477,9 @@ The next section details the various steps for grammar extraction.
 	value.
     + `--provenance` : comma-separated provenances. This is used to search
     for the lexical models in the template.
+    + `--min_lex_prob` : this option is used to keep the memory usage relatively low.
+	Probabilities in the Model 1 table that are lower than a certain threshold are
+	discarded. By default, no entry is discarded.
 
   \subsection hadoop_local_conf Hadoop Local Configuration
 
