@@ -1,0 +1,6 @@
+--ttable_s2t_server_port=4949
+--ttable_s2t_host=localhost
+--ttable_t2s_server_port=9494
+--ttable_t2s_host=localhost
+--ttable_server_template=giza_ibm_model1_filtered/genres/$GENRE/align/$DIRECTION/$DIRECTION.mode1.final.gz
+--provenance=cc,nc,yx,web
