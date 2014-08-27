@@ -238,7 +238,7 @@ simply run
 
     > source $HiFSTROOT/Makefile.inc
     > export PATH=$HiFSTROOT/bin:$OPENFST_BIN:$PATH
-    > export LD_LIBRARY_PATH=$HiFSTROOT/bin:$OPENFST_LIB
+    > export LD_LIBRARY_PATH=$HiFSTROOT/bin:$OPENFST_LIB:$LD_LIBRARY_PATH
 
 You should make sure that $HiFSTBINDIR is added first on the path and
 the library path and that it preceeds the OpenFst directories.
