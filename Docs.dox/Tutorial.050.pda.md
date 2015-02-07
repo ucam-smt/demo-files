@@ -104,11 +104,11 @@ The WFSA T is the replacement of the RTN that was generated in translation.
 
 \section rtn_lm_app Composition and Shortest Path
 
-The applylm tool can be used to apply the baseline 4-gram language model to T via composition.  This generates a new WFSA containing both translation and language model scores:
+The applylm tool can be used to apply the baseline 4-gram language model to T via composition.  This generates a new WFSA containing both grammar and language model scores:
 
 - Input
    - M/lm.4g.mmap : n-gram LM
-   - output/exp.baseline/rtn/1/T.fst : WFSA containing translation scores
+   - output/exp.baseline/rtn/1/T.fst : WFSA containing translation grammar scores
 - Output
    - output/exp.baseline/rtn/1/TG.fst.gz : WFSA containing translation grammar and LM scores
 

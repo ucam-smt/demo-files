@@ -43,23 +43,20 @@ feature, e.g, for the first phrase pair, the first weight should be -3
 (i.e., minus target-word number). By using the above methods, we get
 the rules in the HiFST format, as follows
 
-
-      ...
-      X 44_4_902_7631_2213 3_1331_2242 -3 0.693 1.386 0 0 -1
-      X 44_4_902 3_1331 -2 -0.693 0 0 0 -1
-      X 44_4 3 -1 -0.693 0 0 0 -1
-      ...
-
-
+     ...
+     X 44_4_902_7631_2213 3_1331_2242 -3 0.693 1.386 0 0 -1
+     X 44_4_902 3_1331 -2 -0.693 0 0 0 -1
+     X 44_4 3 -1 -0.693 0 0 0 -1
+     ...
 
 In addition to the phrasal translations, Moses provides a tool for hierarchical phrasal rule extraction. For the above example, the Moses hierarchical rule extractor can generate a rule file:
 
 
-      ...
-      44 [X][X] 16 [X] ||| [X][X] 7 [X] ||| 0.084 0.5 1 1 2.718 ||| 1-0 ||| 1.074 0.090
-      44 [X][X] 16 [X][X] [X] ||| [X][X] 7 [X][X] 8 [X] ||| 0.125 0.5 0.275 0.25 2.718 ||| 1-0 3-2 ||| 0.307 0.139
-      44 [X][X] 16 [X][X] [X] ||| [X][X] 7 [X][X] [X] ||| 0.128 0.5 0.724 1 2.718 ||| 1-0 3-2 ||| 0.786 0.139
-      ...
+     ...
+     44 [X][X] 16 [X] ||| [X][X] 7 [X] ||| 0.084 0.5 1 1 2.718 ||| 1-0 ||| 1.074 0.090
+     44 [X][X] 16 [X][X] [X] ||| [X][X] 7 [X][X] 8 [X] ||| 0.125 0.5 0.275 0.25 2.718 ||| 1-0 3-2 ||| 0.307 0.139
+     44 [X][X] 16 [X][X] [X] ||| [X][X] 7 [X][X] [X] ||| 0.128 0.5 0.724 1 2.718 ||| 1-0 3-2 ||| 0.786 0.139
+     ...
 
 On each language side of a rule, `[X]` represents the non-terminal
 symbol X of the left hand side (Note: both languages share the same
@@ -91,6 +88,7 @@ Joshua and cdec support a different definition of SCFG files, where each rule fo
 
 For the above example, one can obtain the following rule file in the Joshua format.
 
+\code
     ...
     [X] ||| 44 4 902 7631 2213 ||| 3 1331 2242 ||| -0.693 -1.386 0 0 1
     [X] ||| 44 4 902 ||| 3 1331 ||| 0.693 0 0 0 1
@@ -100,11 +98,12 @@ For the above example, one can obtain the following rule file in the Joshua form
     [X] ||| 44 [X,1] 16 [X,2] ||| [X,1] 7 [X,2] 8 ||| -2.079 -0.693 -1.290 -1.386 1
     [X] ||| 44 [X,1] 16 [X,2] ||| [X,1] 7 [X,2] ||| -2.055 -0.693 -0.322 0  1
     ...
-
+\endcode
 
 Here `[X]` represents the non-terminal symbol on the left-hand side of a rule. `[X,n]` represents a non-terminal on the right hand side, where n is an index to determine the non-terminal order. All features(weights) are in log-scale. So we use minus operation to fit them into the weight definition preferred by HiFST. Also, the (minus) target-word number is added as an additional feature. For this Joshua version of the SCFG file, we can transform it into the HiFST-style file:
 
 
+\code
     ...
     X 44_4_902_7631_2213 3_1331_2242 -3 0.693 1.386 0 0 -1
     X 44_4_902 3_1331 -2 -0.693 0 0 0 -1
@@ -114,7 +113,7 @@ Here `[X]` represents the non-terminal symbol on the left-hand side of a rule. `
     X 44_X1_16_X2 X1_7_X2_8 -2 2.079 0.693 1.290 1.386 -1
     X 44_X1_16_X2 X1_7_X2 -1 2.055 0.693 0.322 0 -1
     ...
-
+\endcode
 
 
 \subsection gext_niutrans  NiuTrans
@@ -123,11 +122,14 @@ Here `[X]` represents the non-terminal symbol on the left-hand side of a rule. `
 
 NiuTrans uses another format for SCFG files, like
 
+\code
     RHS_SOURCE ||| RHS_TARGT ||| LHS ||| FEATURE (WEIGHTS)
+\endcode
 
 Based on the NiuTrans format, the above sample grammar can be written, as follows:
 
 
+\code
     ...
     44 4 902 7631 2213 ||| 3 1331 2242 ||| X ||| -0.693 -1.386 0 0 1
     44 4 902 ||| 3 1331 ||| X ||| 0.693 0 0 0 1
@@ -137,37 +139,36 @@ Based on the NiuTrans format, the above sample grammar can be written, as follow
     44 #X 16 #X ||| #1 7 #2 8 ||| X ||| -2.079 -0.693 -1.290 -1.386 1
     44 #X 16 #X ||| #1 7 #2 ||| X ||| -2.055 -0.693 -0.322 0  1
     ...
+\endcode
 
-
-On the source-language side, each non-terminal is marked with '#', followed by its symbol. E.g., #X is a non-terminal with the symbol X. On the target-language side, each non-terminal is also marked with '#' but uses an integer to indicate the index of the corresponding non-terminal in the source-language side. E.g., in the last rule of the above example, #2 is a non-terminal on the target-language side. It is aligned with the second non-terminal on the source-language side and shares the symbol X with its counterpart.
+On the source-language side, each non-terminal is marked with '#', followed by its symbol. E.g., '\#X' is a non-terminal with the symbol X. On the target-language side, each non-terminal is also marked with '#' but uses an integer to indicate the index of the corresponding non-terminal in the source-language side. E.g., in the last rule of the above example, #2 is a non-terminal on the target-language side. It is aligned with the second non-terminal on the source-language side and shares the symbol X with its counterpart.
 
 It is not difficult to transform a NiuTrans-style grammar file into a HiFST-style grammar file. For this example, we have (the same result again)
 
-
-    ...
-    X 44_4_902_7631_2213 3_1331_2242 -3 0.693 1.386 0 0 -1
-    X 44_4_902 3_1331 -2 -0.693 0 0 0 -1
-    X 44_4 3 -1 -0.693 0 0 0 -1
-    ...
-    X 44_X_16 X_7 -1 2.476 0.693 0 0 -1
-    X 44_X1_16_X2 X1_7_X2_8 -2 2.079 0.693 1.290 1.386 -1
-    X 44_X1_16_X2 X1_7_X2 -1 2.055 0.693 0.322 0 -1
-    ...
-
-
+\code
+   ...
+   X 44_4_902_7631_2213 3_1331_2242 -3 0.693 1.386 0 0 -1
+   X 44_4_902 3_1331 -2 -0.693 0 0 0 -1
+   X 44_4 3 -1 -0.693 0 0 0 -1
+   ...
+   X 44_X_16 X_7 -1 2.476 0.693 0 0 -1
+   X 44_X1_16_X2 X1_7_X2_8 -2 2.079 0.693 1.290 1.386 -1
+   X 44_X1_16_X2 X1_7_X2 -1 2.055 0.693 0.322 0 -1
+   ...
+\endcode
 
 \section grammarpruning Translation Grammar Pruning
 
 Once the grammar is obtained, one may consider to prune it for a more compact model as well as a more efficient decoding process. Note that grammar pruning is widely used in SMT systems. This is especially important for some large-scale translation tasks, e.g., training a Chinese-English SMT system on millions of sentence pairs. Without appropriate pruning, the translation speed might be unacceptable in some cases. Here we present a few tips on grammar pruning for better use of HiFST.
 
-[1]. For the source-language of each phrase/rule, we can keep the top-n target-sides in terms of (source-to-target) translation probability. This method is adopted in most open source systems by default. Generally setting n = 10~30 is enough for most tasks.
+1. For the source-language of each phrase/rule, we can keep the top-n target-sides in terms of (source-to-target) translation probability. This method is adopted in most open source systems by default. Generally setting n = 10~30 is enough for most tasks.
 
-[2]. We can prune away low frequency phrases/rules. For example, there is generally much noise in hierarchical phrase translation rules that occur once in the training data. So it is relatively "safe" to discard this type of rule.
+2. We can prune away low frequency phrases/rules. For example, there is generally much noise in hierarchical phrase translation rules that occur once in the training data. So it is relatively "safe" to discard this type of rule.
 
-[3]. Also, we can only keep hierarchical phrase rules that are extracted on a good-quality portion of the parallel corpus, that is, we still obtain phrasal translations from the whole corpus but extract hierarchical phrase rules from a smaller set of sentences.
+3. Also, we can only keep hierarchical phrase rules that are extracted on a good-quality portion of the parallel corpus, that is, we still obtain phrasal translations from the whole corpus but extract hierarchical phrase rules from a smaller set of sentences.
 
-[4]. Another method is to filter rules according to rule patterns. For example, both rule patterns "X -> X w, X w" and  "X -> w X, w X" explain monotonic translation phenomena (where X is a variable and w is a sequence of words). In this case, we can throw away one of this patterns because they are actually doing the same thing.
+4. Another method is to filter rules according to rule patterns. For example, both rule patterns "X -> X w, X w" and  "X -> w X, w X" explain monotonic translation phenomena (where X is a variable and w is a sequence of words). In this case, we can throw away one of this patterns because they are actually doing the same thing.
 
-[5]. In addition to rule filtering, we can also write the grammar to another form for more efficient decoding. For example, we can transform an SCFG to a sallow grammar which avoids unlimited nested structures and makes the decoding much faster. Please see next section for more discussion on shallow grammars.
+5. In addition to rule filtering, we can also write the grammar to another form for more efficient decoding. For example, we can transform an SCFG to a sallow grammar which avoids unlimited nested structures and makes the decoding much faster. Please see next section for more discussion on shallow grammars.
 
-The reader can refer to \ref Iglesias2009 for more methods for grammar pruning.
+The reader can refer to \ref Iglesias2009b for more methods for grammar pruning.
