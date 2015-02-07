@@ -1,0 +1,15 @@
+# This config file does not specify the translation grammar or the grammar or language model weights.
+# Used to demonstrate different command line configurations for specifying these quantities.
+
+range=1:2
+
+[source]
+load=RU/RU.tune.idx
+
+[hifst]
+lattice.store=output/exp.mert/LATS/?.fst.gz
+prune=9 
+replacefstbyarc.nonterminals=X,V 
+
+[lm]
+load=M/lm.4g.mmap
