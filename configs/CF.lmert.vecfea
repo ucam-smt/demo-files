@@ -1,7 +1,7 @@
 # LMERT - Lattice MERT practical exercise
 # Generate vector feature from rule alignment lattices
 
-nthreads=8
+nthreads=20
  
 [ruleflowerlattice]
 load=G/rules.shallow.vecfea.all.gz

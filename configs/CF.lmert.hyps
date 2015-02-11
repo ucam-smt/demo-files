@@ -1,7 +1,7 @@
 # LMERT - Lattice MERT practical exercise
 # generate hypotheses
 
-nthreads=8
+nthreads=20
  
 [source]
 load=RU/RU.tune.idx

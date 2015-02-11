@@ -1,18 +1,6 @@
 # HiFST configuration for Russian-English translation, with chopping
 
-range=3,12,19
-# range of line numbers in the source text file to be translated
-
-[source]
-load=RU/RU.set1.chopping.idx
-# path and filename of the source text file
-
-[target]
-store=output/exp.chopping/chop/hyps
-# path and filename of the target text file; translations are written to this file
-
 [hifst]
-lattice.store=output/exp.chopping/chop/LATS/?.fst.gz
 prune=9
 
 replacefstbyarc.nonterminals=X,V 
@@ -42,10 +30,10 @@ localprune.lm.wps=0.0
 load=M/lm.4g.mmap
 featureweights=1.0
 wps=0.0
-# controls the world penalty weights for each language model.
+# controls the word penalty weights for each language model.
 
 [grammar]
-load=G/rules.hiero.chop.gz
+load=tmp/rules.hiero.chop.gz
 # Hiero grammar modified for chopping
 
 [cykparser]

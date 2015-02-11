@@ -11,8 +11,8 @@ featureweights=0.697263,0.396540,2.270819,-0.145200,0.038503,29.518480,-3.411896
 
 [sparseweightvectorlattice]
 loadalilats=output/exp.mert/nbest/ALILATS/?.fst.gz 
-storenbestfile=output/exp.mert/nbest/VECFEA/?.nbest
-storefeaturefile=output/exp.mert/nbest/VECFEA/?.vecfea
+storenbestfile=output/exp.mert/nbest/VECFEA/?.nbest.gz
+storefeaturefile=output/exp.mert/nbest/VECFEA/?.vecfea.gz
 wordmap=wmaps/wmt13.en.all.wmap
 
 [lm]
