@@ -3,7 +3,7 @@ Rule Extraction                {#rulextract}
 
 \section rulextract_start_reminder Getting started
 
-See (\ref rulextract_start)
+See (\ref rulextract_install)
 
 \section rulextract_cluster_setup Hadoop Cluster Setup
 
