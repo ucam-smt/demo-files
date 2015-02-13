@@ -18,7 +18,7 @@ and efficiently
 
 This whole setup can be accomplished in one single command as follows:
 
-    > hifst.O2 --config=configs/CF.hiero.pdt &> log/log.hiero.pdt
+    > hifst.${TGTBINMK}.bin --config=configs/CF.hiero.pdt &> log/log.hiero.pdt
 
 Please see the config file for the parameters needed, along with explanatory comments.
 
@@ -39,7 +39,7 @@ HiFST can save the RTNs to disk, and the language model application and shortest
 
 For example,  consider generation of the baseline lattices with the Shallow-1 translation grammar and the 4-gram language model.  The command can be re-run, but with added instructions to save the RTNs to disk:
 
-    > hifst.O2 --config=configs/CF.baseline --hifst.writertn=output/exp.baseline/rtn/?/%%rtn_label%%.fst --grammar.storentorder=output/exp.baseline/rtn/ntmap  --hifst.rtnopt=yes &> log/log.baseline.rtn
+    > hifst.${TGTBINMK}.bin --config=configs/CF.baseline --hifst.writertn=output/exp.baseline/rtn/?/%%rtn_label%%.fst --grammar.storentorder=output/exp.baseline/rtn/ntmap  --hifst.rtnopt=yes &> log/log.baseline.rtn
 
 The RTNs are written to the directory `output/exp.baseline/rtn/*` as
 
@@ -69,7 +69,7 @@ B=0 (the first source position), and C=7 (the sentence has 8 words).
 This automata is a representation of all possible translations of the
 source sentence under this grammar, as can be seen by printing its paths (here the first 2):
 
-    > cat output/exp.baseline/rtn/1/1001000007.fst | printstrings.O2 --semiring=lexstdarc -u --nbest=2 2>/dev/null
+    > cat output/exp.baseline/rtn/1/1001000007.fst | printstrings.${TGTBINMK}.bin --semiring=lexstdarc -u --nbest=2 2>/dev/null
     1 1004001000 11 384 1004003000 1004004000 1004005000 1004006000 2
     1 1004001000 11 384 1003003001 1004005000 1004006000 2
 
@@ -115,7 +115,7 @@ The applylm tool can be used to apply the baseline 4-gram language model to T vi
 The output is written in the form of a transducer, with the RTN labels as the input symbols and the target language words on the output symbols:
 
 
-     > applylm.O2 --lm.load=M/lm.4g.mmap --semiring=lexstdarc --lattice.load=output/exp.baseline/rtn/1/T.fst --lattice.store=output/exp.baseline/rtn/1/TG.fst.gz
+     > applylm.${TGTBINMK}.bin --lm.load=M/lm.4g.mmap --semiring=lexstdarc --lattice.load=output/exp.baseline/rtn/1/T.fst --lattice.store=output/exp.baseline/rtn/1/TG.fst.gz
 
      > zcat output/exp.baseline/rtn/1/TG.fst.gz | fstshortestpath | fstrmepsilon | fsttopsort | fstprint
      0    1 	1    		1	-2.609375,-2.609375
@@ -139,12 +139,12 @@ The output is written in the form of a transducer, with the RTN labels as the in
 
 To see the translation alone, we project to the output symbols:
 
-    > zcat output/exp.baseline/rtn/1/TG.fst.gz | fstproject --project_output | printstrings.O2 --semiring=lexstdarc -w -m wmaps/wmt13.en.wmap 2>/dev/null
+    > zcat output/exp.baseline/rtn/1/TG.fst.gz | fstproject --project_output | printstrings.${TGTBINMK}.bin --semiring=lexstdarc -w -m wmaps/wmt13.en.wmap 2>/dev/null
     <s> republican strategy of resistance to the renewal of obamas election </s> 			57.4707,-8.03809
 
 which should agree with the previously generated contents of output/exp.baseline/LATS/1.fst.gz produced by the baseline system:
 
-    > zcat output/exp.baseline/LATS/1.fst.gz | printstrings.O2 --semiring=lexstdarc -w -m wmaps/wmt13.en.wmap 2>/dev/null
+    > zcat output/exp.baseline/LATS/1.fst.gz | printstrings.${TGTBINMK}.bin --semiring=lexstdarc -w -m wmaps/wmt13.en.wmap 2>/dev/null
     <s> republican strategy of resistance to the renewal of obamas election </s> 	     57.4707,-8.03809
 
 \section pda_expand Expansion: Translation by Composition of PDAs and WFSAs followed by Pruned Expansion
@@ -158,12 +158,12 @@ As explained in the example of \ref pda, this process is done by the decoder in 
 
 First, we dump the RTN for the full hiero grammar as follows:
 
-    > hifst.O2 --config=configs/CF.hiero --hifst.writertn=output/exp.hiero/rtn/?/%%rtn_label%%.fst --grammar.storentorder=output/exp.hiero/rtn/ntmap --hifst.rtnopt=yes &> log/log.hiero.rtn
+    > hifst.${TGTBINMK}.bin --config=configs/CF.hiero --hifst.writertn=output/exp.hiero/rtn/?/%%rtn_label%%.fst --grammar.storentorder=output/exp.hiero/rtn/ntmap --hifst.rtnopt=yes &> log/log.hiero.rtn
 
 Then, we ensure that the RTN files are in the tropical semiring:
 
     > mkdir -p output/exp.hiero/rtn-tp/1 output/exp.hiero/rtn-tp/2
-    > pushd output/exp.hiero/rtn/ ; for f in ?/100*.fst; do cat $f | lexmap.O2 --action=lex2std > ../rtn-tp/$f; done; popd
+    > pushd output/exp.hiero/rtn/ ; for f in ?/100*.fst; do cat $f | lexmap.${TGTBINMK}.bin --action=lex2std > ../rtn-tp/$f; done; popd
 
 The PDT is then created as follows:
 
@@ -175,7 +175,7 @@ Then the PDA is composed with the weak language model. This is done via the stan
 
     > for f in 1 2; do cat output/exp.hiero/rtn-tp/1/parens.txt | tr '\t' '\n' | sed 's/$/\t0/' > output/exp.hiero/rtn-tp/$f/parens-to-epsilon.txt ;
     > cat output/exp.hiero/rtn-tp/$f/T.pdt | fstrelabel -relabel_opairs=output/exp.hiero/rtn-tp/$f/parens-to-epsilon.txt > output/exp.hiero/rtn-tp/$f/Tb.pdt
-    > applylm.O2 --lm.load=M/lm.4g.eprnd.mmap --lattice.load=output/exp.hiero/rtn-tp/$f/Tb.pdt --lattice.store=output/exp.hiero/rtn-tp/$f/TG.pdt ;
+    > applylm.${TGTBINMK}.bin --lm.load=M/lm.4g.eprnd.mmap --lattice.load=output/exp.hiero/rtn-tp/$f/Tb.pdt --lattice.store=output/exp.hiero/rtn-tp/$f/TG.pdt ;
     > done
 
 Then the resulting PDT is expanded into an FSA while applying a pruning weight of 9:
@@ -184,12 +184,12 @@ Then the resulting PDT is expanded into an FSA while applying a pruning weight o
 
 Finally, the weak LM is removed and the full LM is applied:
 
-    > for f in 1 2; do applylm.O2 --lm.load=M/lm.4g.eprnd.mmap --lm.featureweights=-1 --lattice.load=output/exp.hiero/rtn-tp/$f/TG.fst --lattice.store=output/exp.hiero/rtn-tp/$f/TG-nolm.fst ; applylm.O2 --lm.load=M/lm.4g.mmap --lattice.load=output/exp.hiero/rtn-tp/$f/TG-nolm.fst --lattice.store=output/exp.hiero/rtn-tp/$f/TG-final.fst ; done
+    > for f in 1 2; do applylm.${TGTBINMK}.bin --lm.load=M/lm.4g.eprnd.mmap --lm.featureweights=-1 --lattice.load=output/exp.hiero/rtn-tp/$f/TG.fst --lattice.store=output/exp.hiero/rtn-tp/$f/TG-nolm.fst ; applylm.${TGTBINMK}.bin --lm.load=M/lm.4g.mmap --lattice.load=output/exp.hiero/rtn-tp/$f/TG-nolm.fst --lattice.store=output/exp.hiero/rtn-tp/$f/TG-final.fst ; done
 
 The final FSA that results from this process (`output/exp.hiero/rtn-tp/1/TG-final.fst`) should be equivalent to the one obtained by HiPDT (`output/exp.hiero.pdt/LATS/1.fst.gz`) except for numerical differences. Their 1-best hypothesis can be obtained as follows:
 
-    > zcat output/exp.hiero.pdt/LATS/1.fst.gz | printstrings.O2 --semiring=lexstdarc -w -m wmaps/wmt13.en.wmap 2>/dev/null
+    > zcat output/exp.hiero.pdt/LATS/1.fst.gz | printstrings.${TGTBINMK}.bin --semiring=lexstdarc -w -m wmaps/wmt13.en.wmap 2>/dev/null
     <s> the republican strategy of resistance to the renewal of obama 's election </s> 	55.2515,-11.6445
 
-    > cat output/exp.hiero/rtn-tp/1/TG-final.fst | printstrings.O2 -w -m wmaps/wmt13.en.wmap 2>/dev/null
+    > cat output/exp.hiero/rtn-tp/1/TG-final.fst | printstrings.${TGTBINMK}.bin -w -m wmaps/wmt13.en.wmap 2>/dev/null
 	<s> the republican strategy of resistance to the renewal of obama 's election </s> 	55.2515
