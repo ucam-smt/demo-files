@@ -39,11 +39,11 @@ Once downloaded, the tools and libraries are compiled in the directory
 
 **Note** that the
 environment variable `TGTBINMK` specific compilation option
-(e.g. optimisation level, static vs dynamic, etc.).  See
-`build-test.sh` for the supported options; the default is `export TGTBINMK=O2`.
+(e.g. optimisation level, static vs dynamic, etc.) can be set to a value of your choosing 
+before running the script.  See `build-test.sh` for the supported options.
 
     > cd $HiFSTROOT
-    > export TGTBINMK=O2 # change this as appropriate for your environment
+    > export TGTBINMK=O2 # change this as appropriate for your environment. If you omit this line, the default is `export TGTBINMK=O2`.
     > ./build-test.sh
 
 This should download and install necessary dependencies,
@@ -59,7 +59,7 @@ simply run
 
     > source $HiFSTROOT/Makefile.inc
     > export PATH=$HiFSTROOT/bin:$OPENFST_BIN:$PATH
-    > export LD_LIBRARY_PATH=$HiFSTROOT/bin:$OPENFST_LIB:$LD_LIBRARY_PATH
+    > export LD_LIBRARY_PATH=$HiFSTROOT/bin:$OPENFST_LIB:$BOOST_LIB:$LD_LIBRARY_PATH
 
 You should make sure that $HiFSTBINDIR is added first on the path and
 the library path and that it preceeds the OpenFst directories.
