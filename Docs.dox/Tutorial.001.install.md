@@ -34,9 +34,16 @@ As a check, the following command should find the `README.md` file downloaded fr
 
     > ls $HiFSTROOT/README.md
 
-Once downloaded, go into the cloned directory and run `./build-test.sh`:
+Once downloaded, the tools and libraries are compiled in the directory
+`$HiFSTROOT` by running the script `build-test.sh`.  
+
+**Note** that the
+environment variable `TGTBINMK` specific compilation option
+(e.g. optimisation level, static vs dynamic, etc.) can be set to a value of your choosing 
+before running the script.  See `build-test.sh` for the supported options.
 
     > cd $HiFSTROOT
+    > export TGTBINMK=O2 # change this as appropriate for your environment. If you omit this line, the default is `export TGTBINMK=O2`.
     > ./build-test.sh
 
 This should download and install necessary dependencies,
@@ -52,7 +59,7 @@ simply run
 
     > source $HiFSTROOT/Makefile.inc
     > export PATH=$HiFSTROOT/bin:$OPENFST_BIN:$PATH
-    > export LD_LIBRARY_PATH=$HiFSTROOT/bin:$OPENFST_LIB:$LD_LIBRARY_PATH
+    > export LD_LIBRARY_PATH=$HiFSTROOT/bin:$OPENFST_LIB:$BOOST_LIB:$LD_LIBRARY_PATH
 
 You should make sure that $HiFSTBINDIR is added first on the path and
 the library path and that it preceeds the OpenFst directories.
@@ -61,6 +68,12 @@ If the LD\_LIBRARY\_PATH variable is not set correctly, you will see the message
     ERROR: GenericRegister::GetEntry : tropical_LT_tropical-arc.so: cannot open shared object file: No such file or directory
     ERROR: ReadFst : unknown arc type "tropical_LT_tropical" : standard input
 
+Sourcing `Makefile.inc` sets the environment variable 
+`TGTBINMK` to point to the HiFST binaries; for example, the following should find the main HiFST binary:
+
+   > ls $HiFSTROOT/bin/hifst.${TGTBINMK}.bin
+
+It is possible to use multiple builds of HiFST by changing the `TGTBINMK` variable.
 
 \section rulextract_install Installation of the Hadoop-based Grammar Extraction Tools
 **Note:** These are not needed to run the basic HiFST \ref tutorial_.
