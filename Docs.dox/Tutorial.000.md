@@ -110,12 +110,28 @@ G. Blackwood, A. de Gispert, W. Byrne.  Proceedings of ACL Short Papers. 2010. <
   Proceedings of HLT-NAACL, 2010.  <br>
 <http://aclweb.org/anthology//N/N10/N10-1139.pdf>
 
-\subsection lmert_refs Lattice Mert
+\subsection lmert_refs Mert
 
 \anchor Macherey2008 [Macherey2008]
 *Lattice-based Minimum Error Rate Training for Statistical Machine Translation*. <br>
 W. Macherey, F. Och, I. Thayer, J. Uszkoreit.  Proceedings of EMNLP, 2008. <br>
 <http://aclweb.org/anthology/D/D08/D08-1076.pdf>
+
+\anchor Waite2015 [Waite2015]
+*The Geometry of Statistical Machine Translation.*<br>
+A Waite and W. Byrne. Proceedings of HLT. 2015. to appear<br>
+
+\anchor Waite2014 [Waite2014]
+*The Geometry of Statistical Machine Translation.* <br> A. Waite.  Ph.D. Thesis. Cambridge University Engineering Department and Girton College. 2014. <br>
+
+\anchor Fukuda2004 [Fukuda2004]
+*From the zonotope construction to the Minkowski addition of convex polytopes.* <br>
+K Fukuda. Journal of Symbolic Computation, 38(4) <br>
+
+\anchor Weibel2010 [Weibel2010]
+*Implementation and parallelization of a reverse-search algorithm for Minkowski sums.* <br>
+C Weibel. Proceedings of ALENEX 2010<br>
+<http://http://epubs.siam.org/doi/pdf/10.1137/1.9781611972900.4>
 
 \anchor Waite2012 [Waite2012]
 *Lattice-based minimum error rate training using weighted finite-state transducers with tropical polynomial weights.*
