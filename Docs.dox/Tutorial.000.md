@@ -131,7 +131,7 @@ K Fukuda. Journal of Symbolic Computation, 38(4) <br>
 \anchor Weibel2010 [Weibel2010]
 *Implementation and parallelization of a reverse-search algorithm for Minkowski sums.* <br>
 C Weibel. Proceedings of ALENEX 2010<br>
-<http://http://epubs.siam.org/doi/pdf/10.1137/1.9781611972900.4>
+<http://epubs.siam.org/doi/pdf/10.1137/1.9781611972900.4>
 
 \anchor Waite2012 [Waite2012]
 *Lattice-based minimum error rate training using weighted finite-state transducers with tropical polynomial weights.*
