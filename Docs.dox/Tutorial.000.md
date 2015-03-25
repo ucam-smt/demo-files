@@ -40,6 +40,7 @@ with thanks to Cyril Allauzen and Michael Riley.
 - Shallow-N translation grammars
 - Source-sentence `chopping' procedures
 - WFSA true-casing
+- Multi-dimensional parameter search for MERT 
 - ...
 
 
