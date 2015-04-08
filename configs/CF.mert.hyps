@@ -23,7 +23,7 @@ featureweights=1.0
 # Note that this parameter should be updated after each iteration of MERT
 
 [grammar]
-load=G/rules.shallow.vecfea.all.gz
+load=G/rules.shallow.vecfea.gz
 featureweights=0.697263,0.396540,2.270819,-0.145200,0.038503,29.518480,-3.411896,-3.732196,0.217455,0.041551,0.060136
 # Note that this parameter vector should be updated after each iteration of MERT
 

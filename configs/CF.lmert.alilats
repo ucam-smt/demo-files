@@ -23,8 +23,7 @@ prunereferenceshortestpath=10000
 # extract n-best list from input lattice to use as hypotheses
 
 [lm]
-# load=M/interp.4g.arpa.newstest2012.tune.corenlp.ru.idx.union.mmap
 load=M/interp.4g.arpa.newstest2012.tune.corenlp.ru.idx.withoptions.mmap
 
 [grammar]
-load=G/rules.shallow.all.gz
+load=G/rules.shallow.gz

@@ -11,8 +11,7 @@ prune=9
 replacefstbyarc.nonterminals=X,V 
 
 [lm]
-# load=M/interp.4g.arpa.newstest2012.tune.corenlp.ru.idx.union.mmap
 load=M/interp.4g.arpa.newstest2012.tune.corenlp.ru.idx.withoptions.mmap
 
 [grammar]
-load=G/rules.shallow.vecfea.all.gz
+load=G/rules.shallow.vecfea.gz
