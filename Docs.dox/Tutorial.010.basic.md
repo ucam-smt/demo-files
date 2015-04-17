@@ -15,7 +15,7 @@ integer-mapped file `RU/RU.set1.idx`:
 
     # Run HiFST
     > mkdir log
-    > hifst.${TGTBINMK}.bin --config=configs/CF.baseline &> log/log.baseline
+    ::> hifst.${TGTBINMK}.bin --config=configs/CF.baseline &> log/log.baseline
 
 The log file output can be viewed as:
 
@@ -94,7 +94,7 @@ The English wordmap can be supplied to fstprint to convert from integer mapped s
 For convenience, the HiFST `printstring` utility programme gathers all these
 operations into a single binary:
 
-    > printstrings.${TGTBINMK}.bin --range=1:2 --label-map=wmaps/wmt13.en.wmap --input=output/exp.baseline/LATS/?.fst.gz --semiring=lexstdarc         
+    ::> printstrings.${TGTBINMK}.bin --range=1:2 --label-map=wmaps/wmt13.en.wmap --input=output/exp.baseline/LATS/?.fst.gz --semiring=lexstdarc         
     ...
     <s> republican strategy of resistance to the renewal of obamas election </s> 
     <s> the leaders of the republican justified their policies need to deal with the spin on the elections . </s> 
@@ -189,7 +189,7 @@ the
 \ref OpenFst [Shortest Path](http://openfst.org/twiki/bin/view/FST/ShortestPathDoc)
 operation, with its n-shortest path option:
 
-    > printstrings.${TGTBINMK}.bin --semiring=lexstdarc --nbest=10 --unique --input=output/exp.baseline/LATS/1.fst.gz 
+    ::> printstrings.${TGTBINMK}.bin --semiring=lexstdarc --nbest=10 --unique --input=output/exp.baseline/LATS/1.fst.gz 
     ...
     1 9121 384 6 2756 7 3 4144 6 1458528 1341 2 
     1 3 9121 384 6 2756 7 3 4144 6 1458528 1341 2 
@@ -262,7 +262,7 @@ the translation grammar `G/rules.shallow.vecfea.gz` has unweighted 11-dimensiona
 
 We have run lattice MERT (\ref lmert) to generate a parameter weight vector for this grammar with these features and the language model `M/lm.4g.mmap`:
 
-    P=1.0,0.697263,0.396540,2.270819,-0.145200,0.038503,29.518480,-3.411896,-3.732196,0.217455,0.041551,0.060136
+    ::> P=1.0,0.697263,0.396540,2.270819,-0.145200,0.038503,29.518480,-3.411896,-3.732196,0.217455,0.041551,0.060136
 
 Note that `P` is 12-dimensional: the weighting of the language model score is `1.0`, and the weights applied to the grammar feature vectors are 
 
@@ -286,7 +286,7 @@ HiFST loads the grammar with unweighted feature vectors, and applies the feature
 
 HiFST loads the grammar with unweighted feature vectors, and applies the feature weights on-the-fly. HiFST automatically determines which elements of `P` should be applied to the language model scores, and which should be applied to the unweighted feature vectors in the translation grammar:
 
-    > hifst.${TGTBINMK}.bin --featureweights=$P --config=configs/CF.nogrammar --target.store=tmp/hyps.3 --grammar.load=G/rules.shallow.vecfea.all.gz
+    ::> hifst.${TGTBINMK}.bin --featureweights=$P --config=configs/CF.nogrammar --target.store=tmp/hyps.3 --grammar.load=G/rules.shallow.vecfea.all.gz
 
 
 These three alternative methods should yield identical results (to verify, compare `tmp/hyps.[123]`).
@@ -405,7 +405,7 @@ previous examples, `--hifst.prune` was set to 9. If we use the default
 example, compare lattices in `exp1/` generated with `prune=9` vs.
 unpruned lattices in `exp2/`:
 
-    > hifst.${TGTBINMK}.bin --config=configs/CF.baseline.outputnoprune &> log/log.baseline.outputnoprune
+    ::> hifst.${TGTBINMK}.bin --config=configs/CF.baseline.outputnoprune &> log/log.baseline.outputnoprune
     > du -sh output/exp.baseline/LATS/1.fst.gz output/exp.baseline.outputnoprune/LATS/1.fst.gz
     8.0K  output/exp.baseline/LATS/1.fst.gz
     56K   output/exp.baseline.outputnoprune/LATS/1.fst.gz
@@ -583,7 +583,7 @@ numbers to illustrate the effect of local pruning.)
 
 If translation is performed with the same grammar and language model, but with local pruning,
 
-     > (time hifst.${TGTBINMK}.bin --config=configs/CF.hiero.localprune) &> log/log.hiero.localprune
+     ::> (time hifst.${TGTBINMK}.bin --config=configs/CF.hiero.localprune) &> log/log.hiero.localprune
 
 then the memory consumption is reduced to under 300MB and the
 processing time to approximately 25s.  Inspecting the log file
@@ -702,7 +702,7 @@ almost no pruning (`output/exp.baseline.outputnoprune/LATS`). Rescoring
 uses the same 4-gram language model originally used to generate the
 lattice, but with a different scale factor (`lm.scale=0.9`).
 
-     > applylm.${TGTBINMK}.bin --config=configs/CF.baseline.outputnoprune.lmrescore  &> log/log.lmrescore
+     ::> applylm.${TGTBINMK}.bin --config=configs/CF.baseline.outputnoprune.lmrescore  &> log/log.lmrescore
 
 For the first sentence, the original 1-best hypothesis was:
 
@@ -777,12 +777,12 @@ operation.
 
 The following example applies LMBR decoding to the baseline lattices
 
-    > lmbr.${TGTBINMK}.bin --config=configs/CF.baseline.lmbr &> log/log.baseline.lmbr
+    ::> lmbr.${TGTBINMK}.bin --config=configs/CF.baseline.lmbr &> log/log.baseline.lmbr
 
 The LMBR output hyppthesis file keeps the scale factor, word penalty, and sentence id at the start of the file;
 the hypothesis follows the colon
 
-    > cat output/exp.baseline.lmbr/HYPS/0.40_0.02.hyp
+    ::> cat output/exp.baseline.lmbr/HYPS/0.40_0.02.hyp
     0.4 0.02 1:1 3 9121 384 6 2756 7 3 4144 6 159312 42 1341 2
     0.4 0.02 2:1 3 1119 6 3 9121 1711 54 79 6 3 85 7 525 3 13907 17 3 628 5 2
 
@@ -914,7 +914,7 @@ semiring as described earlier.
     fst type                                          vector
     arc type                                          tropical_LT_tropical
 
-    > zcat output/exp.mert/LATS/1.fst.gz | printstrings.${TGTBINMK}.bin --semiring=lexstdarc -m wmaps/wmt13.en.all.wmap -w 2>/dev/null
+    > zcat output/exp.mert/LATS/1.fst.gz | printstrings.${TGTBINMK}.bin --semiring=lexstdarc -m wmaps/wmt13.en.all.wmap.gz -w 2>/dev/null
     <s> parliament does not support the amendment , which gives you the freedom of tymoshenko </s>	43.093,-19.4512
 
 
@@ -1719,8 +1719,8 @@ A range of input lattices can be true-cased in the following way with our fst-ba
     # re-run the baseline 
     > hifst.${TGTBINMK}.bin --config=configs/CF.baseline
     # recase the output lattices
-    > disambig.${TGTBINMK}.bin configs/CF.recaser --recaser.input=output/exp.baseline/LATS/?.fst.gz --recaser.output=output/exp.baseline/LATS/2.fst.recase.gz --range=1:2 -s lexstdarc
-    > printstrings.${TGTBINMK}.bin --input=output/exp.recasing/LATS/?.fst.gz --semiring=lexstdarc --label-map=wmaps/wmt13.en.wmap --range=1:2
+    ::> disambig.${TGTBINMK}.bin configs/CF.recaser --recaser.input=output/exp.baseline/LATS/?.fst.gz --recaser.output=output/exp.baseline/LATS/?.fst.recase.gz --range=1:2 -s lexstdarc
+    ::> printstrings.${TGTBINMK}.bin --input=output/exp.baseline/LATS/?.fst.recase.gz --semiring=lexstdarc --label-map=wmaps/wmt13.en.wmap --range=1:2
     <s> Republican strategy of resistance to the renewal of obamas election </s> 
     <s> The leaders of the Republican justified their policies need to deal with the spin on the elections . </s> 
 
@@ -1728,7 +1728,7 @@ Note that both models need to be integer-mapped, hence the external target wordm
 
 HiFST can include truecasing as subsequent step following decoding, prior to writing the output hypotheses. For instance:
     
-    > hifst.${TGTBINMK}.bin --config=configs/CF.baseline --recaser.lm.load=M/lm.tc.gz --recaser.unimap.load=G/tc.unimap
+    ::> hifst.${TGTBINMK}.bin --config=configs/CF.baseline --recaser.lm.load=M/lm.tc.gz --recaser.unimap.load=G/tc.unimap
 
     > farcompilestrings --entry_type=line output/exp.baseline/hyps | farprintstrings --symbols=wmaps/wmt13.en.wmap 
     <s> Republican strategy of resistance to the renewal of obamas election </s>
@@ -1736,7 +1736,7 @@ HiFST can include truecasing as subsequent step following decoding, prior to wri
 
 However, the output lattices are left in uncased form:
 
-    > printstrings.${TGTBINMK}.bin --semiring=lexstdarc --label-map=wmaps/wmt13.en.wmap --input=output/exp.baseline/LATS/1.fst.gz 
+    ::> printstrings.${TGTBINMK}.bin --semiring=lexstdarc --label-map=wmaps/wmt13.en.wmap --input=output/exp.baseline/LATS/1.fst.gz 
     <s> republican strategy of resistance to the renewal of obamas election </s>
 
 
@@ -1744,8 +1744,8 @@ However, the output lattices are left in uncased form:
 
 HiFST can run in server mode.
 
-     > hifst.${TGTBINMK}.bin --config=configs/CF.baseline.server &> log/log.server &
-     > pid=$! # catch the server pid
+     ::> hifst.${TGTBINMK}.bin --config=configs/CF.baseline.server &> log/log.server &
+     ::> pid=$! # catch the server pid
 
 Note that in this particular configuration, both source and target wordmaps are loaded.
 Hifst can read tokenized Russian text and produce tokenized English translations
@@ -1756,20 +1756,20 @@ have to be added on the fly, as the shallow grammar relies on them (i.e. `S 1 1`
 With the `hifst-client.${TGTBINMK}.bin` binary, we can read Russian tokenized text (`RU/RU.tune`) and submit translation requests to the server.
 The output is stored in a file specified by the client tool (`--target.store`).
 
-    > sleep 60 # make sure to wait for the server to finish loading, otherwise clients will fail
+    ::> sleep 60 # make sure to wait for the server to finish loading, otherwise clients will fail
     > hifst-client.${TGTBINMK}.bin --config=configs/CF.baseline.client --range=200:5:300 --target.store=output/exp.clientserver/translation1.txt &> log/log.client1 &
     # Connect to localhost, port=1205 and translate a bunch of sentences. Lets do this in background, just for fun
     # Note that the localhost setting is in the config file; this can point to another machine, of course
     > pid2=$!
 
-    > hifst-client.${TGTBINMK}.bin --config=configs/CF.baseline.client --range=1:50,100,1300 --target.store=output/exp.clientserver/translation2.txt &> log/log.client2 &
+    ::> hifst-client.${TGTBINMK}.bin --config=configs/CF.baseline.client --range=1:50,100,1300 --target.store=output/exp.clientserver/translation2.txt &> log/log.client2 &
     # In the meantime, we request another 52 translations...
     > wait $pid2
 
-    > kill -9 $pid
+    ::> kill -9 $pid
     # We are finished -- kill the server
 
-    > head -5 output/exp.clientserver/translation2.txt
+    ::> head -5 output/exp.clientserver/translation2.txt
     parliament supports amendment giving freedom tymoshenko
     amendment , which led to a liberation located imprisoned former prime minister was rejected during second reading bill mitigating sentences for economic offences .
     sentence still ultimate ; the court will review appeal tymoshenko in december .

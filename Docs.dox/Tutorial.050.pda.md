@@ -18,7 +18,7 @@ and efficiently
 
 This whole setup can be accomplished in one single command as follows:
 
-    > hifst.${TGTBINMK}.bin --config=configs/CF.hiero.pdt &> log/log.hiero.pdt
+    ::> hifst.${TGTBINMK}.bin --config=configs/CF.hiero.pdt &> log/log.hiero.pdt
 
 Please see the config file for the parameters needed, along with explanatory comments.
 
@@ -39,7 +39,7 @@ HiFST can save the RTNs to disk, and the language model application and shortest
 
 For example,  consider generation of the baseline lattices with the Shallow-1 translation grammar and the 4-gram language model.  The command can be re-run, but with added instructions to save the RTNs to disk:
 
-    > hifst.${TGTBINMK}.bin --config=configs/CF.baseline --hifst.writertn=output/exp.baseline/rtn/?/%%rtn_label%%.fst --grammar.storentorder=output/exp.baseline/rtn/ntmap  --hifst.rtnopt=yes &> log/log.baseline.rtn
+    ::> hifst.${TGTBINMK}.bin --config=configs/CF.baseline --hifst.writertn=output/exp.baseline/rtn/?/%%rtn_label%%.fst --grammar.storentorder=output/exp.baseline/rtn/ntmap  --hifst.rtnopt=yes &> log/log.baseline.rtn
 
 The RTNs are written to the directory `output/exp.baseline/rtn/*` as
 
@@ -158,33 +158,33 @@ As explained in the example of \ref pda, this process is done by the decoder in 
 
 First, we dump the RTN for the full hiero grammar as follows:
 
-    > hifst.${TGTBINMK}.bin --config=configs/CF.hiero --hifst.writertn=output/exp.hiero/rtn/?/%%rtn_label%%.fst --grammar.storentorder=output/exp.hiero/rtn/ntmap --hifst.rtnopt=yes &> log/log.hiero.rtn
+    ::> hifst.${TGTBINMK}.bin --config=configs/CF.hiero --hifst.writertn=output/exp.hiero/rtn/?/%%rtn_label%%.fst --grammar.storentorder=output/exp.hiero/rtn/ntmap --hifst.rtnopt=yes &> log/log.hiero.rtn
 
 Then, we ensure that the RTN files are in the tropical semiring:
 
-    > mkdir -p output/exp.hiero/rtn-tp/1 output/exp.hiero/rtn-tp/2
-    > pushd output/exp.hiero/rtn/ ; for f in ?/100*.fst; do cat $f | lexmap.${TGTBINMK}.bin --action=lex2std > ../rtn-tp/$f; done; popd
+    ::> mkdir -p output/exp.hiero/rtn-tp/1 output/exp.hiero/rtn-tp/2
+    ::> pushd output/exp.hiero/rtn/ ; for f in ?/100*.fst; do cat $f | lexmap.${TGTBINMK}.bin --action=lex2std > ../rtn-tp/$f; done; popd
 
 The PDT is then created as follows:
 
-    > for f in 1 2; do pdtreplace --pdt_parentheses=output/exp.hiero/rtn-tp/$f/parens.txt `ls output/exp.hiero/rtn-tp/$f/1*.fst | sed 's,\(.*\)/\(.*\).fst,\1/\2.fst \2,'` > output/exp.hiero/rtn-tp/$f/T.pdt; done
+    ::> for f in 1 2; do pdtreplace --pdt_parentheses=output/exp.hiero/rtn-tp/$f/parens.txt `ls output/exp.hiero/rtn-tp/$f/1*.fst | sed 's,\(.*\)/\(.*\).fst,\1/\2.fst \2,'` > output/exp.hiero/rtn-tp/$f/T.pdt; done
 
 where the `pdt_parentheses' option indicates that the open/close parentheses symbols are to be stored into a file. This is used later in order to expand the PDA to an FSA.
 
 Then the PDA is composed with the weak language model. This is done via the standard composition algorithm, but making sure that open/close parentheses symbols are treated as epsilons by the composition algorithm. To accomplish this, their respective output symbols need to be relabel to 0 before applying the LM:
 
-    > for f in 1 2; do cat output/exp.hiero/rtn-tp/1/parens.txt | tr '\t' '\n' | sed 's/$/\t0/' > output/exp.hiero/rtn-tp/$f/parens-to-epsilon.txt ;
-    > cat output/exp.hiero/rtn-tp/$f/T.pdt | fstrelabel -relabel_opairs=output/exp.hiero/rtn-tp/$f/parens-to-epsilon.txt > output/exp.hiero/rtn-tp/$f/Tb.pdt
-    > applylm.${TGTBINMK}.bin --lm.load=M/lm.4g.eprnd.mmap --lattice.load=output/exp.hiero/rtn-tp/$f/Tb.pdt --lattice.store=output/exp.hiero/rtn-tp/$f/TG.pdt ;
-    > done
+    ::> for f in 1 2; do cat output/exp.hiero/rtn-tp/1/parens.txt | tr '\t' '\n' | sed 's/$/\t0/' > output/exp.hiero/rtn-tp/$f/parens-to-epsilon.txt ;
+    ::> cat output/exp.hiero/rtn-tp/$f/T.pdt | fstrelabel -relabel_opairs=output/exp.hiero/rtn-tp/$f/parens-to-epsilon.txt > output/exp.hiero/rtn-tp/$f/Tb.pdt
+    ::> applylm.${TGTBINMK}.bin --lm.load=M/lm.4g.eprnd.mmap --lattice.load=output/exp.hiero/rtn-tp/$f/Tb.pdt --lattice.store=output/exp.hiero/rtn-tp/$f/TG.pdt ;
+    ::> done
 
 Then the resulting PDT is expanded into an FSA while applying a pruning weight of 9:
 
-    > for f in 1 2; do fstproject output/exp.hiero/rtn-tp/$f/TG.pdt | pdtexpand --pdt_parentheses=output/exp.hiero/rtn-tp/$f/parens.txt --weight=9 > output/exp.hiero/rtn-tp/$f/TG.fst ; done
+    ::> for f in 1 2; do fstproject output/exp.hiero/rtn-tp/$f/TG.pdt | pdtexpand --pdt_parentheses=output/exp.hiero/rtn-tp/$f/parens.txt --weight=9 > output/exp.hiero/rtn-tp/$f/TG.fst ; done
 
 Finally, the weak LM is removed and the full LM is applied:
 
-    > for f in 1 2; do applylm.${TGTBINMK}.bin --lm.load=M/lm.4g.eprnd.mmap --lm.featureweights=-1 --lattice.load=output/exp.hiero/rtn-tp/$f/TG.fst --lattice.store=output/exp.hiero/rtn-tp/$f/TG-nolm.fst ; applylm.${TGTBINMK}.bin --lm.load=M/lm.4g.mmap --lattice.load=output/exp.hiero/rtn-tp/$f/TG-nolm.fst --lattice.store=output/exp.hiero/rtn-tp/$f/TG-final.fst ; done
+    ::> for f in 1 2; do applylm.${TGTBINMK}.bin --lm.load=M/lm.4g.eprnd.mmap --lm.featureweights=-1 --lattice.load=output/exp.hiero/rtn-tp/$f/TG.fst --lattice.store=output/exp.hiero/rtn-tp/$f/TG-nolm.fst ; applylm.${TGTBINMK}.bin --lm.load=M/lm.4g.mmap --lattice.load=output/exp.hiero/rtn-tp/$f/TG-nolm.fst --lattice.store=output/exp.hiero/rtn-tp/$f/TG-final.fst ; done
 
 The final FSA that results from this process (`output/exp.hiero/rtn-tp/1/TG-final.fst`) should be equivalent to the one obtained by HiPDT (`output/exp.hiero.pdt/LATS/1.fst.gz`) except for numerical differences. Their 1-best hypothesis can be obtained as follows:
 
