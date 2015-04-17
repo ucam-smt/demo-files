@@ -1,6 +1,14 @@
 Translation and FST Operations {#basictrans}
 ================================================
 
+**Notes:** 
+
+   * Make sure that environment variables are set as described in \ref tutorial_install and \ref hifst_paths.
+   * Make sure that the language models are downloaded and uncompressed into the `$DEMO/M/` directory.
+   * Make sure you're in the `$DEMO` directory.
+
+   > \> cd $DEMO
+
 \section basic_trans Basic Translation Operations
 
 The first demonstration exercise is to generate translations of
@@ -15,28 +23,28 @@ integer-mapped file `RU/RU.set1.idx`:
 
     # Run HiFST
     > mkdir log
-    ::> hifst.${TGTBINMK}.bin --config=configs/CF.baseline &> log/log.baseline
+    > hifst.${TGTBINMK}.bin --config=configs/CF.baseline &> log/log.baseline
 
 The log file output can be viewed as:
 
     > tail -n 11 log/log.baseline
-    Fri May  9 11:04:37 2014: run.INF:=====Translate sentence 1:1 20870 2447 5443 50916 78159 3621 2
-    Fri May  9 11:04:37 2014: run.INF:Loading hierarchical grammar: G/rules.shallow.gz
-    Fri May  9 11:04:37 2014: run.INF:loading LM=M/lm.4g.mmap
-    Fri May  9 11:04:37 2014: run.INF:Stats for Sentence 1: local pruning, number of times=0
-    Fri May  9 11:04:37 2014: run.INF:End Sentence ******************************************************
-    Fri May  9 11:04:37 2014: run.INF:Translation 1best is: 1 9121 384 6 2756 7 3 4144 6 1458528 1341 2
-    Fri May  9 11:04:37 2014: run.INF:=====Translate sentence 2:1 1716 20196 95123 154 1049 6778 996 9 239837 7 1799 4 2
-    Fri May  9 11:04:37 2014: run.INF:Stats for Sentence 2: local pruning, number of times=0
-    Fri May  9 11:04:38 2014: run.INF:End Sentence ******************************************************
-    Fri May  9 11:04:38 2014: run.INF:Translation 1best is: 1 3 1119 6 3 9121 1711 63 355 85 7 369 24 3 13907 17 3 628 5 2
-    Fri May  9 11:04:38 2014: main.INF:hifst.${TGTBINMK}.bin ends!
+    Fri Apr  3 12:48:16 2015: run.INF:loading LM=M/interp.4g.arpa.newstest2012.tune.corenlp.ru.idx.withoptions.mmap
+    Fri Apr  3 12:48:16 2015: run.INF:Stats for Sentence 1: local pruning, number of times=0
+    Fri Apr  3 12:48:16 2015: run.INF:End Sentence ******************************************************
+    Fri Apr  3 12:48:16 2015: run.INF:Writing lattice 1 to ... output/exp.baseline/LATS/1.fst.gz
+    Fri Apr  3 12:48:16 2015: run.INF:Translation 1best is: 1 50 135 20 103 3 245 4 25 1145 48 3 425 6 23899 2 
+    Fri Apr  3 12:48:16 2015: run.INF:=====Translate sentence 2:1 16055 3 102 5182 66 18 23602 12611 5 6522 2377 3431 3 98 52858 61 46 2140 4422 15871 25 67408 17658 26 1731 19663 4 2
+    Fri Apr  3 12:48:16 2015: run.INF:Stats for Sentence 2: local pruning, number of times=0
+    Fri Apr  3 12:48:22 2015: run.INF:End Sentence ******************************************************
+    Fri Apr  3 12:48:22 2015: run.INF:Writing lattice 2 to ... output/exp.baseline/LATS/2.fst.gz
+    Fri Apr  3 12:48:22 2015: run.INF:Translation 1best is: 1 245 4 25 35 23 1028 7 3 2295 6 25 12 9 2666 4 972 1052 564 4 51 1284 317 3 312 734 6 3 3423 7 4922 2057 14 119 3570 5 2 
+    Fri Apr  3 12:48:22 2015: ~MainClass.INF:hifst.O2.bin ends!
 
 The best scoring translation hypotheses are given in integer-mapped
-form, e.g. for the second Russian sentence, the best-scoring translation
+form, e.g. for the first  Russian sentence, the best-scoring translation
 hypothesis is
 
-    run.INF:Translation 1best is: 1 3 1119 6 3 9121 1711 63 355 85 7 369 24 3 13907 17 3 628 5 2
+    run.INF:Translation 1best is: 1 50 135 20 103 3 245 4 25 1145 48 3 425 6 23899 2
 
 \section printing_hyps Printing the 1-Best Hypotheses
 
@@ -47,15 +55,16 @@ this file should agree with the Translation 1best entries in the log file
 (compare these results to the entries in the log file, above):
 
      > cat output/exp.baseline/hyps
-     1 9121 384 6 2756 7 3 4144 6 1458528 1341 2
-     1 3 1119 6 3 9121 1711 63 355 85 7 369 24 3 13907 17 3 628 5 2
+     1 50 135 20 103 3 245 4 25 1145 48 3 425 6 23899 2 
+     1 245 4 25 35 23 1028 7 3 2295 6 25 12 9 2666 4 972 1052 564 4 51 1284 317 3 312 734 6 3 3423 7 4922 2057 14 119 3570 5 2
 
 The FST Archive (FAR) command line tools (in the \ref OpenFst FAR [extensions](http://openfst.org/twiki/bin/view/FST/FstExtensions))
 can be used to load the English wordmap (`wmaps/wmt13.en.wmap`) and print the hypotheses in readable form:
 
     > farcompilestrings --entry_type=line output/exp.baseline/hyps | farprintstrings --symbols=wmaps/wmt13.en.wmap
-    <s> republican strategy of resistance to the renewal of obamas election </s>
-    <s> the leaders of the republican justified their policies need to deal with the spin on the elections . </s>
+    <s> parliament does not support the amendment , which gives you the freedom of tymoshenko </s>
+    <s> amendment , which would have led to the release of which is in prison , former prime minister , was rejected during the second reading of the bill to ease penalty for economic offences . </s>
+
 
 Note that loading the English wordmap can be time consuming due to its
 size.  Ideally, in processing multiple translation hypotheses, the
@@ -76,28 +85,28 @@ the use of the '`.gz`' extension: when this is provided, lattices are
 written as gzipped files.
 
 \ref OpenFst operations can be used to compute the **shortest path** through each of these output lattices, and the results should agree
-with the top-scoring hypotheses in the hyps file and the log file:
+with the top-scoring hypotheses in the file `output/exp.baseline/hyps` and the log file:
 
     > echo `zcat output/exp.baseline/LATS/1.fst.gz | fstshortestpath | fsttopsort | fstprint | awk '{print $3}'`
-     1 9121 384 6 2756 7 3 4144 6 1458528 1341 2
+    1 50 135 20 103 3 245 4 25 1145 48 3 425 6 23899 2
     > echo `zcat output/exp.baseline/LATS/2.fst.gz | fstshortestpath | fsttopsort | fstprint | awk '{print $3}'`
-     1 3 1119 6 3 9121 1711 63 355 85 7 369 24 3 13907 17 3 628 5 2
+    1 245 4 25 35 23 1028 7 3 2295 6 25 12 9 2666 4 972 1052 564 4 51 1284 317 3 312 734 6 3 3423 7 4922 2057 14 119 3570 5 2
 
-The English wordmap can be supplied to fstprint to convert from integer mapped strings to English:
+The English wordmap can be supplied to `fstprint` to convert from integer mapped strings to English:
 
     > echo `zcat output/exp.baseline/LATS/1.fst.gz | fstshortestpath | fsttopsort | fstprint --isymbols=wmaps/wmt13.en.wmap | awk '{print $3}'`
-     <s> republican strategy of resistance to the renewal of obamas election </s>
+    <s> parliament does not support the amendment , which gives you the freedom of tymoshenko </s>
 
     > echo `zcat output/exp.baseline/LATS/2.fst.gz | fstshortestpath | fsttopsort | fstprint --isymbols=wmaps/wmt13.en.wmap | awk '{print $3}'`
-      <s> the leaders of the republican justified their policies need to deal with the spin on the elections . </s>
+    <s> amendment , which would have led to the release of which is in prison , former prime minister , was rejected during the second reading of the bill to ease penalty for economic offences . </s>
 
 For convenience, the HiFST `printstring` utility programme gathers all these
 operations into a single binary:
 
-    ::> printstrings.${TGTBINMK}.bin --range=1:2 --label-map=wmaps/wmt13.en.wmap --input=output/exp.baseline/LATS/?.fst.gz --semiring=lexstdarc         
+    > printstrings.${TGTBINMK}.bin --range=1:2 --label-map=wmaps/wmt13.en.wmap --input=output/exp.baseline/LATS/?.fst.gz --semiring=lexstdarc         
     ...
-    <s> republican strategy of resistance to the renewal of obamas election </s> 
-    <s> the leaders of the republican justified their policies need to deal with the spin on the elections . </s> 
+    <s> parliament does not support the amendment , which gives you the freedom of tymoshenko </s> 
+    <s> amendment , which would have led to the release of which is in prison , former prime minister , was rejected during the second reading of the bill to ease penalty for economic offences . </s> 
     ...
 
 **Note** the use of the `range=1:2` command line option, which
@@ -123,62 +132,75 @@ Input lattice:
      arc type                                          tropical_LT_tropical
      input symbol table                                none
      output symbol table                               none
-     # of states                                       489
-     # of arcs                                         1104
+     # of states                                       656
+     # of arcs                                         1513
 
 Shortest Path:
 
     > zcat output/exp.baseline/LATS/1.fst.gz | fstshortestpath | fstprint
-    12      11      1       1       -2.609375,-2.609375
+    16     15      1 1 -2.68554688,-2.68554688
     0
-    1       0       2       2       2.33047056,-2.34277344
-    2       1       1341    1341    6.04568958,1.55957031
-    3       2       1458528 1458528 13.4981985,2.22167969
-    4       3       6       6       0.201819927,0
-    5       4       4144    4144    9.78138161,0
-    6       5       3       3       -0.395056069,-1.23925781
-    7       6       7       7       1.79730964,0
-    8       7       2756    2756    9.45967484,0.288085938
-    9       8       6       6       0.892110586,-2.04589844
-    10      9       384     384     7.13530731,-2.609375
-    11      10      9121    9121    9.33318996,-1.26074219
+    1	   0       2       2        2.83719015,-2.34277344
+    2 	   1       23899   23899    10.2336502,0
+    3 	   2       6       6        1.83065951,0
+    4 	   3       425     425      4.19441986,0
+    5 	   4       3       3        -3.28652811,-5.1171875
+    6 	   5       48      48       3.01827216,0
+    7 	   6       1145    1145     4.64596272,0
+    8 	   7       25      25       1.83065951,0
+    9 	   8       4       4        0.548432946,-1.28222656
+    10     9       245     245      5.13327551,-0.48828125
+    11     10      3       3        0.961314559,0
+    12     11      103     103      4.64596272,0
+    13     12      20      20       0.961314559,0
+    14     13      135     135      1.43660688,-4.65039062
+    15     14      50      50       6.39422989,-2.88476562
 
 **Note** that the paired weights are described in \ref basic_scores.
 
 Topologically Sorted Shortest Path:
 
     > zcat output/exp.baseline/LATS/1.fst.gz | fstshortestpath | fsttopsort | fstprint
-    0       1       1       1       -2.609375,-2.609375
-    1       2       9121    9121    9.33318996,-1.26074219
-    2       3       384     384     7.13530731,-2.609375
-    3       4       6       6       0.892110586,-2.04589844
-    4       5       2756    2756    9.45967484,0.288085938
-    5       6       7       7       1.79730964,0
-    6       7       3       3       -0.395056069,-1.23925781
-    7       8       4144    4144    9.78138161,0
-    8       9       6       6       0.201819927,0
-    9       10      1458528 1458528 13.4981985,2.22167969
-    10      11      1341    1341    6.04568958,1.55957031
-    11      12      2       2       2.33047056,-2.34277344
-    12
+    1      1       1 	   1     -2.68554688,-2.68554688
+    1      2       50      50    6.39422989,-2.88476562
+    2      3       135     135   1.43660688,-4.65039062
+    3      4       20      20    0.961314559,0
+    4      5       103     103   4.64596272,0
+    5      6       3       3     0.961314559,0
+    6      7       245     245   5.13327551,-0.48828125
+    7      8       4       4     0.548432946,-1.28222656
+    8      9       25      25    1.83065951,0
+    9      10      1145    1145  4.64596272,0
+    10     11      48      48    3.01827216,0
+    11     12      3       3     -3.28652811,-5.1171875
+    12     13      425     425   4.19441986,0
+    13     14      6       6     1.83065951,0
+    14     15      23899   23899 10.2336502,0
+    15     16      2       2     2.83719015,-2.34277344
+    16
 
 
 Toplogically Sorted Shortest Path, with English words replacing the arc input symbols
 
-    > zcat output/exp.baseline/LATS/1.fst.gz | fstshortestpath | fsttopsort | fstprint --isymbols=wmaps/wmt13.en.wmap
-    0       1       <s>     1       -2.609375,-2.609375
-    1       2       republican      9121    9.33318996,-1.26074219
-    2       3       strategy        384     7.13530731,-2.609375
-    3       4       of      6       0.892110586,-2.04589844
-    4       5       resistance      2756    9.45967484,0.288085938
-    5       6       to      7       1.79730964,0
-    6       7       the     3       -0.395056069,-1.23925781
-    7       8       renewal 4144    9.78138161,0
-    8       9       of      6       0.201819927,0
-    9       10      obamas  1458528 13.4981985,2.22167969
-    10      11      election        1341    6.04568958,1.55957031
-    11      12      </s>    2       2.33047056,-2.34277344
-    12
+    > zcat output/exp.baseline/LATS/1.fst.gz | fstshortestpath | fsttopsort | fstprint --isymbols=wmaps/wmt13.en.wmap --acceptor
+    0      1    <s>         -2.68554688,-2.68554688
+    1      2    parliament  6.39422989,-2.88476562
+    2      3    does        1.43660688,-4.65039062
+    3      4    not         0.961314559,0
+    4      5    support     4.64596272,0
+    5      6    the         0.961314559,0
+    6      7    amendment   5.13327551,-0.48828125
+    7      8    ,           0.548432946,-1.28222656
+    8      9    which       1.83065951,0
+    9      10   gives       4.64596272,0
+    10     11   you         3.01827216,0
+    11     12   the         -3.28652811,-5.1171875
+    12     13   freedom     4.19441986,0
+    13     14   of          1.83065951,0
+    14     15   tymoshenko  10.2336502,0
+    15     16   </s>        2.83719015,-2.34277344
+    16
+
 
 
 
@@ -189,34 +211,34 @@ the
 \ref OpenFst [Shortest Path](http://openfst.org/twiki/bin/view/FST/ShortestPathDoc)
 operation, with its n-shortest path option:
 
-    ::> printstrings.${TGTBINMK}.bin --semiring=lexstdarc --nbest=10 --unique --input=output/exp.baseline/LATS/1.fst.gz 
+    > printstrings.${TGTBINMK}.bin --semiring=lexstdarc --nbest=10 --unique --input=output/exp.baseline/LATS/1.fst.gz 
     ...
-    1 9121 384 6 2756 7 3 4144 6 1458528 1341 2 
-    1 3 9121 384 6 2756 7 3 4144 6 1458528 1341 2 
-    1 9121 384 6 2756 7 3 4144 6 159312 42 1341 2 
-    1 3 9121 384 6 2756 7 3 4144 6 159312 42 1341 2 
-    1 9121 384 2756 7 3 4144 6 1458528 1341 2 
-    1 3 9121 384 2756 7 3 4144 6 1458528 1341 2 
-    1 9121 384 2756 7 3 4144 6 159312 42 1341 2 
-    1 3 9121 1132 384 4144 6 1458528 1341 2 
-    1 3 9121 384 2756 7 3 4144 6 159312 42 1341 2 
-    1 3 9121 1132 384 3 4144 6 1458528 1341 2 
+    1 50 135 20 103 3 245 4 25 1145 48 3 425 6 23899 2 
+    1 50 135 20 103 34 245 4 25 1145 48 3 425 6 23899 2 
+    1 3 50 135 20 103 3 245 4 25 1145 48 3 425 6 23899 2 
+    1 50 311 20 103 3 245 4 25 1145 48 3 425 6 23899 2 
+    1 50 135 20 103 3 245 4 25 1145 48 3 425 7 23899 2 
+    1 50 135 20 103 3 245 4 25 1145 48 425 6 23899 2 
+    1 50 135 20 103 3 245 4 25 1145 425 6 23899 2 
+    1 50 135 20 103 3 245 4 25 1145 408 23899 2 
+    1 50 135 20 103 3 245 4 25 1145 3 425 6 23899 2 
+    1 50 135 20 103 3 245 4 25 1145 48 408 23899 2 
     ...
 
 With the English wordmap,  `printstrings` will map the integer representation to English text:
 
     > printstrings.${TGTBINMK}.bin --semiring=lexstdarc --nbest=10 --unique --input=output/exp.baseline/LATS/1.fst.gz --label-map=wmaps/wmt13.en.wmap
     ...
-    <s> republican strategy of resistance to the renewal of obamas election </s> 
-    <s> the republican strategy of resistance to the renewal of obamas election </s> 
-    <s> republican strategy of resistance to the renewal of obama 's election </s> 
-    <s> the republican strategy of resistance to the renewal of obama 's election </s> 
-    <s> republican strategy resistance to the renewal of obamas election </s> 
-    <s> the republican strategy resistance to the renewal of obamas election </s> 
-    <s> republican strategy resistance to the renewal of obama 's election </s> 
-    <s> the republican opposition strategy renewal of obamas election </s> 
-    <s> the republican strategy resistance to the renewal of obama 's election </s> 
-    <s> the republican opposition strategy the renewal of obamas election </s> 
+    <s> parliament does not support the amendment , which gives you the freedom of tymoshenko </s> 
+    <s> parliament does not support an amendment , which gives you the freedom of tymoshenko </s> 
+    <s> the parliament does not support the amendment , which gives you the freedom of tymoshenko </s> 
+    <s> parliament did not support the amendment , which gives you the freedom of tymoshenko </s> 
+    <s> parliament does not support the amendment , which gives you the freedom to tymoshenko </s> 
+    <s> parliament does not support the amendment , which gives you freedom of tymoshenko </s> 
+    <s> parliament does not support the amendment , which gives freedom of tymoshenko </s> 
+    <s> parliament does not support the amendment , which gives free tymoshenko </s> 
+    <s> parliament does not support the amendment , which gives the freedom of tymoshenko </s> 
+    <s> parliament does not support the amendment , which gives you free tymoshenko </s> 
     ...
 
 It often happens that a translation hypothesis can be produced by multiple derivations (i.e. rule sequences),
@@ -224,16 +246,16 @@ so the top scoring hypotheses need not be unique. For example, omitting the `--u
 
     > printstrings.${TGTBINMK}.bin --semiring=lexstdarc --nbest=10 --input=output/exp.baseline/LATS/1.fst.gz --label-map=wmaps/wmt13.en.wmap
     ...
-    <s> republican strategy of resistance to the renewal of obamas election </s> 
-    <s> the republican strategy of resistance to the renewal of obamas election </s> 
-    <s> the republican strategy of resistance to the renewal of obamas election </s> 
-    <s> republican strategy of resistance to the renewal of obamas election </s> 
-    <s> republican strategy of resistance to the renewal of obamas election </s> 
-    <s> republican strategy of resistance to the renewal of obama 's election </s> 
-    <s> the republican strategy of resistance to the renewal of obama 's election </s> 
-    <s> the republican strategy of resistance to the renewal of obama 's election </s> 
-    <s> the republican strategy of resistance to the renewal of obamas election </s> 
-    <s> republican strategy of resistance to the renewal of obama 's election </s> 
+    <s> parliament does not support the amendment , which gives you the freedom of tymoshenko </s> 
+    <s> parliament does not support the amendment , which gives you the freedom of tymoshenko </s> 
+    <s> parliament does not support the amendment , which gives you the freedom of tymoshenko </s> 
+    <s> parliament does not support the amendment , which gives you the freedom of tymoshenko </s> 
+    <s> parliament does not support the amendment , which gives you the freedom of tymoshenko </s> 
+    <s> parliament does not support the amendment , which gives you the freedom of tymoshenko </s> 
+    <s> parliament does not support the amendment , which gives you the freedom of tymoshenko </s> 
+    <s> parliament does not support the amendment , which gives you the freedom of tymoshenko </s> 
+    <s> parliament does not support the amendment , which gives you the freedom of tymoshenko </s> 
+    <s> parliament does not support the amendment , which gives you the freedom of tymoshenko </s> 
     ...
 
 \section vector_feature_grammars Weight Vectors and Feature Vectors
@@ -260,9 +282,9 @@ the translation grammar `G/rules.shallow.vecfea.gz` has unweighted 11-dimensiona
     V 3 4_3 3.333756 0.338107 -2 -1 0 0 0 0 -1 1.662178 3.363062
     V 3 8 3.74095 3.279819 -1 -1 0 0 0 0 -1 3.741382 2.271445
 
-We have run lattice MERT (\ref lmert) to generate a parameter weight vector for this grammar with these features and the language model `M/lm.4g.mmap`:
+We have run lattice MERT (\ref lmert) to generate a parameter weight vector for this grammar with these features and the language model `M/interp.4g.arpa.newstest2012.tune.corenlp.ru.idx.withoptions.mmap`
 
-    ::> P=1.0,0.697263,0.396540,2.270819,-0.145200,0.038503,29.518480,-3.411896,-3.732196,0.217455,0.041551,0.060136
+    > P=1.0,0.697263,0.396540,2.270819,-0.145200,0.038503,29.518480,-3.411896,-3.732196,0.217455,0.041551,0.060136
 
 Note that `P` is 12-dimensional: the weighting of the language model score is `1.0`, and the weights applied to the grammar feature vectors are 
 
@@ -286,7 +308,7 @@ HiFST loads the grammar with unweighted feature vectors, and applies the feature
 
 HiFST loads the grammar with unweighted feature vectors, and applies the feature weights on-the-fly. HiFST automatically determines which elements of `P` should be applied to the language model scores, and which should be applied to the unweighted feature vectors in the translation grammar:
 
-    ::> hifst.${TGTBINMK}.bin --featureweights=$P --config=configs/CF.nogrammar --target.store=tmp/hyps.3 --grammar.load=G/rules.shallow.vecfea.all.gz
+    > hifst.${TGTBINMK}.bin --featureweights=$P --config=configs/CF.nogrammar --target.store=tmp/hyps.3 --grammar.load=G/rules.shallow.vecfea.gz
 
 
 These three alternative methods should yield identical results (to verify, compare `tmp/hyps.[123]`).
@@ -316,16 +338,16 @@ HiFST uses a **lexicographic semiring  of two tropical weights** [\ref Roark2011
      arc type                                          tropical_LT_tropical
 
      > zcat output/exp.baseline/LATS/1.fst.gz | fstprint | head -n 10
-     0 1    1                            1             -2.609375,-2.609375
-     1 36   999999999                    999999999      29.5185547,29.5185547
-     1 35   12198                        12198          19.6816635,7.27929688
-     1 34   12198                        12198          17.9902573,5.58789062
-     1 33   9227                         9227           16.845089,2.56347656
-     1 32   9121                         9121           9.55193996,-1.04199219
-     1 31   9121                         9121           7.86053371,-2.73339844
-     1 30   9121                         9121           9.33318996,-1.26074219
-     1 29   8559                         8559           14.9520674,4.25878906
-     1 28   4608                         4608           17.6058693,4.88671875
+     0 1    1       1   -2.68554688,-2.68554688
+     1 4    170     170 11.4819975,4.25097656
+     1 3    50      50  6.39422989,-2.88476562
+     1 2    3       3   1.87243128,-2.70800781
+     1 197  50      50  3.70087051,-5.578125
+     1 196  3       3   -0.820928097,-5.40136719
+     1 456  50      50  7.04462051,-2.234375
+     1 455  3       3   1.72790003,-2.85253906
+     1 195  50      50  6.01825333,-3.26074219
+     1 81   170     170 5.89898968,-1.33203125
 
 The `arc type` of `tropical_LT_tropical` indicates that the
 lexicographic semiring is a pair of tropical weights.  As produced by
@@ -341,25 +363,30 @@ rescoring_lm).
 In the above example, scores are distributed over the arcs in the FST.  
 The \ref OpenFst [Push](http://openfst.org/twiki/bin/view/FST/PushDoc)  operation can be used to accumulate weights at the path level within the shortest path fst:
 
-     > zcat output/exp.baseline/LATS/1.fst.gz | fstshortestpath | fsttopsort | fstpush --push_weights --to_final | fstprint --isymbols=wmaps/wmt13.en.wmap
-     0       1       <s>     1
-     1       2       republican      9121
-     2       3       strategy        384
-     3       4       of      6
-     4       5       resistance      2756
-     5       6       to      7
-     6       7       the     3
-     7       8       renewal 4144
-     8       9       of      6
-     9       10      obamas  1458528
-     10      11      election        1341
-     11      12      </s>    2
-     12      57.4707222,-8.03808594
+     zcat output/exp.baseline/LATS/1.fst.gz | fstshortestpath | fsttopsort | fstpush --push_weights --to_final | fstprint --isymbols=wmaps/wmt13.en.wmap --acceptor
+     0      1    <s>
+     1      2    parliament
+     2      3    does
+     3      4    not
+     4      5    support
+     5      6    the
+     6      7    amendment
+     7      8    ,
+     8      9    which
+     9      10   gives
+     10     11   you
+     11     12   the
+     12     13   freedom
+     13     14   of
+     14     15   tymoshenko
+     15     16   </s>
+     16     42.6998749,-19.4511719
 
-In this example, `(G+M, G)` is `(57.4707222,-8.03808594)`.  The first
-component, 54.4707222, contains the sum of the translation grammar
+
+In this example, `(G+M, G)` is `(42.6998749,-19.4511719)`.  The first
+component, 42.6998749, contains the sum of the translation grammar
 scores and the language model - this is the score assigned to the
-hypotheses by the decoder.  The second component, -8.03808594, is the
+hypotheses by the decoder.  The second component, `-19.4511719`, is the
 translation grammar score alone, i.e. contains the score assigned to
 the hypotheses under the translation grammar without the language
 model (see Section 5.1 of [\ref Allauzen2014]).  The lexicographic
@@ -376,7 +403,7 @@ The HiFST utility `printstrings` also works with the lexicographic semiring, and
 
     > printstrings.${TGTBINMK}.bin --input=output/exp.baseline/LATS/1.fst.gz --label-map=wmaps/wmt13.en.wmap --semiring=lexstdarc --weight
     ...
-    <s> republican strategy of resistance to the renewal of obamas election </s>    57.4707,-8.03809
+<s> parliament does not support the amendment , which gives you the freedom of tymoshenko </s>  42.6999,-19.4512
     ...
 
 
@@ -384,11 +411,13 @@ Printing the top 5 hypotheses shows that hypotheses are scored and ranked under 
 
     > printstrings.${TGTBINMK}.bin --input=output/exp.baseline/LATS/1.fst.gz --label-map=wmaps/wmt13.en.wmap --semiring=lexstdarc --weight --nbest=5 --unique
     ...
-    <s> republican strategy of resistance to the renewal of obamas election </s>    57.4705,-8.03809
-    <s> the republican strategy of resistance to the renewal of obamas election </s>        57.5366,-8.66992
-    <s> republican strategy of resistance to the renewal of obama 's election </s>  57.7029,-8.49512
-    <s> the republican strategy of resistance to the renewal of obama 's election </s>      57.769,-9.12695
-    <s> republican strategy resistance to the renewal of obamas election </s>       59.5391,-6.32422
+    <s> parliament does not support the amendment , which gives you the freedom of tymoshenko </s>  42.7003,-19.4512
+    <s> parliament does not support an amendment , which gives you the freedom of tymoshenko </s>   44.2802,-20.8945
+    <s> the parliament does not support the amendment , which gives you the freedom of tymoshenko </s>      45.4819,-19.9385
+    <s> parliament did not support the amendment , which gives you the freedom of tymoshenko </s>   45.7096,-15.5635
+    <s> parliament does not support the amendment , which gives you the freedom to tymoshenko </s>  45.8136,-19.0361
+
+
 
 \section basic_toplevelpruning Admissible Pruning
 
@@ -405,43 +434,26 @@ previous examples, `--hifst.prune` was set to 9. If we use the default
 example, compare lattices in `exp1/` generated with `prune=9` vs.
 unpruned lattices in `exp2/`:
 
-    ::> hifst.${TGTBINMK}.bin --config=configs/CF.baseline.outputnoprune &> log/log.baseline.outputnoprune
+    > hifst.${TGTBINMK}.bin --config=configs/CF.baseline.outputnoprune &> log/log.baseline.outputnoprune
     > du -sh output/exp.baseline/LATS/1.fst.gz output/exp.baseline.outputnoprune/LATS/1.fst.gz
-    8.0K  output/exp.baseline/LATS/1.fst.gz
-    56K   output/exp.baseline.outputnoprune/LATS/1.fst.gz
+    12K    output/exp.baseline/LATS/1.fst.gz
+    1.1M   output/exp.baseline.outputnoprune/LATS/1.fst.gz
     > du -sh output/exp.baseline/LATS/2.fst.gz output/exp.baseline.outputnoprune/LATS/2.fst.gz
-    84K output/exp.baseline/LATS/2.fst.gz
-    3.8M	output/exp.baseline.outputnoprune/LATS/2.fst.gz
+    148K   output/exp.baseline/LATS/2.fst.gz
+    16M    output/exp.baseline.outputnoprune/LATS/2.fst.gz
+
 
 The \ref OpenFst
 [fstinfo](http://openfst.org/twiki/bin/view/FST/FstQuickTour#Printing_Drawing_and_Summarizing)
 command also indicates much larger outputs:
 
-    > zcat output/exp.baseline/LATS/2.fst.gz | fstinfo | grep \#
-    # of states                                       3312
-    # of arcs                                         11365
-    # of final states                                 1
-    # of input/output epsilons                        0
-    # of input epsilons                               0
-    # of output epsilons                              0
-    # of accessible states                            3312
-    # of coaccessible states                          3312
-    # of connected states                             3312
-    # of connected components                         1
-    # of strongly conn components                     3312
+    > zcat output/exp.baseline/LATS/2.fst.gz | fstinfo | grep \# | head -2
+    # of states                                       5833
+    # of arcs                                         22845
 
-    > zcat output/exp.baseline.outputnoprune/LATS/2.fst.gz | fstinfo | grep \#
-    # of states                                       39270
-    # of arcs                                         584446
-    # of final states                                 1
-    # of input/output epsilons                        0
-    # of input epsilons                               0
-    # of output epsilons                              0
-    # of accessible states                            39270
-    # of coaccessible states                          39270
-    # of connected states                             39270
-    # of connected components                         1
-    # of strongly conn components                     39270
+    > zcat output/exp.baseline.outputnoprune/LATS/2.fst.gz | fstinfo | grep \# | head -2
+    # of states                                       172843
+    # of arcs                                         2481006
 
 
 The unpruned lattices are much bigger, and contain many translation
@@ -449,13 +461,13 @@ hypotheses, although the top scoring hypotheses should be unchanged
 by this form of pruning, as is the case in this example:
 
     > head output/exp.baseline/hyps output/exp.baseline.outputnoprune/hyps
-    ==> output/exp1/hyps <==
-    1 9121 384 6 2756 7 3 4144 6 1458528 1341 2
-    1 3 1119 6 3 9121 1711 63 355 85 7 369 24 3 13907 17 3 628 5 2
+    ==> output/exp.baseline/hyps <==
+    1 50 135 20 103 3 245 4 25 1145 48 3 425 6 23899 2 
+    1 245 4 25 35 23 1028 7 3 2295 6 25 12 9 2666 4 972 1052 564 4 51 1284 317 3 312 734 6 3 3423 7 4922 2057 14 119 3570 5 2 
 
     ==> output/exp.baseline.outputnoprune/hyps <==
-    1 9121 384 6 2756 7 3 4144 6 1458528 1341 2
-    1 3 1119 6 3 9121 1711 63 355 85 7 369 24 3 13907 17 3 628 5 2
+    1 50 135 20 103 3 245 4 25 1145 48 3 425 6 23899 2 
+    1 245 4 25 35 23 1028 7 3 2295 6 25 12 9 2666 4 972 1052 564 4 51 1284 317 3 312 734 6 3 3423 7 4922 2057 14 119 3570 5 2 
 
 
 \section lpruning Inadmissible Pruning
@@ -570,82 +582,50 @@ Pruning is applied during construction of the RTN, as follows:
 
 Pruning in search is particularly important when running HiFST with
 grammars that are more powerful than the shallow grammar used in
-earlier examples.
+these examples.  However, we can still see speed and memory use improvements through local pruning, particularly with long sentences.
 
-For example, HiFST can be run with a full Hiero grammar,
-while monitoring memory consumption via the UNIX `top` command:
+First, pick some long source language sentences to translate:
 
-     > (time hifst.${TGTBINMK}.bin --config=configs/CF.hiero) &> log/log.hiero
+     > awk 'NF>80' RU/RU.tune.idx  > tmp/RU.long.idx # should be 3 sentences
 
-The memory use is approximately 2GB and translation takes approximately 1m45s.
+Translate these long sentences under the baseline Shallow-1 grammar; note this will overwrite the output in `output/exp.baseline/`
+
+     > (time hifst.${TGTBINMK}.bin --config=configs/CF.baseline --range=1:3 --source.load=tmp/RU.long.idx ) &> log/log.long
+
+The maximum memory use is approximately 2.5GB and translation takes approximately 1m30s.
 (The resource consumption may vary depending on your hardware, we provide these
 numbers to illustrate the effect of local pruning.)
 
-If translation is performed with the same grammar and language model, but with local pruning,
+If translation is performed with the same grammar and language model, but with aggressive local pruning,
 
-     ::> (time hifst.${TGTBINMK}.bin --config=configs/CF.hiero.localprune) &> log/log.hiero.localprune
+     > (time hifst.${TGTBINMK}.bin --config=configs/CF.baseline.localprune) &> log/log.baseline.localprune
 
-then the memory consumption is reduced to under 300MB and the
-processing time to approximately 25s.  Inspecting the log file
-indicates that local pruning was applied to 18 sublattices for the
-second sentence:
+then the memory consumption is reduced to under 2.2GB and the
+processing time to approximately 40s.  Note that local pruning does
+not have as great an effect on translation under the Shallow-1 grammar
+as it would with e.g. a full Hiero grammar.
 
-     > tail -n 16 log/log.hiero.localprune | head -n 12
-     Fri May  9 15:20:38 2014: run.INF:=====Translate sentence 1:1 20870 2447 5443 50916 78159 3621 2
-     Fri May  9 15:20:38 2014: run.INF:Loading hierarchical grammar: G/rules.hiero.gz
-     Fri May  9 15:20:38 2014: run.INF:loading LM=M/lm.4g.mmap
-     Fri May  9 15:20:38 2014: run.INF:loading LM=M/lm.3g.mmap
-     Fri May  9 15:20:38 2014: run.INF:Stats for Sentence 1: local pruning, number of times=0
-     Fri May  9 15:20:38 2014: run.INF:End Sentence ******************************************************
-     Fri May  9 15:20:38 2014: run.INF:Translation 1best is: 1 3 9121 384 6 2756 7 3 4144 6 159312 42 1341 2
-     Fri May  9 15:20:38 2014: run.INF:=====Translate sentence 2:1 1716 20196 95123 154 1049 6778 996 9 239837 7 1799 4 2
-     Fri May  9 15:20:47 2014: run.INF:Stats for Sentence 2: local pruning, number of times=18
-     Fri May  9 15:20:55 2014: run.INF:End Sentence ******************************************************
-     Fri May  9 15:20:56 2014: run.INF:Translation 1best is: 1 3 1119 6 3 9121 1711 63 355 85 7 369 24 3 13907 17 3 628 5 2
-     Fri May  9 15:20:56 2014: main.INF:hifst.${TGTBINMK}.bin ends!
-
-In this case, local pruning has no effect on the translations produced:
-
-     > head output/exp.hiero.localprune/hyps output/exp.hiero/hyps
-     ==> output/exp.hiero.localprune/hyps <==
-     1 3 9121 384 6 2756 7 3 4144 6 159312 42 1341 2
-     1 3 1119 6 3 9121 1711 63 355 85 7 369 24 3 13907 17 3 628 5 2
-
-     ==> output/exp.hiero/hyps <==
-     1 3 9121 384 6 2756 7 3 4144 6 159312 42 1341 2
-     1 3 1119 6 3 9121 1711 63 355 85 7 369 24 3 13907 17 3 628 5 2
-
-The effect of pruning can be more dramatic on longer, more difficult
-to translate sentences.  For example, the third sentence in this set
-is difficult to translate under the full Hiero grammar without
-pruning, although it can be translated using local pruning as
-
-     > (time hifst.${TGTBINMK}.bin --config=configs/CF.hiero.localprune --range=3:3) &> log/log.hiero.localprune2
-
-Even with local pruning, the processing time for this one sentence is over 4 minutes.
-
-By comparison, translation is much faster with much more aggressive local pruning, which we introduce
-via command line options to override the settings in the configuration
-file:
-
-     > (time hifst.${TGTBINMK}.bin --config=configs/CF.hiero.localprune --range=3:3 --hifst.lattice.store=output/exp.hiero.localprunemore/LATS/?.fst.gz --target.store=output/exp.hiero.localprunemore/hyps --hifst.localprune.conditions=X,3,10,1,V,3,10,1) &> log/log.hiero.localprune3
-
-Translation finishes in less than 6 seconds, but this more aggressive local pruning
-changes the translation hypothesis:
-
-     > zcat output/exp.hiero.localprune/LATS/3.fst.gz | printstrings.${TGTBINMK}.bin -w --semiring=lexstdarc -m wmaps/wmt13.en.wmap 2>/dev/null
-     <s> however , in the heart of the take the last myth , arguing that the rare cases of fraud in elections in the united states , the deaths of a lightning strike . </s>  128.842,-0.150391
-
-     > zcat output/exp.hiero.localprunemore/LATS/3.fst.gz | printstrings.${TGTBINMK}.bin -w --semiring=lexstdarc -m wmaps/wmt13.en.wmap 2>/dev/null
-     <s> however , in the heart of the take the last myth , arguing that a rare cases of fraud in elections in the united states , the deaths of a lightning strike . </s>  130.054,-0.943359
+Inspecting the log file indicates that local pruning was applied extensively in translation:
 
 
+     > grep pruning log/log.baseline.localprune
+     Mon Apr  6 19:06:46 2015: run.INF:Stats for Sentence 1: local pruning, number of times=266
+     Mon Apr  6 19:07:01 2015: run.INF:Stats for Sentence 2: local pruning, number of times=279
+     Mon Apr  6 19:07:16 2015: run.INF:Stats for Sentence 3: local pruning, number of times=154
 
-The best hypothesis generated with less local pruning in `exp.hiero.localprune/` has a combined
-grammar and language model score of 128.842 .  This hypothesis
-does not survive more local pruning in `exp.hiero.localprunemore/` , where the best hypothesis has a higher
-combined score of 130.054 .
+Pruning is aggressive enough here that the translations are affected:
 
+     > printstrings.${TGTBINMK}.bin -w --semiring=lexstdarc -m wmaps/wmt13.en.wmap --input=output/exp.baseline/LATS/1.fst.gz
+     <s> the decline in economic activity caused , until november , the permanent rise in unemployment in the state , according to the national institute of statistics and geography , in the first three quarters was recorded accelerated growth in unemployment , from january to march 55.053 resident sinaloa were unemployed , with the share of per cent of the economically active population , in the second quarter , the share rose to percent from july to september , she continued to rise to percent share , if calculated per number of people is more than unemployed people in sinaloa , the 18.969 people more than in the first half . </s> 	471.123,2.46484
+
+     > printstrings.${TGTBINMK}.bin -w --semiring=lexstdarc -m wmaps/wmt13.en.wmap --input=output/exp.baseline.localprune/LATS/1.fst.gz
+     <s> the decline in economic activity caused , until november , the permanent rise in unemployment in the state , according to the national institute of statistics and geography , in the first three quarters was recorded accelerated growth in unemployment , from january to march 55.053 resident sinaloa were unemployed , with the share of per cent of the economically active population , in the second quarter share rose to percent from july to september , she continued to rise to percent stake , which is recalculated the number of people is more than unemployed people in sinaloa , the 18.969 people more than in the first half . </s> 	472.86,3.74023
+
+
+The best hypothesis generated under the baseline system without local pruning has a combined
+grammar and language model score of `471.123`.  This hypothesis
+does not survive more aggressive local pruning under these parameters , where the best hypothesis has a higher
+combined score of `472.86`.
 
 \section rescoring_lm Language Model Rescoring
 
@@ -654,17 +634,17 @@ of two tropical weights.  In each arc of a lattice generated by HiFST,
 the first weight `(G+M)` contains the correct score (translation grammar score + language model score).  The second weight `G` only contains the
 translation grammar score.  An example is repeated here:
 
-     > zcat output/exp.baseline/LATS/1.fst.gz | fstprint | head -n 10
-     0 1    1		                 1             -2.609375,-2.609375
-     1 36   999999999		 	 999999999	29.5185547,29.5185547
-     1 35   12198			 12198		19.6816635,7.27929688
-     1 34   12198			 12198		17.9902573,5.58789062
-     1 33   9227			 9227		16.845089,2.56347656
-     1 32   9121			 9121		9.55193996,-1.04199219
-     1 31   9121			 9121		7.86053371,-2.73339844
-     1 30   9121			 9121		9.33318996,-1.26074219
-     1 29   8559			 8559		14.9520674,4.25878906
-     1 28   4608			 4608		17.6058693,4.88671875
+    > zcat output/exp.baseline/LATS/1.fst.gz | fsttopsort | fstprint | head -n 10
+    0     1     1     1   -2.68554688,-2.68554688
+    1   319   170   170   11.4819975,4.25097656
+    1   118    50    50   6.39422989,-2.88476562
+    1   104     3     3   1.87243128,-2.70800781
+    1    91    50    50   3.70087051,-5.578125
+    1    87     3     3   -0.820928097,-5.40136719
+    1    65    50    50   7.04462051,-2.234375
+    1    62     3     3   1.72790003,-2.85253906
+    1    47    50    50   6.01825333,-3.26074219
+    1    43   170   170   5.89898968,-1.33203125
 
 The advantage of using the lexicographic semiring to represent
 `(G+M,G)` weights is that the language model score can be removed very
@@ -675,17 +655,17 @@ operation.  The result is a WFSA whose weights contain only the
 translation grammar scores.  The lexmap tool can be used to do this
 mapping, as follows, yielding lexicographic weights `(G,G)`:
 
-      > zcat output/exp.baseline.outputnoprune/LATS/1.fst.gz | lexmap.${TGTBINMK}.bin  | fstprint | head -n 10
-      0	 1 1	1						-2.609375,-2.609375
-      1	 36	999999999					999999999	29.5185547,29.5185547
-      1	 35	12198						12198		7.27929688,7.27929688
-      1	 34	12198						12198		5.58789062,5.58789062
-      1	 33	9227						9227		2.56347656,2.56347656
-      1	 32	9121						9121		-1.04199219,-1.04199219
-      1	 31	9121						9121		-2.73339844,-2.73339844
-      1	 30	9121						9121		-1.26074219,-1.26074219
-      1	 29	8559						8559		4.25878906,4.25878906
-      1	 28	4608						4608		4.88671875,4.88671875
+    > zcat output/exp.baseline/LATS/1.fst.gz | lexmap.${TGTBINMK}.bin | fsttopsort | fstprint | head -n 10
+    0     1     1     1   -2.68554688,-2.68554688
+    1   319   170   170   4.25097656,4.25097656
+    1   118    50    50   -2.88476562,-2.88476562
+    1   104     3     3   -2.70800781,-2.70800781
+    1    91    50    50   -5.578125,-5.578125
+    1    87     3     3   -5.40136719,-5.40136719
+    1    65    50    50   -2.234375,-2.234375
+    1    62     3     3   -2.85253906,-2.85253906
+    1    47    50    50   -3.26074219,-3.26074219
+    1    43   170   170   -1.33203125,-1.33203125
 
 Using this facility to remove language model scores, the HiFST
 `applylm` tool can be used to rescore lattices under a different
@@ -702,17 +682,18 @@ almost no pruning (`output/exp.baseline.outputnoprune/LATS`). Rescoring
 uses the same 4-gram language model originally used to generate the
 lattice, but with a different scale factor (`lm.scale=0.9`).
 
-     ::> applylm.${TGTBINMK}.bin --config=configs/CF.baseline.outputnoprune.lmrescore  &> log/log.lmrescore
+     > applylm.${TGTBINMK}.bin --config=configs/CF.baseline.outputnoprune.lmrescore  &> log/log.lmrescore
 
-For the first sentence, the original 1-best hypothesis was:
+For the second sentence, the original 1-best hypothesis was:
 
-    > zcat output/exp.baseline.outputnoprune/LATS/1.fst.gz | printstrings.${TGTBINMK}.bin --semiring=lexstdarc -m wmaps/wmt13.en.wmap -w 2>/dev/null
-    <s> republican strategy of resistance to the renewal of obamas election </s>	57.4707,-8.03809
+     > zcat output/exp.baseline.outputnoprune/LATS/2.fst.gz | printstrings.${TGTBINMK}.bin --semiring=lexstdarc -m wmaps/wmt13.en.wmap -w 2>/dev/null
+     <s> amendment , which would have led to the release of which is in prison , former prime minister , was rejected during the second reading of the bill to ease penalty for economic offences . </s>     101.582,-37.5605
 
 Rescoring yields a slightly different 1-best:
 
-    > zcat output/exp.baseline.lmrescore/LATS/1.fst.gz | printstrings.${TGTBINMK}.bin --semiring=lexstdarc -m wmaps/wmt13.en.wmap -w 2>/dev/null
-    <s> the republican strategy of resistance to the renewal of obamas election </s>	50.9163,-8.66992
+     > zcat output/exp.baseline.lmrescore/LATS/2.fst.gz | printstrings.${TGTBINMK}.bin --semiring=lexstdarc -m wmaps/wmt13.en.wmap -w 2>/dev/null
+     <s> amendment , which would have led to the release of which is in jail of former prime minister , was rejected during the second reading of the bill to ease penalty for economic offences . </s>  87.5249,-39.5508
+
 
 Note the `load.deletelmcost` option in the configuration file, which
 instructs the tool to subtract old lm scores first.
@@ -738,12 +719,12 @@ the baseline configuration is run over the first twenty sentences without multit
 
      > time hifst.${TGTBINMK}.bin --config=configs/CF.baseline --range=1:20
 
-Processing time is 140 seconds and maximum memory use is about 0.3GB.  
+Processing time is 105 seconds and maximum memory use is about 2GB.  
 In the same decoder configuration but with 2 threads
 
      > time hifst.${TGTBINMK}.bin --config=configs/CF.baseline --range=1:20 --nthreads=2
 
-processing time is reduced to 90 seconds with maximum memory use of about 0.5GB.
+processing time is reduced to 60 seconds with maximum memory use of about 2.5GB.
 
 In these examples, both the LM and translation grammar are relatively
 small, and so there is not a great deal of gain from keeping them in
@@ -777,14 +758,14 @@ operation.
 
 The following example applies LMBR decoding to the baseline lattices
 
-    ::> lmbr.${TGTBINMK}.bin --config=configs/CF.baseline.lmbr &> log/log.baseline.lmbr
+    > lmbr.${TGTBINMK}.bin --config=configs/CF.baseline.lmbr &> log/log.baseline.lmbr
 
 The LMBR output hyppthesis file keeps the scale factor, word penalty, and sentence id at the start of the file;
 the hypothesis follows the colon
 
-    ::> cat output/exp.baseline.lmbr/HYPS/0.40_0.02.hyp
-    0.4 0.02 1:1 3 9121 384 6 2756 7 3 4144 6 159312 42 1341 2
-    0.4 0.02 2:1 3 1119 6 3 9121 1711 54 79 6 3 85 7 525 3 13907 17 3 628 5 2
+    > cat output/exp.baseline.lmbr/HYPS/0.40_0.02.hyp
+    0.4 0.02 1:1 50 135 20 103 3 245 4 25 1145 48 3 425 6 23899 2 
+    0.4 0.02 2:1 245 4 25 35 23 1028 7 3 2295 6 25 12 9 2666 6 972 1052 564 4 51 1284 317 3 312 734 6 3 3423 7 4922 2057 14 119 3570 5 2 
 
 LMBR can be optimised by tuning the grammar scale factor and word insertion penalty.
 Once lattices are loaded into memory and n-grams are extracted (steps 1 - 5), rescoring is fast enough that
@@ -828,7 +809,7 @@ RU/RU.tune.idx.
 
 The process takes the following as its input:
 - `RU/RU.tune.idx` -- tuning set source language sentences
-- `G/rules.shallow.vecfea.all.gz` -- translation grammar, with unweighted feature vectors
+- `G/rules.shallow.vecfea.gz` -- translation grammar, with unweighted feature vectors
 - `M/interp.4g.arpa.newstest2012.tune.corenlp.ru.idx.union.mmap` -- target language model
 - Initial feature weights for the language model and translation grammar (see `configs/CF.mert.hyps` and \ref weight_feature_vector_examples)
   - P=1.0,0.697263,0.396540,2.270819,-0.145200,0.038503,29.518480,-3.411896,-3.732196,0.217455,0.041551,0.060136
@@ -855,7 +836,7 @@ As a sanity check,  computing the inner product between the vector `$P` and the 
 
 which agrees with the score assigned to the top hypotheses by the decoder:
 
-    > printstrings.${TGTBINMK}.bin --input=output/exp.mert/LATS/1.fst.gz --weight --semiring=lexstdarc --label-map=wmaps/wmt13.en.all.wmap
+    > printstrings.${TGTBINMK}.bin --input=output/exp.mert/LATS/1.fst.gz --weight --semiring=lexstdarc --label-map=wmaps/wmt13.en.wmap
     ...
     <s> parliament does not support the amendment , which gives you the freedom of tymoshenko </s> 43.093,-19.4512
     ...
@@ -868,7 +849,7 @@ The three steps to generating the n-best hypotheses and unweighted feature vecto
 
 - Input:
   - `RU/RU.tune.idx` -- tuning set source language sentences
-  - `G/rules.shallow.vecfea.all.gz` -- translation grammar
+  - `G/rules.shallow.vecfea.gz` -- translation grammar
   - `M/interp.4g.arpa.newstest2012.tune.corenlp.ru.idx.union.mmap` -- target language model
   - language model and translation grammar feature weights (see `configs/CF.mert.hyps`)
 - Output:
@@ -883,7 +864,7 @@ In this configuration, the grammar feature weights and the language
 model feature weights are applied on-the-fly to the grammar and
 language model as they are loaded.  This allows feature vector weights
 to be changed at each iteration of MERT.  This behaviour is specified
-through the following options in the CF.mert.hyps file, where we use
+through the following options in the `CF.mert.hyps` file, where we use
 the parameters from the baseline system:
 
     [lm]
@@ -894,14 +875,14 @@ the parameters from the baseline system:
     # after each iteration of MERT
 
     [grammar]
-    load=G/rules.shallow.vecfea.all.gz
+    load=G/rules.shallow.vecfea.gz
     featureweights=0.697263,0.396540,2.270819,-0.145200,0.038503,29.518480,-3.411896,-3.732196,0.217455,0.041551,0.060136
     # Note that this parameter vector should be updated after each iteration of MERT
     # Updated versions can be provided via command line arguments
 
 The translation grammar has its rules with unweighted feature vectors:
 
-    > zcat G/rules.shallow.vecfea.all.gz | head -n 3
+    > zcat G/rules.shallow.vecfea.gz | head -n 3
     V 3 4 0.223527 0.116794 -1 -1 0 0 0 0 -1 1.268789 0.687159
     V 3 4_3 3.333756 0.338107 -2 -1 0 0 0 0 -1 1.662178 3.363062
     V 3 8 3.74095 3.279819 -1 -1 0 0 0 0 -1 3.741382 2.271445
@@ -914,7 +895,7 @@ semiring as described earlier.
     fst type                                          vector
     arc type                                          tropical_LT_tropical
 
-    > zcat output/exp.mert/LATS/1.fst.gz | printstrings.${TGTBINMK}.bin --semiring=lexstdarc -m wmaps/wmt13.en.all.wmap.gz -w 2>/dev/null
+    > zcat output/exp.mert/LATS/1.fst.gz | printstrings.${TGTBINMK}.bin --semiring=lexstdarc -m wmaps/wmt13.en.wmap -w 2>/dev/null
     <s> parliament does not support the amendment , which gives you the freedom of tymoshenko </s>	43.093,-19.4512
 
 
@@ -922,7 +903,7 @@ semiring as described earlier.
 
 - Input:
    - `RU/RU.tune.idx` -- tuning set source language sentences
-   - `G/rules.shallow.all.gz` -- translation grammar
+   - `G/rules.shallow.gz` -- translation grammar
    - `M/interp.4g.arpa.newstest2012.tune.corenlp.ru.idx.union.mmap` -- target language model
    - `output/exp.mert/LATS/?.fst.gz` -- word lattices (WFSAs), determinized and minimized (from \ref mert_hyps)
 - Output:
@@ -970,8 +951,8 @@ lexicographic semiring form.
 
 Individual rules are identified by their line number in the translation grammar file.  A rule map can be created as
 
-    > zcat G/rules.shallow.all.gz | awk 'BEGIN{print "0\t0"}{printf "%s-><%s,%s>\t%d\n", $1, $2, $3, NR}'  > tmp/rules.shallow.all.map
-    > head -5 tmp/rules.shallow.all.map
+    > zcat G/rules.shallow.gz | awk 'BEGIN{print "0\t0"}{printf "%s-><%s,%s>\t%d\n", $1, $2, $3, NR}'  > tmp/rules.shallow.map
+    > head -5 tmp/rules.shallow.map
     0       0
     V-><3,4>        1
     V-><3,4_3>      2
@@ -988,7 +969,7 @@ hypothesis:
     > zcat output/exp.mert/LATS/1.fst.gz | fstshortestpath | fstmap --map_type=rmweight > tmp/1.fst 
 
     # print the two best derivations for the top-scoring hypothesis
-    > zcat output/exp.mert/nbest/ALILATS/1.fst.gz | fstcompose - tmp/1.fst | fstproject | printstrings.${TGTBINMK}.bin --nbest=2 --semiring=lexstdarc -m tmp/rules.shallow.all.map
+    > zcat output/exp.mert/nbest/ALILATS/1.fst.gz | fstcompose - tmp/1.fst | fstproject | printstrings.${TGTBINMK}.bin --nbest=2 --semiring=lexstdarc -m tmp/rules.shallow.map
     S-><1,1> V-><3526,50> X-><V,V> S-><S_X,S_X> V-><28847,245> X-><10_1278_V,135_20_103_3_V> S-><S_X,S_X> V-><3_64570,4_25_1145_48> X-><V,V> S-><S_X,S_X> V-><1857,3_425_6> X-><V_7786,V_23899> S-><S_X,S_X> X-><2,</s>> S-><S_X,S_X>
     S-><1,1> V-><3526,50> X-><V,V> S-><S_X,S_X> V-><28847,245> X-><10_1278_V,135_20_103_3_V> S-><S_X,S_X> V-><3_64570,4_25_1145_48> X-><V,V> S-><S_X,S_X> V-><1857,3_425_6> X-><V,V> S-><S_X,S_X> V-><7786,23899> X-><V,V> S-><S_X,S_X> X-><2,</s>> S-><S_X,S_X>
 
@@ -1002,7 +983,7 @@ bottom-up ordering after Replacement.
 \subsection mert_alilats Step 3. Hypotheses with Unweighted Feature Vectors
 
 - Input:
-   - `G/rules.shallow.vecfea.all.gz` -- translation grammar, rules with (unweighted) feature vectors
+   - `G/rules.shallow.vecfea.gz` -- translation grammar, rules with (unweighted) feature vectors
    - `output/exp.mert/nbest/ALILATS/?.fst.gz` -- transducers mapping derivations to translations, for n-best entries (from \ref mert_nblist_derivations)
    - language model and translation grammar feature weights (see `configs/CF.mert.vecfea.nbest`)
 - Output:
@@ -1048,7 +1029,7 @@ and `storefeaturefile`:
     loadalilats=output/exp.mert/nbest/ALILATS/?.fst.gz
     storenbestfile=output/exp.mert/nbest/VECFEA/?.nbest
     storefeaturefile=output/exp.mert/nbest/VECFEA/?.vecfea
-    wordmap=wmaps/wmt13.en.all.wmap
+    wordmap=wmaps/wmt13.en.wmap
 
 With the wordmap specified, the output of alilats2splats is in readable form in the
 target language. Note that the sentence boundary symbols and the combined
@@ -1072,13 +1053,13 @@ Each line k in the feature file has the format
 
 which are the unweighted feature values for the k-th hypothesis, e.g.
 
-     > head -n 2 output/exp.mert/nbest/VECFEA/1.vecfea
+     > zcat -f output/exp.mert/nbest/VECFEA/1.vecfea.gz | head -n 2
      62.5442 10.8672 8.3936 -16.0000 -8.0000 -5.0000 0.0000  -1.0000 0.0000  -7.0000 16.3076 40.5293
      63.1159 12.8613 8.7959 -17.0000 -8.0000 -5.0000 0.0000  -1.0000 0.0000  -7.0000 17.0010 43.9482
 
 and the translation_score in line k is F(e_k) . P
 
-    > head -n 2 output/exp.mert/nbest/VECFEA/1.nbest
+    > zcat -f output/exp.mert/nbest/VECFEA/1.nbest.gz | head -n 2
     <s> parliament does not support the amendment , which gives you the freedom of tymoshenko </s>	43.0904
     <s> the parliament does not support the amendment , which gives you the freedom of tymoshenko </s>	43.1757
 
@@ -1094,36 +1075,42 @@ This HiFST release includes an implementation of LMERT [\ref Waite2012].  The
 script `HiFST_lmert` runs several iterations of lattice generation and
 parameter estimation using the `lmert` tool.
 
-Prior to running the script, make sure to download and uncompress the
-LM `interp.4g.arpa.newstest2012.tune.corenlp.ru.idx.withoptions.mmap`
-into the `M/` directory (see \ref tutorial_install).
-
     > scripts/HiFST_lmert
 
-This script runs 4 iterations of LMERT, with each iteration consisting of the four steps that follow in the sections below.
+This script runs 3 iterations of LMERT, with each iteration consisting of the four steps that follow in the sections below.
 In our experience, on a X86_64 Linux computer with 4 2.8GHz CPUs and 24GB RAM, each iteration takes ca. 3 hours.  
 Output from each iteration is written to files `log/log.lmert.[1,2,3,4]`.  For example,
 
-    > tail -n 8 log/log.lmert.[12] 
-    ==> log/log.lmert.1 <==
-    Fri Jan  2 01:14:01 2015: RandomLineSearch.INF:Bleu gain less than threshold. Exiting.
-    Fri Jan  2 01:14:01 2015: RandomLineSearch.INF:Initial Bleu: 0.308047 (0.990986)
-    Fri Jan  2 01:14:01 2015: RandomLineSearch.INF:Final Bleu:   0.32652 (0.999441)
-    Fri Jan  2 01:14:01 2015: RandomLineSearch.INF:Final Lambda: 1 1.05193 0.765889 3.27362 -0.494135 0.640882 32.8406 -6.76974 -5.34774 -0.593705 0.199506 0.306218 
-    Fri Jan  2 01:14:01 2015: main.INF:lmert.${TGTBINMK}.bin finished!
-    ==Params
-    Fri Jan  2 01:14:04 GMT 2015
-    1,1.05193,0.765889,3.27362,-0.494135,0.640882,32.8406,-6.76974,-5.34774,-0.593705,0.199506,0.306218
+           > tail -n 8 log/log.lmert.?
+	   ==> log/log.lmert.1 <==
+	   Fri Apr  3 21:04:07 2015: RandomLineSearch.INF:Bleu gain less than threshold. Exiting.
+	   Fri Apr  3 21:04:07 2015: RandomLineSearch.INF:Initial Bleu: 0.308047 (0.990986)
+	   Fri Apr  3 21:04:07 2015: RandomLineSearch.INF:Final Bleu:   0.326275 (0.996078)
+	   Fri Apr  3 21:04:07 2015: RandomLineSearch.INF:Final Lambda: 1 0.804341 0.857127 2.94424 -1.08039 1.31302 41.8783 -6.55013 -5.76312 -0.843428 0.294197 0.300588 
+	   Fri Apr  3 21:04:07 2015: main.INF:lmert.O2.bin finished!
+	   ==Params
+	   Fri Apr  3 21:04:10 BST 2015
+	   1,0.804341,0.857127,2.94424,-1.08039,1.31302,41.8783,-6.55013,-5.76312,-0.843428,0.294197,0.300588
 
-    ==> log/log.lmert.2 <==
-    Fri Jan  2 04:23:44 2015: RandomLineSearch.INF:Bleu gain less than threshold. Exiting.
-    Fri Jan  2 04:23:44 2015: RandomLineSearch.INF:Initial Bleu: 0.32488 (0.999654)
-    Fri Jan  2 04:23:44 2015: RandomLineSearch.INF:Final Bleu:   0.326884 (0.99557)
-    Fri Jan  2 04:23:44 2015: RandomLineSearch.INF:Final Lambda: 1 1.07943 0.756751 3.28067 -0.975041 0.651193 29.1538 -6.67344 -5.32952 -0.582743 0.203554 0.300284 
-    Fri Jan  2 04:23:44 2015: main.INF:lmert.${TGTBINMK}.bin finished!
-    ==Params
-    Fri Jan  2 04:23:46 GMT 2015
-    1,1.07943,0.756751,3.28067,-0.975041,0.651193,29.1538,-6.67344,-5.32952,-0.582743,0.203554,0.300284
+	   ==> log/log.lmert.2 <==
+	   Sat Apr  4 00:12:01 2015: RandomLineSearch.INF:Bleu gain less than threshold. Exiting.
+	   Sat Apr  4 00:12:01 2015: RandomLineSearch.INF:Initial Bleu: 0.323506 (0.998028)
+	   Sat Apr  4 00:12:01 2015: RandomLineSearch.INF:Final Bleu:   0.326441 (0.999893)
+	   Sat Apr  4 00:12:01 2015: RandomLineSearch.INF:Final Lambda: 1 1.05897 0.893133 2.81302 -0.752161 1.2221 35.8963 -6.62349 -4.37219 -0.583849 0.242874 0.194865 
+	   Sat Apr  4 00:12:01 2015: main.INF:lmert.O2.bin finished!
+	   ==Params
+	   Sat Apr  4 00:12:04 BST 2015
+	   1,1.05897,0.893133,2.81302,-0.752161,1.2221,35.8963,-6.62349,-4.37219,-0.583849,0.242874,0.194865
+
+	   ==> log/log.lmert.3 <==
+	   Sat Apr  4 04:55:40 2015: RandomLineSearch.INF:Bleu gain less than threshold. Exiting.
+	   Sat Apr  4 04:55:40 2015: RandomLineSearch.INF:Initial Bleu: 0.326105 (0.999734)
+	   Sat Apr  4 04:55:40 2015: RandomLineSearch.INF:Final Bleu:   0.327024 (0.999893)
+	   Sat Apr  4 04:55:40 2015: RandomLineSearch.INF:Final Lambda: 1 1.05159 0.88871 2.80248 -0.750582 1.22436 30.0357 -5.14523 -2.57261 -0.585201 0.249596 0.196453 
+	   Sat Apr  4 04:55:40 2015: main.INF:lmert.O2.bin finished!
+	   ==Params
+	   Sat Apr  4 04:55:43 BST 2015
+	   1,1.05159,0.88871,2.80248,-0.750582,1.22436,30.0357,-5.14523,-2.57261,-0.585201,0.249596,0.196453
 
 
 
@@ -1158,7 +1145,7 @@ The following command is run at iteration `$it` ,  and will generate lattices fo
   - `$it` -- lmert iteration (1, 2, ...)
   - `$M` -- number of sentences to process
   - `RU/RU.tune.idx` -- tuning set source language sentences
-  - `G/rules.shallow.vecfea.all.gz` -- translation grammar
+  - `G/rules.shallow.vecfea.gz` -- translation grammar
   - `M/interp.4g.arpa.newstest2012.tune.corenlp.ru.idx.union.mmap` -- target language model
   - language model and translation grammar feature weights, provided via command line option
 - Output
@@ -1245,9 +1232,11 @@ The HiFST `alilats2splats` command is
 - Output:
   - `output/exp.lmert/params.$it` -- reestimated feature vector under LMERT with BLEU
 
-`latmert` runs as follows
+`lmert` runs as follows
 
-    > latmert.${TGTBINMK}.bin --search=random --random_axes --random_directions=28 --direction=axes --threads=24 --cache_lattices --error_function=bleu --algorithm=lmert --idxlimits=1:$M --print_precision=6 --lats=output/exp.lmert/$it/VECFEA/%idx%.fst.gz --lambda=$FW --write_parameters=output/exp.lmert/params.$it  EN/EN.tune.idx
+    > lmert.${TGTBINMK}.bin --config=configs/CF.lmert.lmert --range=1:$M \
+    --input=output/exp.lmert/$it/VECFEA/?.fst.gz  --initial_params=$FW \
+    --write_params=output/exp.lmert/params.$it 
 
 
 \subsection lmert_references References and De/Tokenization
@@ -1260,23 +1249,27 @@ The example earlier in this section uses integer-mapped reference translations:
     > head -2 EN/EN.tune.idx 
     50 135 20 103 245 9445 23899
     3 245 10 35 578 7 9445 3 5073 972 1052 564 51 13011 317 312 734 6 3 122 14 16306 6 4448 14 119 3570 5
-    > lmert.${TGTBINMK}.bin --int_refs=EN/EN.tune.idx --range=1:$M \
-    --input=output/exp.lmert/$it/VECFEA/?.fst.gz --initial_params=$FW \
-    --write_params=output/exp.lmert/params.$it  
+    > lmert.${TGTBINMK}.bin --int_refs=EN/EN.tune.idx --range=1:10 \
+    --input=output/exp.lmert/1/VECFEA/?.fst.gz --initial_params=$FW --random_seed=17 \
+    --write_params=tmp/params.1
     ...
-    Fri Jan  2 16:03:36 2015: RandomLineSearch.INF:Initial Bleu: 0.308047 (0.990986)
+    Sat Apr  4 11:35:48 2015: RandomLineSearch.INF:Initial Bleu: 0.244382 (1)
+    Sat Apr  4 11:35:48 2015: RandomLineSearch.INF:Final Bleu:   0.379273 (1)
+    Sat Apr  4 11:35:48 2015: RandomLineSearch.INF:Final Lambda: 1 1.23568 0.883693 3.50594 -0.200368 -1.51527 41.5974 -4.49443 -5.2153 4.82334 -0.343277 0.45311 
     ...    
 
-An alternative is to use plain-text reference files with the word map:
+An alternative is to use plain-text reference files with the word map; with the same random seed, the results should agree with using integer mapped references:
 
     > head -2 EN/EN.tune     
     parliament does not support amendment freeing tymoshenko
     the amendment that would lead to freeing the imprisoned former prime minister was revoked during second reading of the proposal for mitigation of sentences for economic offences .
-    > lmert.${TGTBINMK}.bin --word_refs=EN/EN.tune --word_map=wmaps/wmt13.en.all.wmap --range=1:$M \
-    --input=output/exp.lmert/$it/VECFEA/?.fst.gz --initial_params=$FW \
-    --write_params=output/exp.lmert/params.$it  
+    > lmert.${TGTBINMK}.bin --word_refs=EN/EN.tune --word_map=wmaps/wmt13.en.wmap --range=1:10 \
+    --input=output/exp.lmert/1/VECFEA/?.fst.gz --initial_params=$FW --random_seed=17 \
+    --write_params=tmp/params.1
     ...
-    Fri Jan  2 16:35:25 2015: RandomLineSearch.INF:Initial Bleu: 0.308047 (0.990986)
+    Sat Apr  4 11:39:25 2015: RandomLineSearch.INF:Initial Bleu: 0.244382 (1)
+    Sat Apr  4 11:39:25 2015: RandomLineSearch.INF:Final Bleu:   0.379273 (1)
+    Sat Apr  4 11:39:25 2015: RandomLineSearch.INF:Final Lambda: 1 1.23568 0.883693 3.50594 -0.200368 -1.51527 41.5974 -4.49443 -5.2153 4.82334 -0.343277 0.45311 
     ...
 
 It is also possible to including de/tokenization of hypotheses prior
@@ -1292,33 +1285,33 @@ As an alternative,  a set of references can be created which attach apostrophes 
     > sed -f tmp/sed.apos EN/EN.tune > tmp/EN.tune.apos
     > awk 'NR==3' tmp/EN.tune.apos
     the verdict is not yet final ; the court will hear tymoshenko's appeal in december .
-    > lmert.${TGTBINMK}.bin --word_refs=EN/EN.tune --word_map=wmaps/wmt13.en.all.wmap --range=1:$M \
-    --input=output/exp.lmert/$it/VECFEA/?.fst.gz --initial_params=$FW \
-    --write_params=output/exp.lmert/params.$it --external_tokenizer="tee tmp/before | sed -u -f tmp/sed.apos | tee tmp/after"
+    > lmert.${TGTBINMK}.bin --word_refs=EN/EN.tune --word_map=wmaps/wmt13.en.wmap --range=1:10 \
+    --input=output/exp.lmert/1/VECFEA/?.fst.gz --initial_params=$FW --random_seed=17 \
+    --write_params=tmp/params.1 --external_tokenizer="tee tmp/before | sed -u -f tmp/sed.apos | tee tmp/after"
     ...
-    Fri Jan  2 18:07:21 2015: RandomLineSearch.INF:Initial Bleu: 0.307182 (0.987676)
+    Sat Apr  4 11:41:38 2015: RandomLineSearch.INF:Initial Bleu: 0.24523 (1)
+    Sat Apr  4 11:41:38 2015: RandomLineSearch.INF:Final Bleu:   0.380598 (1)
+    Sat Apr  4 11:41:38 2015: RandomLineSearch.INF:Final Lambda: 1 1.23568 0.883693 3.50594 -0.200368 -1.51527 41.5974 -4.49443 -5.2153 4.82334 -0.343277 0.45311 
     ...
 
-The BLEU score changes, due to changes in both the hypotheses and references.   
 The `tee` command makes it possible to compare hypotheses before and after processing:
 
-    > awk 'NR==9' tmp/before
-    instead of the dictator 's society is composed of rival clans , will be merged the koran .
-    air099: /home/blue7/wjb31/src/hifst.21Dec14/demo-files >
-    > awk 'NR==9' tmp/after
-    instead of the dictator's society is composed of rival clans , will be merged the koran .
+     > diff tmp/before tmp/after | head -4
+     9c9
+     < instead of the dictator 's society is composed of rival clans , will be merged the koran .
+     ---
+     > instead of the dictator's society is composed of rival clans , will be merged the koran .
 
 Lmert optimises the BLEU score over the latter sets of hypotheses.
-**Note** that it should also be possible to use the
+**Note** that it is possible to use the
 `external_tokenizer` with integer references, but the external
 tokenizer will have to be able to read integer sequences at its input
 and write integer sequences at its output, i.e. it will have to apply
 a word map internally.
 
-
 \section lmert_veclats_tst Tropical Sparse Tuple Semiring
 
-The lattices generated by `alilats2splats` in `output/exp.lmert/$it/lats/VECFEA` are `tropicalsparsetuple` vector weight lattices.
+The lattices generated by `alilats2splats` in `output/exp.lmert/1/lats/VECFEA` are `tropicalsparsetuple` vector weight lattices.
 
     > zcat output/exp.lmert/1/VECFEA/1.fst.gz | fstinfo | head -n 2
     fst type                                          vector
@@ -1331,7 +1324,7 @@ vectors do not agree with the initial translation hypotheses, e.g. the
 shortest-path does not agree with the best translation:
 
     > unset TUPLEARC_WEIGHT_VECTOR
-    > zcat output/exp.lmert/1/VECFEA/1.fst.gz | fstshortestpath | fsttopsort | fstpush --to_final --push_weights | fstprint -isymbols=wmaps/wmt13.en.all.wmap
+    > zcat output/exp.lmert/1/VECFEA/1.fst.gz | fstshortestpath | fsttopsort | fstpush --to_final --push_weights | fstprint -isymbols=wmaps/wmt13.en.wmap
     Warning: cannot find parameter vector. Defaulting to flat parameters
     Warning: cannot find parameter vector. Defaulting to flat parameters
     0       1       <s>     1
@@ -1344,7 +1337,7 @@ shortest-path does not agree with the best translation:
     7       8       freedom 425
     8       9       tymoshenko      23899
     9       10      </s>    2
-    10      0,10,1,35.6919899,2,6.59277344,3,14.2285156,4,-10,5,-10,6,-6,8,-1,10,-9,11,8.2109375,12,13.7412109,
+    10      0,10,1,63.460289,2,7.08984375,3,10.9941406,4,-13,5,-9,6,-6,9,-1,10,-8,11,13.1025391,12,29.7294922,
 
 The sparse vector weight format is
 
@@ -1366,7 +1359,7 @@ which in this particular example is
 The shortest path found through the vector lattice is then
 the same hypothesis produced under the initial parameter settings:
 
-    > zcat output/exp.lmert/1/VECFEA/1.fst.gz | fstshortestpath | fsttopsort | fstpush --to_final --push_weights | fstprint -isymbols=wmaps/wmt13.en.all.wmap
+    > zcat output/exp.lmert/1/VECFEA/1.fst.gz | fstshortestpath | fsttopsort | fstpush --to_final --push_weights | fstprint -isymbols=wmaps/wmt13.en.wmap
     0       1       <s>     1
     1       2       parliament      50
     2       3       supports        1463
@@ -1375,13 +1368,13 @@ the same hypothesis produced under the initial parameter settings:
     5       6       freedom 425
     6       7       tymoshenko      23899
     7       8       </s>    2
-    8       0,10,1,20.7773838,2,7.80957031,3,17.8671875,4,-8,5,-8,6,-5,9,-1,10,-7,11,20.0175781,12,18.2978516,
+    8       0,10,1,62.1510468,2,10.8671875,3,8.39355469,4,-16,5,-8,6,-5,8,-1,10,-7,11,16.3076172,12,40.5292969,
 
 
-Note that printstrings can be used to extract n-best lists from the vector lattices,
+Note that `printstrings` can be used to extract n-best lists from the vector lattices,
 if the TUPLEARC_WEIGHT_VECTOR is correctly set:
 
-    > zcat output/exp.lmert/1/VECFEA/1.fst.gz | printstrings.${TGTBINMK}.bin --semiring=tuplearc --nbest=10 --unique -w -m wmaps/wmt13.en.all.wmap --tuplearc.weights=$TUPLEARC_WEIGHT_VECTOR 2>/dev/null
+    > zcat output/exp.lmert/1/VECFEA/1.fst.gz | printstrings.${TGTBINMK}.bin --semiring=tuplearc --nbest=10 --unique -w -m wmaps/wmt13.en.wmap --tuplearc.weights=$TUPLEARC_WEIGHT_VECTOR 2>/dev/null
     <s> parliament supports amendment giving freedom tymoshenko </s>        20.7778,7.80957,17.8672,-8,-8,-5,0,0,-1,-7,20.0176,18.2979
     <s> parliament supports amendment gives freedom tymoshenko </s>         20.7773,8.48828,20.9248,-8,-8,-4,0,-1,0,-7,14.1162,14.1016
     <s> parliament supports amendment giving freedom timoshenko </s>        20.7778,9.70703,17.7393,-8,-8,-5,0,0,-1,-7,22.166,18.2529
@@ -1429,68 +1422,66 @@ We describe two approaches to source sentence chopping:
 
 To make the tutorial easy to follow, we will simply chop the Russian source sentences at every comma (`,`) which has index symbol `3`:
 
-    > grep -w , wmaps/wmt13.ru.wmap 
+    > awk 'NR==4' wmaps/wmt13.ru.wmap 
     ,       3
-
 
 \subsection chopping_sseg Chopping by Explicit Source Sentence Segmentation
 
 The original Russian sentence is
-chopped into four shorter sentences which are to be translated
+chopped into shorter sentences which are to be translated
 independently, as follows:
 
-     # the third sentence is 30 words long
-     > awk 'NR==3' RU/RU.set1.idx
-     1 109 5 458 756435 1225 1358 60145 3 12725 3 11 3678 66369 7 1799 5 1317 2946 45 32023 3 75 3678 1102 24 10272 28960 4 2
+     # sentence 328 is 31 words long
+     > awk 'NR==328' RU/RU.tune.idx
+     1 17914 3004 169868 123860 45 1246 53414 16617 15 6 215 26993 7704 5 142 680 13640 2481 1195794 16 7390 24705 14 3 1676 24844 33 3 24 1759 16617 5 18091 42 4340 140478 31410 5 13214 144114 6 8 12859 30201 2623 8 5 913863 4 2
 
-     # split the third sentence into 4 separate sentences; 
-     # split at the 3 symbol, and introduce sentence start and end symbols
-     > awk 'NR==3' RU/RU.set1.idx | sed 's, 3 , 3 2\n1 ,g'  > tmp/RU.sent3.chopped
-     > cat tmp/RU.sent3.chopped
-     1 109 5 458 756435 1225 1358 60145 3 2
-     1 12725 3 2
-     1 11 3678 66369 7 1799 5 1317 2946 45 32023 3 2
-     1 75 3678 1102 24 10272 28960 4 2
+     # chop sentence 328 into separate segments; 
+     # split at the 3 symbol, and introduce sentence start and end symbols, 
+     # so that language model and translation grammar are applied correctly
+     > awk 'NR==328' RU/RU.tune.idx | sed 's, 3 , 3 2\n1 ,g'  > tmp/RU.328.segs
+     > cat tmp/RU.328.segs
+     1 17914 3004 169868 123860 45 1246 53414 16617 15 6 215 26993 7704 5 142 680 13640 2481 1195794 16 7390 24705 14 3 2
+     1 1676 24844 33 3 2
+     1 24 1759 16617 5 18091 42 4340 140478 31410 5 13214 144114 6 8 12859 30201 2623 8 5 913863 4 2
+ 
+     # run HiFST over all segments
+     # lattices for each segment are written to tmp/seg.328.?.fst
+     > hifst.${TGTBINMK}.bin --source.load=tmp/RU.328.segs --target.store=tmp/hyps.328.segs --hifst.lattice.store=tmp/seg.328.?.fst --hifst.prune=9 --hifst.replacefstbyarc.nonterminals=X,V --lm.load=M/interp.4g.arpa.newstest2012.tune.corenlp.ru.idx.withoptions.mmap --grammar.load=G/rules.shallow.gz
 
-     # run HiFST over all 4 segments
-     # lattices for each segment are written to output/exp.chopping.explicit/LATS/seg.?.fst
-     > hifst.${TGTBINMK}.bin --source.load=tmp/RU.sent3.chopped --target.store=output/exp.chopping.explicit/hyps.seg \
-     --hifst.lattice.store=output/exp.chopping.explicit/LATS/seg.?.fst --hifst.prune=9 \
-     --hifst.replacefstbyarc.nonterminals=X,V --lm.load=M/lm.4g.mmap --grammar.load=G/rules.shallow.gz
-
-     # concatenate output lattices
-     > fstconcat output/exp.chopping.explicit/LATS/seg.1.fst output/exp.chopping.explicit/LATS/seg.2.fst |\
-     fstconcat - output/exp.chopping.explicit/LATS/seg.3.fst |\
-     fstconcat - output/exp.chopping.explicit/LATS/seg.4.fst > output/exp.chopping.explicit/LATS/sent.fst
+     # concatenate lattices for each segment
+     > fstconcat tmp/seg.328.1.fst tmp/seg.328.2.fst | fstconcat - tmp/seg.328.3.fst > tmp/seg.328.123.fst
 
      # print output strings
-     > printstrings.${TGTBINMK}.bin --semiring=lexstdarc -m wmaps/wmt13.en.wmap -u -n 3 --input=output/exp.chopping.explicit/LATS/sent.fst -w
+     > printstrings.${TGTBINMK}.bin --semiring=lexstdarc -m wmaps/wmt13.en.wmap -u -n 3 --input=tmp/seg.328.123.fst -w
      ...
-     <s> however , in the heart of the take the last myth , </s> <s> claiming </s> <s> the cases of fraud in elections in the united states , a rare </s> <s> the deaths of a lightning strike . </s>        149.066,-3.28125
-     <s> however , in the heart of the take the last myth , </s> <s> by saying , </s> <s> the cases of fraud in elections in the united states , a rare </s> <s> the deaths of a lightning strike . </s>     149.2,-5.52539
-     <s> however , in the heart of the take the last myth , </s> <s> saying , </s> <s> the cases of fraud in elections in the united states , a rare </s> <s> the deaths of a lightning strike . </s>        149.201,-4.0957
+     <s> architectural historian mÃ¤der toured more than 200 swimming pools , and now gathered experience in his recently published book badefreuden ( joy of swimming ) , </s> <s> where included , </s> <s> from a public pool in munich and the historic bathing palaces in the black forest and functional concrete buildings " . </s>     313.88,1.68848
+     <s> architectural historian mÃ¤der toured more than 200 swimming pools , and now gathered experience in his recent book badefreuden ( joy of swimming ) , </s> <s> where included , </s> <s> from a public pool in munich and the historic bathing palaces in the black forest and functional concrete buildings " . </s>     314.045,5.41211
+     <s> architectural historian mÃ¤der toured more than 200 swimming pools , and now gathered experience in his recently published book badefreuden ( joy of swimming ) , </s> <s> where entered the </s> <s> from a public pool in munich and the historic bathing palaces in the black forest and functional concrete buildings " . </s>    314.115,-0.470703
      ...
 
 Simply concatenating the output lattices in this way leads to the substrings `</s> <s>` 
-in every hypothesis.  A transducer `strip_1_2.fst` can be built to remove these from the output lattice:
+in every hypothesis in the concatenated lattice.  A transducer can be built to remove these from the output lattice.  The transducer must
+   * keep the initial `1` (`<s>`)
+   * keep the final `2` (`</s>`) 
+   * delete every `1 2` (`</s> <s>`) sequence 
+   * map every word to itself
 
-     > mkdir -p tmp
-     > echo -e "0\t1\t1\t1" > tmp/strip_1_2.txt
-     > echo -e "1\t2\t2\t0" >> tmp/strip_1_2.txt
-     > echo -e "2\t1\t1\t0" >> tmp/strip_1_2.txt
-     > echo -e "2\t2\t0\t0" >> tmp/strip_1_2.txt
-     > echo -e "1\t3\t2\t2" >> tmp/strip_1_2.txt
+The following 3-state transducer will do this
+
+     > echo -e "0\t1\t1\t1" > tmp/strip_1_2.txt              # keep initial `1`
+     > echo -e "1\t2\t2\t0\n2\t1\t1\t0" >> tmp/strip_1_2.txt # map `1 2` to `0 0`
+     > echo -e "1\t3\t2\t2" >> tmp/strip_1_2.txt             # keep final `2`
      > echo -e "3" >> tmp/strip_1_2.txt
      > awk '$2 != 1 && $2 != 2 {printf "1\t1\t%d\t%d\n", $2,$2}' wmaps/wmt13.en.wmap >> tmp/strip_1_2.txt
+     > echo -e "1\t1\t999999998\t999999998" >>  tmp/strip_1_2.txt  # OOV symbol
      > fstcompile  --arc_type=tropical_LT_tropical tmp/strip_1_2.txt | fstarcsort > tmp/strip_1_2.fst
 
-     # apply the strip_1_2.fst transducer to the fst for sentence 3
-     > fstcompose output/exp.chopping.explicit/LATS/sent.fst tmp/strip_1_2.fst |\
-     fstproject --project_output | fstrmepsilon > output/exp.chopping.explicit/LATS/sent_no12.fst 
+     # apply the strip_1_2.fst transducer to the fst of the concatenated translation lattices
+     > fstcompose tmp/seg.328.123.fst tmp/strip_1_2.fst | fstproject --project_output | fstrmepsilon > tmp/seg.328.no12.fst 
 
      # look at output
-     > printstrings.${TGTBINMK}.bin --semiring=lexstdarc -m wmaps/wmt13.en.wmap -w --input=output/exp.chopping.explicit/LATS/sent_no12.fst 
-     <s> however , in the heart of the take the last myth , claiming the cases of fraud in elections in the united states , a rare the deaths of a lightning strike . </s>   149.068,-3.28125
+     > printstrings.${TGTBINMK}.bin --semiring=lexstdarc -m wmaps/wmt13.en.wmap -w --input=tmp/seg.328.no12.fst
+     <s> architectural historian mÃ¤der toured more than 200 swimming pools , and now gathered experience in his recently published book badefreuden ( joy of swimming ) , where included , from a public pool in munich and the historic bathing palaces in the black forest and functional concrete buildings " . </s>   313.879,1.68848
 
 The top hypothesis, and its score, are unchanged by removing the `</s>
 <s>` substrings.  **Note** however that the language model score for
@@ -1505,21 +1496,20 @@ output/exp.chopping.explicit/LATS/sent_no12.fst
 and then reapplies them
 via composition
 
-     > applylm.${TGTBINMK}.bin --lm.load=M/lm.4g.mmap --lm.featureweights=1 --lm.wps=0.0 --semiring=lexstdarc --lattice.load=output/exp.chopping.explicit/LATS/sent_no12.fst --lattice.store=output/exp.chopping.explicit/LATS/sent_no12_rescore.fst --lattice.load.deletelmcost 
+     > applylm.${TGTBINMK}.bin --lm.load=M/interp.4g.arpa.newstest2012.tune.corenlp.ru.idx.withoptions.mmap --lm.featureweights=1 --lm.wps=0.0 --semiring=lexstdarc --lattice.load=tmp/seg.328.no12.fst --lattice.store=tmp/seg.328.no12.relm.fst --lattice.load.deletelmcost 
 
 The rescored output is written to 
-`output/exp.chopping.explicit/LATS/sent_no12_rescore.fst`
-with correctly applied language model scores.  The total translation cost is much lower (better) than when segment hypotheses are simply combined (i.e. 125.653 vs. 149.066):
+`tmp/seg.328.no12.relm.fst`
+with correctly applied language model scores, i.e. the LM history is no longer broken by any `</s> <s>` in the lattice.  The total translation cost is much lower (better) than when segment hypotheses are simply combined (i.e. 291.958 vs. 313.879):
 
-     > printstrings.${TGTBINMK}.bin --input=output/exp.chopping.explicit/LATS/sent_no12_rescore.fst --semiring=lexstdarc -m wmaps/wmt13.en.wmap -w 
-     <s> however , in the heart of the take the last myth , arguing that the cases of fraud in elections in the united states , a rare , the deaths of a lightning strike . </s>     125.653,-11.6699
-
+    > printstrings.${TGTBINMK}.bin --input=tmp/seg.328.no12.relm.fst --semiring=lexstdarc -m wmaps/wmt13.en.wmap -w 
+    <s> architectural historian mÃ¤der toured more than 200 swimming pools , and now gathered experience in his recently published book badefreuden ( joy of swimming ) , which included everything from a public pool in munich and the historic bathing palaces in the black forest and functional concrete buildings " . </s>  291.958,-0.329102
 
 
 \subsection chopping_gb Grammar-based Sentence Chopping
 
 Chopping can also be done by inserting a special 'chop' symbol
-'0' in the source sentence, and then translating with a modified
+`0` in the source sentence, and then translating with a modified
 grammar.  The chopping grammar is constructed so that translation
 rules are not applied across the chopping points, thus limiting the
 space of translation that are generated.  Conceptually, translation proceeds as:
@@ -1527,14 +1517,12 @@ space of translation that are generated.  Conceptually, translation proceeds as:
    -# local pruning can be applied to the translations of these segments
    -# the resulting WFSAs containing translations of the segments are concatenated under the chopping grammar, possibly with local pruning
    -# the language model is applied to the concatenated WFSA
-   -# top-level, admissible pruning is done under the combined grammar and languaage model scores
+   -# top-level, admissible pruning is done under the combined grammar and language model scores
 
 In this way the FSTs produced by translating the segments are
-concatenated prior to application of the target language model; in
-this way the language model context is not broken by the source
-sentence chopping.
-
-As an example, a grammar modified for chopping contains the following rules (without
+concatenated prior to application of the target language model, 
+and the language model context is not broken by the source
+sentence chopping.   As an example, a grammar modified for chopping contains the following rules (without
 weights):
 
      R 1 1
@@ -1603,9 +1591,9 @@ The usual Hiero grammar can be converted for chopping, as follows; note that no-
 
 First, create the chopping and glue rules:
 
-     > (echo "T T_D_X T_D_X 0" ; echo "T T_X T_X 0" ; echo "T 0 0 0") > tmp/rules.hiero.chop
-     > (echo "S S_U S_U 0" ; echo "U T T 0" ; echo "Q R R 0" ; echo "S Q Q 0") >> tmp/rules.hiero.chop
-     > cat tmp/rules.hiero.chop
+     > (echo "T T_D_X T_D_X 0" ; echo "T T_X T_X 0" ; echo "T 0 0 0") > tmp/rules.shallow.chop
+     > (echo "S S_U S_U 0" ; echo "U T T 0" ; echo "Q R R 0" ; echo "S Q Q 0") >> tmp/rules.shallow.chop
+     > cat tmp/rules.shallow.chop
      T T_D_X T_D_X 0
      T T_X T_X 0
      T 0 0 0
@@ -1616,55 +1604,66 @@ First, create the chopping and glue rules:
 
 Next, append all rules, mapping glue rules with LHS S to LHS R:
 
-     > zcat G/rules.hiero.gz | sed 's,S,R,g' >> tmp/rules.hiero.chop
-     > gzip tmp/rules.hiero.chop
+     > zcat G/rules.shallow.gz | sed 's,S,R,g' >> tmp/rules.shallow.chop
+     > gzip tmp/rules.shallow.chop
 
 The source text (`RU/RU.set1.chop.idx`) will be chopped simply inserting
 the chopping marker '0' after each comma (integer mapped to 3 in the
 Russian wordmap); this
 is a simplistic approach that is easily implemented for this
-demonstration.   We will select long sentences from the source language set:
+demonstration.   We will select sentences with more than 80 words from the source language set:
 
-     > awk 'NF>=30' RU/RU.set1.idx > tmp/RU.set1.idx
-     > cat tmp/RU.set1.idx
-     1 109 5 458 756435 1225 1358 60145 3 12725 3 11 3678 66369 7 1799 5 1317 2946 45 32023 3 75 3678 1102 24 10272 28960 4 2
-     1 5 357 494 3 524 68 1707 905 3 39 80 1030 6967 175 3 42793 5928 12 3565 1681 3 10 283 16670 2502 9 21513 3 52567 21861 5653 38 3110 4 2
+     # there are 3 source sentences longer than 80 words
+     > awk 'NF > 80 {print $0}' RU/RU.tune.idx > tmp/RU.long.idx
 
-     # insert the chopping symbol
-     > sed 's, 3 , 3 0 ,g' tmp/RU.set1.idx > tmp/RU.set1.chopping.idx
-     > cat tmp/RU.set1.chopping.idx
-     1 109 5 458 756435 1225 1358 60145 3 0 12725 3 0 11 3678 66369 7 1799 5 1317 2946 45 32023 3 0 75 3678 1102 24 10272 28960 4 2
-     1 5 357 494 3 0 524 68 1707 905 3 0 39 80 1030 6967 175 3 0 42793 5928 12 3565 1681 3 0 10 283 16670 2502 9 21513 3 0 52567 21861 5653 38 3110 4 2
+     # make a version with the chopping symbol 0 after every comma
+     > sed 's, 3 , 3 0 ,g' tmp/RU.long.idx > tmp/RU.long.csym.idx
 
-     # Run HiFST, with chopping.  Input is the chopped source tmp/RU.set1.chopping.idx.
-     # hypotheses are written to output/exp.chopping/chop/hyps and lattices to output/exp.chopping/chop/LATS/
-     > (time hifst.${TGTBINMK}.bin --config=configs/CF.hiero.chopping) &> log/log.chopping.grammar
+     # print the first line; the <epsilon> indicates where the chopping symbol has been inserted
+     > farcompilestrings  --entry_type=line tmp/RU.long.csym.idx | farprintstrings --symbols=wmaps/wmt13.ru.wmap | head -1
+     <s> спад экономической активности вызвал , <epsilon> до ноября , <epsilon> постоянный рост безработицы в штате , <epsilon> по данным национального института статистики и географии , <epsilon> в течение первых трех кварталов был зафиксирован ускоренный рост уровня безработицы , <epsilon> с января по март 55.053 жителя синалоа были безработными , <epsilon> с долей 4.53 процента экономически активного населения , <epsilon> во втором квартале доля возросла до 5.28 процента , <epsilon> а с июля по сентябрь она продолжила расти до 6.19 процента , <epsilon> доли , <epsilon> которая в пересчете на количество людей составляет более чем 74.000 безработных жителей синалоа , <epsilon> что на 18.969 человек больше по сравнению с первой половиной . </s>
 
-     # Run HiFST, without chopping.  Input is the original, unchopped source RU/RU.set1.idx
+     # Run HiFST, without chopping.  Input is the original source: tmp/RU.long.idx
      # hypotheses are written to output/exp.chopping/nochop/hyps and lattices to output/exp.chopping/nochop/LATS/
-     > (time hifst.${TGTBINMK}.bin --config=configs/CF.hiero.chopping --source.load=RU/RU.set1.idx --target.store=output/exp.chopping/nochop/hyps --hifst.lattice.store=output/exp.chopping/nochop/LATS/?.fst.gz) &> log/log.chopping.nochop
+     # configuration is otherwise 
+     > (time hifst.$TGTBINMK.bin --source.load=tmp/RU.long.idx --target.store=tmp/hyps.long.nochop --hifst.lattice.store=tmp/long.nochop.?.fst.gz --config=configs/CF.baseline ) &> log/log.long.nochop
 
-Comparing the time and memory consumption of the two experiments shows that source-sentence chopping is significantly faster and uses far less memory; in particular, local pruning is required less often under the chopping grammar:
+The decoder requires the following settings to use the chopping grammar:
 
-                                         Number of local prunings
-     Input      Tot time      Max memory    Sent 1    Sent 2
-     --------   --------      ----------    ------    ------
-     Unchopped   5m 38s         2.4Gb	      96        166
-     Chopped	    49s         0.2Gb	      35         20
+   * hifst.replacefstbyarc.exceptions=S,R,T # Specifies glue rule types in the grammar
+   * cykparser.ntexceptionsmaxspan=S,Q,R,T,U # List of non-terminals not affected by cykparser.hrmaxheight. S should be here
+
+Now run HiFST, with chopping.  
+
+     # Input is the source with chopping symbols: tmp/RU.long.csym.idx
+     # hypotheses are written to tmp/hyps.long.gchop and lattices to tmp/long.gchop.?.fst.gz
+     > (time hifst.$TGTBINMK.bin --source.load=tmp/RU.long.csym.idx --target.store=tmp/hyps.long.gchop --hifst.lattice.store=tmp/long.gchop.?.fst.gz --config=configs/CF.baseline --grammar.load=tmp/rules.shallow.chop.gz --cykparser.ntexceptionsmaxspan=S,Q,R,T,U --hifst.replacefstbyarc.exceptions=S,R,T) &> log/log.long.gchop
+
+Comparing the two experiments indicates that chopping requires less memory and runs faster (and note that the LM alone requires ~1GB):
+                        
+     Input/Grammar  Tot time      Max memory
+     --------       --------      ----------
+     Unchopped       1m 21s         2.6Gb
+     Chopped	        39s         1.6Gb  
+     
+
+
 
 However, chopping restricts the space of translations.  Looking at the
 scores of the best translation hypotheses, chopping the source
 sentence prevents the decoder from finding the best scoring hypothesis
 under the grammar; for the third sentence, the hypothesis produced
-without chopping has a lower (i.e. better) combined cost (128.842)
-than the hypothesis produced with chopping (130.309):
+without chopping has a lower (i.e. better) combined cost (471.123)
+than the hypothesis produced with chopping (474.753):
 
-     # find the score of the best hypothesis for the 3rd sentence, without chopping
-     > printstrings.${TGTBINMK}.bin --semiring=lexstdarc --input=output/exp.chopping.grammar/LATS/1.nochop.fst.gz -w
-     1 106 4 9 3 1552 6 3 96 3 200 8072 4 5452 10 3 4143 535 6 1206 9 628 9 3 232 56 4 3 2723 6 11 21441 2645 5 2    128.842,-0.150391
-     # find the score of the best hypothesis for the 3rd sentence, with chopping
-     > printstrings.${TGTBINMK}.bin --semiring=lexstdarc --input=output/exp.chopping.grammar/LATS/1.fst.gz -w
-     1 106 4 9 3 1552 6 3 96 3 200 8072 4 5452 10 3 4143 535 6 1206 9 628 9 3 232 56 4 3 2723 6 11 21441 2645 5 2    130.309,1.31641
+     # best hypothesis for the 1st sentence, without chopping
+     > printstrings.${TGTBINMK}.bin --semiring=lexstdarc --input=tmp/long.nochop.1.fst.gz -w -m wmaps/wmt13.en.wmap
+     <s> the decline in economic activity caused , until november , the permanent rise in unemployment in the state , according to the national institute of statistics and geography , in the first three quarters was recorded accelerated growth in unemployment , from january to march 55.053 resident sinaloa were unemployed , with the share of per cent of the economically active population , in the second quarter , the share rose to percent from july to september , she continued to rise to percent share , if calculated per number of people is more than unemployed people in sinaloa , the 18.969 people more than in the first half . </s>     471.123,2.46484
+
+     # best hypothesis for the 1st sentence, with chopping
+     > printstrings.${TGTBINMK}.bin --semiring=lexstdarc --input=tmp/long.gchop.1.fst.gz -w -m wmaps/wmt13.en.wmap
+     <s> the decline in economic activity caused , until november , a permanent rise in unemployment in the state , according to the national institute of statistics and geography , in the first three quarters was recorded accelerated growth in unemployment , from january to march 55.053 resident sinaloa were unemployed , with the share of per cent of the economically active population , in the second quarter , the share rose to percent from july to september , she continued to rise to percent stake , which is recalculated the number of people is more than unemployed people in sinaloa , the 18.969 people more than in the first half . </s>       474.753,4.52344
+
 
 
 \section true_casing FST-based True Casing
@@ -1719,8 +1718,8 @@ A range of input lattices can be true-cased in the following way with our fst-ba
     # re-run the baseline 
     > hifst.${TGTBINMK}.bin --config=configs/CF.baseline
     # recase the output lattices
-    ::> disambig.${TGTBINMK}.bin configs/CF.recaser --recaser.input=output/exp.baseline/LATS/?.fst.gz --recaser.output=output/exp.baseline/LATS/?.fst.recase.gz --range=1:2 -s lexstdarc
-    ::> printstrings.${TGTBINMK}.bin --input=output/exp.baseline/LATS/?.fst.recase.gz --semiring=lexstdarc --label-map=wmaps/wmt13.en.wmap --range=1:2
+    > disambig.${TGTBINMK}.bin configs/CF.recaser --recaser.input=output/exp.baseline/LATS/?.fst.gz --recaser.output=output/exp.baseline/LATS/?.fst.recase.gz --range=1:2 -s lexstdarc
+    > printstrings.${TGTBINMK}.bin --input=output/exp.baseline/LATS/?.fst.recase.gz --semiring=lexstdarc --label-map=wmaps/wmt13.en.wmap --range=1:2
     <s> Republican strategy of resistance to the renewal of obamas election </s> 
     <s> The leaders of the Republican justified their policies need to deal with the spin on the elections . </s> 
 
@@ -1728,7 +1727,7 @@ Note that both models need to be integer-mapped, hence the external target wordm
 
 HiFST can include truecasing as subsequent step following decoding, prior to writing the output hypotheses. For instance:
     
-    ::> hifst.${TGTBINMK}.bin --config=configs/CF.baseline --recaser.lm.load=M/lm.tc.gz --recaser.unimap.load=G/tc.unimap
+    > hifst.${TGTBINMK}.bin --config=configs/CF.baseline --recaser.lm.load=M/lm.tc.gz --recaser.unimap.load=G/tc.unimap
 
     > farcompilestrings --entry_type=line output/exp.baseline/hyps | farprintstrings --symbols=wmaps/wmt13.en.wmap 
     <s> Republican strategy of resistance to the renewal of obamas election </s>
@@ -1736,7 +1735,7 @@ HiFST can include truecasing as subsequent step following decoding, prior to wri
 
 However, the output lattices are left in uncased form:
 
-    ::> printstrings.${TGTBINMK}.bin --semiring=lexstdarc --label-map=wmaps/wmt13.en.wmap --input=output/exp.baseline/LATS/1.fst.gz 
+    > printstrings.${TGTBINMK}.bin --semiring=lexstdarc --label-map=wmaps/wmt13.en.wmap --input=output/exp.baseline/LATS/1.fst.gz 
     <s> republican strategy of resistance to the renewal of obamas election </s>
 
 
@@ -1744,8 +1743,8 @@ However, the output lattices are left in uncased form:
 
 HiFST can run in server mode.
 
-     ::> hifst.${TGTBINMK}.bin --config=configs/CF.baseline.server &> log/log.server &
-     ::> pid=$! # catch the server pid
+     > hifst.${TGTBINMK}.bin --config=configs/CF.baseline.server &> log/log.server &
+     > pid=$! # catch the server pid
 
 Note that in this particular configuration, both source and target wordmaps are loaded.
 Hifst can read tokenized Russian text and produce tokenized English translations
@@ -1756,22 +1755,22 @@ have to be added on the fly, as the shallow grammar relies on them (i.e. `S 1 1`
 With the `hifst-client.${TGTBINMK}.bin` binary, we can read Russian tokenized text (`RU/RU.tune`) and submit translation requests to the server.
 The output is stored in a file specified by the client tool (`--target.store`).
 
-    ::> sleep 60 # make sure to wait for the server to finish loading, otherwise clients will fail
+    > sleep 60 # make sure to wait for the server to finish loading, otherwise clients will fail
     > hifst-client.${TGTBINMK}.bin --config=configs/CF.baseline.client --range=200:5:300 --target.store=output/exp.clientserver/translation1.txt &> log/log.client1 &
     # Connect to localhost, port=1205 and translate a bunch of sentences. Lets do this in background, just for fun
     # Note that the localhost setting is in the config file; this can point to another machine, of course
     > pid2=$!
 
-    ::> hifst-client.${TGTBINMK}.bin --config=configs/CF.baseline.client --range=1:50,100,1300 --target.store=output/exp.clientserver/translation2.txt &> log/log.client2 &
+    > hifst-client.${TGTBINMK}.bin --config=configs/CF.baseline.client --range=1:50,100,1300 --target.store=output/exp.clientserver/translation2.txt &> log/log.client2 &
     # In the meantime, we request another 52 translations...
     > wait $pid2
 
-    ::> kill -9 $pid
+    > kill -9 $pid
     # We are finished -- kill the server
 
-    ::> head -5 output/exp.clientserver/translation2.txt
-    parliament supports amendment giving freedom tymoshenko
-    amendment , which led to a liberation located imprisoned former prime minister was rejected during second reading bill mitigating sentences for economic offences .
-    sentence still ultimate ; the court will review appeal tymoshenko in december .
-    proposal cancel article 365 criminal-procedural codex whereby former prime minister was convicted was supported 147 members parliament .
-    winning libya
+    > head -5 output/exp.clientserver/translation2.txt
+    parliament does not support the amendment , which gives you the freedom of tymoshenko
+    amendment , which would have led to the release of which is in prison , former prime minister , was rejected during the second reading of the bill to ease penalty for economic offences .
+    the verdict is not final , the court will consider an appeal of tymoshenko in december .
+    a proposal to repeal article 365 of the code of criminal procedure , according to which was convicted former prime minister , was supported by the 147 members of parliament .
+    victory in libya

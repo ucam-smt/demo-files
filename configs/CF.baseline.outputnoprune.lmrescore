@@ -8,9 +8,9 @@ semiring=lexstdarc
 # This choice determines the semiring of the output lattice.
 
 [lm]
-load=M/lm.4g.mmap 
+load=M/interp.4g.arpa.newstest2012.tune.corenlp.ru.idx.withoptions.mmap
 featureweights=0.9
-# LM to use in rescoring
+# LM to use in rescoring; in lattice generation, the lm featureweight was set to 1.0.
 
 [lattice]
 load=output/exp.baseline.outputnoprune/LATS/?.fst.gz

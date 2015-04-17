@@ -7,9 +7,9 @@ range=1:2
 load=RU/RU.tune.idx
 
 [hifst]
-lattice.store=output/exp.mert/LATS/?.fst.gz
+lattice.store=output/exp.baseline/LATS/?.fst.gz
 prune=9 
 replacefstbyarc.nonterminals=X,V 
 
 [lm]
-load=M/lm.4g.mmap
+load=M/interp.4g.arpa.newstest2012.tune.corenlp.ru.idx.withoptions.mmap

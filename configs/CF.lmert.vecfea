@@ -4,12 +4,11 @@
 nthreads=20
  
 [ruleflowerlattice]
-load=G/rules.shallow.vecfea.all.gz
+load=G/rules.shallow.vecfea.gz
 filterbyalilats=true
 
 [sparseweightvectorlattice]
 stripspecialepsilonlabels=yes 
 
 [lm]
-# load=M/interp.4g.arpa.newstest2012.tune.corenlp.ru.idx.union.mmap
 load=M/interp.4g.arpa.newstest2012.tune.corenlp.ru.idx.withoptions.mmap

@@ -23,7 +23,7 @@ prunereferenceshortestpath=100
 # uses fstshortestpath
 
 [grammar]
-load=G/rules.shallow.all.gz
+load=G/rules.shallow.gz
 # note that only the translation grammar needs to be loaded; the language model is not needed.
 # the lattices specified by referencefilter.load will serve as (unweighted) language models
 # grammar weights/features are ignored, as well.

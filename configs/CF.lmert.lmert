@@ -1,0 +1,7 @@
+# LMERT - Lattice MERT practical exercise
+# perform lattice mert
+
+int_refs=EN/EN.tune.idx 
+nthreads=24
+num_random_directions=28
+min_gamma=0.000005
