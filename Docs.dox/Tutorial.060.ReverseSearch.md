@@ -21,9 +21,9 @@ use the reverse search implementation of C. Weibel
 [\ref Weibel2010]. Because his implementation has a GPL license it must be
 downloaded and compiled separately. The version used in the following
 example is
-[1.6.2f](https://sites.google.com/site/christopheweibel/research/minksum/MINKSUM_1.6.2f.tar.gz?attredirects=0). The
-scripts used in the example assume that the shell variable $MINK_SUM
-points to the bin directory of this tool.
+[1.6.2f](https://sites.google.com/site/christopheweibel/research/minksum/MINKSUM_1.6.2f.tar.gz?attredirects=0). 
+**The scripts used in the example assume that the shell variable $MINK_SUM
+points to the bin directory of this tool.**
 
 The following script will perform a mulit-dimensional MERT over 150 sentences.
 *N.B.* Before running reverse search it is necessary to generate the N-Best lists.  

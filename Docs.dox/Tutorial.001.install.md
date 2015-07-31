@@ -178,6 +178,11 @@ At this point, the following command should find the smaller of the two LMs:
 
     > ls $DEMO/M/interp.4g.arpa.newstest2012.tune.corenlp.ru.idx.withoptions.mmap
 
+**Word Maps** The Russian and English wordmap files should be uncompressed (see \ref wmappedfiles ):
+
+    > gunzip -k wmaps/wmt13.ru.wmap.gz wmaps/wmt13.en.wmap.gz
+
+
 **Documentation**
 As an optional
 step, if you wish to regenerate the HTML code for this

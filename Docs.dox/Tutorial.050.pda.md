@@ -185,7 +185,7 @@ which should agree with the previously generated contents of output/exp.baseline
 
 \section pda_pda_expand Translation by PDA Pruned Expansion 
 
-(Note: as of March 2014 we have not managed to make the OpenFST PDT command line operations work well with our lexicographic library, so the standard tropical semirring must be used in this example. This makes it slightly more complex than it should be, but we believe it is useful to understand HiPDT anyway)
+(Note, as of July 2015: The OpenFST PDT command line operations do not work well with our lexicographic library, so the standard tropical semirring must be used in this example. This makes the example slightly more complex than it actually is in practice.)
 
 **Step 0.** Dump the RTN under the full translation grammar, as described in \ref  pda_rtns
 
