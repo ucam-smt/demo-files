@@ -1,0 +1,33 @@
+[source]
+load=tmp/RU.long.idx
+
+[target]
+store=output/exp.baseline.localprune/hyps
+
+[hifst]
+lattice.store=output/exp.baseline.localprune/LATS/?.fst.gz
+prune=9 
+replacefstbyarc.nonterminals=X,V 
+
+[lm]
+load=M/interp.4g.arpa.newstest2012.tune.corenlp.ru.idx.withoptions.mmap
+
+[grammar]
+load=G/rules.shallow.gz
+
+[hifst.localprune]
+enable=yes
+# activates local pruning or pruning in search
+
+conditions=X,3,8,2,V,4,10,2
+# controls the conditions in CYK parsing for local pruning.
+# For this setting, lattices associated with CYK grid cells are pruned if:
+#  - the non-terminal X covers at least 3 words in the input and
+#  the lattice at that cell has at least 8 states; 
+#  - the non-terminal V covers at least 4 words in the input and
+#  the lattice at that cell has at least 10 states
+# In both cases, pruning is performed at threshold 2.
+
+lm.load=M/interp.4g.arpa.newstest2012.tune.corenlp.ru.idx.withoptions.mmap
+# A language model is needed for local pruning.  
+# Might as well use the same LM as for decoding.

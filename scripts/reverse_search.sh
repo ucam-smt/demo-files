@@ -1,5 +1,6 @@
 #!/bin/bash
 
+[ -z "$MINK_SUM" ] && echo "Need to set MINK_SUM" && exit 1;
 SETSIZE=150
 
 mkdir -p output/exp.mert/polytope
