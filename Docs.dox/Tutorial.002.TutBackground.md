@@ -11,14 +11,15 @@ HiFST Data and Control Files  {#tutorial_}
 The following directories contain the data files, configuration files, and model files needed for this tutorial.
 
      ./
-     |-configs/ # Configuration files
-     |-train/   # Training data files
-     |-EN/      # English reference text
-     |-G/       # Translation grammars
-     |-M/       # Language models
-     |-RU/      # Russian input text
-     |-scripts/ # Scripts for these demonstration exercises
-     |-wmaps/   # Word maps, to map English and Russian text to integers
+     |-configs/  # Configuration files
+     |-train/    # Training data files
+     |-Docs.dox/ # Tutorial documentation files
+     |-EN/       # English reference text
+     |-G/        # Translation grammars
+     |-M/        # Language models
+     |-RU/       # Russian input text
+     |-scripts/  # Scripts for these demonstration exercises
+     |-wmaps/    # Word maps, to map English and Russian text to integers
 
 The following directories will be created after running this tutorial.
 
