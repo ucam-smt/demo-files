@@ -55,8 +55,8 @@ A. de Gispert, G. Iglesias, G. Blackwood, E. R. Banga, and W. Byrne. Computation
 
 \anchor Allauzen2014 [Allauzen2014]
 *Pushdown automata in statistical machine translation*. <br>
-C. Allauzen, W. Byrne, A. de Gispert, G. Iglesias, and M. Riley. Computational Linguistics. 2014. To appear.<br>
-<http://mi.eng.cam.ac.uk/~wjb31/ppubs/cl2013.final.pdf>
+C. Allauzen, W. Byrne, A. de Gispert, G. Iglesias, and M. Riley. Computational Linguistics. 2014. <br> <http://www.aclweb.org/anthology/J/J14/J14-3008.pdf>
+
 
 \anchor Iglesias2009a [Iglesias2009a]
 *Hierarchical phrase-based translation with weighted finite state transducers.*<br>
@@ -139,7 +139,7 @@ C Weibel. Proceedings of ALENEX 2010<br>
 <br> A. Waite, G. Blackwood, and W. Byrne. Proceedings of FSMNLP, 2012.<br>
 <http://aclweb.org/anthology-new/W/W12/W12-6219.pdf>
 
-\subsection rulextract_refs [HiFST Rule Extraction]
+\subsection rulextract_refs HiFST Rule Extraction
 
 \anchor Pino2012 [Pino2012]
 *Simple and Efficient Model Filtering in Statistical Machine Translation*. <br>

@@ -4,7 +4,7 @@
 range=1:2
 
 [source]
-load=RU/RU.set1.idx
+load=RU/RU.tune.idx
 
 [target]
 store=output/exp.baseline.outputnoprune/hyps
@@ -22,7 +22,7 @@ lattice.store=output/exp.baseline.outputnoprune/LATS/?.fst.gz
 replacefstbyarc.nonterminals=X,V 
 
 [lm]
-load=M/lm.4g.mmap
+load=M/interp.4g.arpa.newstest2012.tune.corenlp.ru.idx.withoptions.mmap
 
 [grammar]
 load=G/rules.shallow.gz

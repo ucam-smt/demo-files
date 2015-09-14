@@ -1,21 +1,25 @@
 HiFST Data and Control Files  {#tutorial_}
 =============================
 
-**Note:** Make sure that environment variables are set as described in \ref tutorial_install and \ref hifst_paths. 
+**Notes:** 
+
+   * Make sure that environment variables are set as described in \ref tutorial_install and \ref hifst_paths.
+   * Make sure that the language models are downloaded and uncompressed into the `$DEMO/M/` directory.
 
 \section tutorial_directories Tutorial Directory Structure
 
 The following directories contain the data files, configuration files, and model files needed for this tutorial.
 
      ./
-     |-configs/ # Configuration files
-     |-train/   # Training data files
-     |-EN/      # English reference text
-     |-G/       # Translation grammars
-     |-M/       # Language models
-     |-RU/      # Russian input text
-     |-scripts/ # Scripts for these demonstration exercises
-     |-wmaps/   # Word maps, to map English and Russian text to integers
+     |-configs/  # Configuration files
+     |-train/    # Training data files
+     |-Docs.dox/ # Tutorial documentation files
+     |-EN/       # English reference text
+     |-G/        # Translation grammars
+     |-M/        # Language models
+     |-RU/       # Russian input text
+     |-scripts/  # Scripts for these demonstration exercises
+     |-wmaps/    # Word maps, to map English and Russian text to integers
 
 The following directories will be created after running this tutorial.
 
@@ -23,9 +27,6 @@ The following directories will be created after running this tutorial.
      |-log/     # Translation process log files
      |-output/  # Translation output, as 1-best hypotheses and lattices
 
-
-There are additional Supplementary Files which can be downloaded
-from <http://mi.eng.cam.ac.uk/~wjb31/data/hifst.release.May14/> ; these should be put in the `M/` directory.
 
 \section Setup_configs Configuration Files and Command Line Options
 
@@ -47,31 +48,66 @@ or as
      prune=9
      replacefstbyarc.nonterminals=X,V
 
-As you work through the tutorial, please read the comments in the config files which explain some of the processing options.
-The following configuration files are provided for the tutorial.  
+As you work through the tutorial, please read the comments in the
+config files which explain some of the processing options.  For example, see `configs/CF.baseline`:
 
-     # baseline configuration: 4-gram LM and Shallow-1 translation grammar
-     configs/CF.baseline : HiFST with 4-gram language model and a Shallow-1 grammar
-     configs/CF.baseline.lmbr : lattice Minimum Bayes' Risk (LMBR) rescoring on top of baseline system
-     configs/CF.baseline.outputnoprune : lattice output without pruning
-     configs/CF.baseline.outputnoprune.lmrescore : lattice rescoring with language models
-     # full Hiero grammar with 4-gram LM
-     configs/CF.hiero : full Hiero grammar without pruning in search
-     configs/CF.hiero.chopping : methods for dealing with long source sentences
-     configs/CF.hiero.localprune  : full Hiero grammar with pruning in search
-     configs/CF.hiero.pdt : full Hiero grammar, decoding with push-down automata (HiPDT)
-     # full, iterative lattice MERT script
-     configs/CF.lmert.alilats : Lattice MERT example, alignment lattices
-     configs/CF.lmert.hyps : Lattice MERT example, initial hypotheses
-     configs/CF.lmert.vecfea : Lattice MERT example, vector feature lattices
-     # example feature generation for MERT and LMERT
-     configs/CF.mert.alilats.nbest : MERT features, derivation-to-translation transducers, restricted to N-Best lists
-     configs/CF.mert.hyps : MERT features, initial hypotheses
-     configs/CF.mert.vecfea.nbest  : MERT features, N-Best feature lists for MERT
-     # misc
-     configs/CF.recaser : recasing examples
-     configs/CF.baseline.client : HiFST client-server example, client
-     configs/CF.baseline.server : HiFST client-server example, server
+
+       # Basic HiFST configuration for Russian-English translation
+       # Translation uses a 4gram language model with a shallow-1 grammar
+       # as described in 
+       #  J. Pino, et al. The University of Cambridge Russian-English System at
+       #  WMT13. http://aclweb.org/anthology//W/W13/W13-2225.pdf
+        
+	range=1:2
+	# range of line numbers in the source text file to be translated
+
+	[source]
+	load=RU/RU.tune.idx
+	# path and filename of the source text file
+
+	[target]
+	store=output/exp.baseline/hyps
+	# path and filename of the target text file; translations are written to this file
+
+	[hifst]
+	lattice.store=output/exp.baseline/LATS/?.fst.gz
+	# specifies the path and filename into which translation lattices are
+	# written.  Note the use of the placeholder '?' in the argument
+	# .../LATS/?.fst.gz . The placeholder is replaced by the line
+	# number of sentence being translated, e.g. so that
+	# .../LATS/2.fst.gz is a WFST containing translations of the second
+	# line in the source text file.  Note also the use of the '.gz'
+	# extension: when this is provided, lattices are written as gzipped
+	# files.
+
+	prune=9 
+	# translation lattices are pruned using OpenFST pruning operations
+	# prior to saving to disk.  The parameter provided is the pruning
+	# threshold. The default is 3.40282347e+38 which effectively means
+	# no pruning.
+
+	replacefstbyarc.nonterminals=X,V 
+	# Specifies non-terminals in the grammar, apart from the top-level
+	# non-terminal S.  HiFST will treat X and V as non-terminals;
+	# in addition, other symbols Xn and Vn (e.g. X1 and V2) will be treated as non-terminals.  
+
+	[lm]
+	load=M/interp.4g.arpa.newstest2012.tune.corenlp.ru.idx.withoptions.mmap
+	# path and filename of the English n-gram language model in kenlm format
+	# this particular language model is a modified Kneser-Ney 4-gram language model
+	# trained for the Russian-English task at WMT13 (http://statmt.org/wmt13/)
+	# with the KenLM toolkit (http://kheafield.com/code/kenlm/)
+
+	[grammar]
+	load=G/rules.shallow.gz
+	# path and filename of the Hiero translation grammar to load and use in translation
+	# this particular grammar is a shallow grammar: when CYK parsing the source side,
+	# hierarchical rules can only be concatenated with the glue rule and not combined
+	# together with another hierarchical rules.
+	# See 
+	#  A. de Gispert et al.  Hierarchical phrase-based translation with weighted finite 
+	#  state transducers and shallow-N grammars. Computational Linguistics, 2010.
+	#  http://www.aclweb.org/anthology-new/J/J10/J10-3008.pdf)
 
 
 \section wmaps Word Maps
@@ -85,11 +121,9 @@ discussion of the use of symbol tables.
 Integer mappings for English and Russian are in the directory wmaps/ :
 
      wmaps/wmt13.en.wmap
-     wmaps/wmt13.en.all.wmap (a much larger version of wmaps/wmt13.en.wmap)
      wmaps/wmt13.ru.wmap
-     wmaps/wmt13.ru.all.wmap (a much larger version of wmaps/wmt13.ru.wmap)
 
-Note that HiFST reserves the integers 1 and 2 for the sentence-start and sentence-end symbols.  0 is the \ref OpenFst epsilon symbol.  
+Note that HiFST reserves the integers `1` and `2` for the sentence-start and sentence-end symbols.  `0` is the \ref OpenFst epsilon symbol.  `999999998` is the OOV symbol.
 
 The format of the wordmap files is straightforward, e.g.
 
@@ -109,93 +143,53 @@ The format of the wordmap files is straightforward, e.g.
 
 Source text files are provided in integer format :
 
-     RU/RU.set1.idx : integer mapped Russian text
+     > head -1 RU/RU.tune.idx
+     1 3526 10 1278 28847 3 64570 1857 7786 2
 
-     > head -2 RU/RU.set1.idx
-     1 20870 2447 5443 50916 78159 3621 2
-     1 1716 20196 95123 154 1049 6778 996 9 239837 7 1799 4 2
+The \ref OpenFst [FAR](http://openfst.org/twiki/bin/view/FST/FstExtensions) tools can be used to generate Russian text from the integer mapped files (see \ref basic_latshyps).
 
-
-The \ref OpenFst [FAR](http://openfst.org/twiki/bin/view/FST/FstExtensions) tools can be used to generate Russian text from the integer mapped files (see the discussion on \ref basic_latshyps).
-
-     > farcompilestrings --entry_type=line RU/RU.set1.idx | farprintstrings --symbols=wmaps/wmt13.ru.wmap | head -2
-     <s> республиканская стратегия сопротивления повторному избранию обамы </s>
-     <s> лидеры республиканцев оправдывали свою политику необходимостью борьбы с фальсификациями на выборах . </s>
-
-
+     > farcompilestrings --entry_type=line RU/RU.tune.idx | farprintstrings --symbols=wmaps/wmt13.ru.wmap | head -1
+     <s> парламент не поддерживает поправку , дающую свободу тимошенко </s>
 
 
 \section lms Language Models
 
-English 3-gram and 4-gram language models are provided in both
+English language models are provided in both
 [KenLM](http://kheafield.com/code/kenlm/) and
 [ARPA](http://www.speech.sri.com/projects/srilm/manpages/ngram-format.5.html)
 formats .  See [\ref Pino2013] for a description of how these LMs are built.
 
-The following language models have restricted vocabulary corresponding
-to the target side of the rules that apply to the first few sentences
-of the tuning set RU.set1.idx . This is done so that the LMs are small
-and quickly and easily loaded into memory.  
-*Do not use these models except for the first few sentences in this tutorial.*
-
-     M/lm.3g.arpa.gz : Kneser-Ney 3-gram language model in ARPA format
-     M/lm.3g.mmap : Kneser-Ney 3-gram language model in KenLM format
-     M/lm.4g.arpa.gz : Kneser-Ney 4-gram language model in ARPA format
-     M/lm.4g.mmap : Kneser-Ney 4-gram language model in KenLM format
-     M/lm.4g.eprnd.mmap : entropy pruned KN 4-gram LM in KenLM format
-     M/lm.tc.gz : true-casing language model
-
-The following large LMs are available from a separate download site (see \ref build).  
-It covers the target-side vocabulary for the large translation grammars, and is suitable
- for running on the complete tune and test set included in this tutorial.
-In particular, this second LM must be downloaded and uncompressed into the M/ directory prior to running
-the MERT and LMERT scripts and examples (see \ref mert and \ref lmert).  
-
-     M/interp.4g.arpa.newstest2012.tune.corenlp.ru.idx.union.mmap : KN 4gram LM in KenLM format
-     M/interp.4g.arpa.newstest2012.tune.corenlp.ru.idx.withoptions.mmap : quantized KN 4gram LM in KenLM format
-
 Language models are in integer mapped format, e.g. for the ARPA files:
 
-     > zcat M/lm.3g.arpa.gz | grep . | head -15
-     \data\
-     ngram 1=1348
-     ngram 2=130054
-     ngram 3=785733
-     \1-grams:
-     -1.0615243	<unk>
-     -inf		<s>	-1.0853117
-     -1.5690455	</s>
-     -2.2388144	12	-1.0949439
-     -2.682596	11	-0.872226
-     -4.0860014	1547	-0.66412055
-     -2.4807615	14	-0.8686333
-     -2.9167347	25	-0.7014704
-     -2.599824	22	-0.6987488
-     -2.6652465	26	-0.7175091
+      > zcat M/lm.tc.gz | head -15
 
-We also provide an *entropy pruned* [\ref SRILM] version of the 4-gram language model
-as used for decoding with Push-Down Automata [\ref Allauzen2014] ; this is described below in \ref pda .
+      \data\
+      ngram 1=2794
+      ngram 2=181413
+      ngram 3=292841
 
-     M/lm.4g.eprnd.arpa.gz : Entropy-pruned Kneser-Ney 4-gram language model in ARPA format
-     M/lm.4g.eprnd.mmap : Entropy-pruned Kneser-Ney 4-gram language model in KenLM format
+      \1-grams:
+      -2.153572  10 -0.8350325
+      -4.555545  100  -0.5700829
+      -4.174318  1000 -0.9515274
+      -3.82578 1001 -1.104666
+      -5.726784  10013     -0.2537366
+      -6.726784  100231    -0.2309253
+      -4.027669  1004 -0.9985322
+      -4.362545  1009 -0.7841078
+
+The integers correspond to words in the English wordmap file `wmaps/wmt13.en.wmap`.
+
 
 \section tgrammars Translation Grammars
 HiFST uses Synchronous Context-Free Grammars (SCFGs) for translation.
 A full Hiero and a Shallow-1 translation grammar are provided in the `G/` directory:
 
-     G/rules.hiero.gz : full hiero grammar with scalar grammar scores
-     G/rules.shallow.gz : Shallow-1 hiero grammar with scalar grammar scores
+     G/rules.shallow.gz : Shallow-1 hiero grammar with scalar scores
 
-We also provide versions of these grammars with raw, unweighted feature vectors:
+We also provide a grammar with raw, unweighted feature vectors:
 
-     G/rules.hiero.vecfea.gz : full hiero grammar with feature vectors
      G/rules.shallow.vecfea.gz : Shallow-1 hiero grammar with feature vectors
-
-For the tutorial on optimization (\ref mert), larger grammars corresponding
-to the entire `RU/RU.tune.idx` tune set are provided:
-
-     G/rules.shallow.all.gz : larger Shallow-1 hiero grammar with scalar grammar scores
-     G/rules.shallow.vecfea.allgz : larger Shallow-1 hiero grammar with unweighted feature vectors
 
 There is also a grammar provided for the true-casing example (\ref true_casing)
 
@@ -221,12 +215,11 @@ symbol sequences in the source and target languages.
 \subsection tgrammars_formats_fea Feature Vectors
 
 Scores are assigned to rules as the dot product of a rule-specific feature vector
-and a weight vector ([\ref Chiang2007] and see the discussion in \ref mert).  This
+and a weight vector ([\ref Chiang2007] and see the discussion in \ref lmert).  This
 computation can be done offline, in which case the feature for every rule in the grammar is a
 1-dimensional scalar. Alternatively, the decoder can be provided with a weight vector which is applied
 to the feature vectors while loading the grammar.
-
-For example, the grammar `G/rules.shallow.gz` provided in this tutorial the following set of weights was found via LMERT tuning (see \ref mert ):
+For example, the grammar `G/rules.shallow.gz` provided in this tutorial the following set of weights was found via LMERT tuning (\ref lmert ):
 
     0.697263,0.396540,2.270819,-0.145200,0.038503,29.518480,-3.411896,-3.732196,0.217455,0.041551,0.060136
 

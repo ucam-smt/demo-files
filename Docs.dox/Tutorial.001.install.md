@@ -146,17 +146,45 @@ Files for this tutorial can be downloaded from the following GitHub address:
     > git clone https://github.com/ucam-smt/demo-files.git
     > cd demo-files; gunzip wmaps/*.gz  ## Uncompress big wordmap files.
 
-**Supplementary Files** There are additional files which can be
-downloaded from
-<http://mi.eng.cam.ac.uk/~wjb31/data/hifst.release.May14/> .  These
-are large grammars and language models to be used to replicate
-evaluation results.  They're needed for some of the tutorial steps,
-e.g. MERT, but aren't included in the default tutorial downloads, due
-to their size.
-
 The tutorial files and sources for this tutorial will be
 in the `demo-files` directory. The variable `$DEMO`
-designates this directory from now on. As an optional
+should be set to point to this director:
+
+    > export DEMO=complete_path_to_demo-files_cloned_directory
+
+As a check, the following command should find the `README` file downloaded from github:
+
+    > ls $DEMO/README
+
+**Language Models** The language models needed for this tutorial can be downloaded from
+<http://mi.eng.cam.ac.uk/~wjb31/data/hifst.release.May14/> .  These are not on github, due to their size.
+There are two files:
+   * [interp.4g.arpa.newstest2012.tune.corenlp.ru.idx.withoptions.mmap.gz](http://mi.eng.cam.ac.uk/~wjb31/data/hifst.release.May14/interp.4g.arpa.newstest2012.tune.corenlp.ru.idx.withoptions.mmap.gz) -- 766M
+   * [interp.4g.arpa.newstest2012.tune.corenlp.ru.idx.union.mmap.gz](http://mi.eng.cam.ac.uk/~wjb31/data/hifst.release.May14/interp.4g.arpa.newstest2012.tune.corenlp.ru.idx.union.mmap.gz) -- 5.8G
+
+To run this tutorial you **must** download the smaller of the two LMs:
+
+    > cd $DEMO/M/
+    > wget http://mi.eng.cam.ac.uk/~wjb31/data/hifst.release.May14/interp.4g.arpa.newstest2012.tune.corenlp.ru.idx.withoptions.mmap.gz
+    > gunzip interp.4g.arpa.newstest2012.tune.corenlp.ru.idx.withoptions.mmap.gz
+
+The big LM is needed for some language model rescoring operations, but otherwise is not required for the tutorial.
+
+    > cd $DEMO/M/
+    > wget http://mi.eng.cam.ac.uk/~wjb31/data/hifst.release.May14/interp.4g.arpa.newstest2012.tune.corenlp.ru.idx.union.mmap.gz
+    > gunzip interp.4g.arpa.newstest2012.tune.corenlp.ru.idx.union.mmap.gz
+
+At this point, the following command should find the smaller of the two LMs:
+
+    > ls $DEMO/M/interp.4g.arpa.newstest2012.tune.corenlp.ru.idx.withoptions.mmap
+
+**Word Maps** The Russian and English wordmap files should be uncompressed (see \ref wmappedfiles ):
+
+    > gunzip -k wmaps/wmt13.ru.wmap.gz wmaps/wmt13.en.wmap.gz
+
+
+**Documentation**
+As an optional
 step, if you wish to regenerate the HTML code for this
 tutorial, make sure you have doxygen (1.8+
 for markdown support) and
@@ -165,8 +193,4 @@ latex (for formulas) installed and run the following commands:
     > cd $DEMO/Docs.dox
     > doxygen
 
-For this tutorial, it is assumed that rule extraction commands
-are run from the `$DEMO` directory:
-
-    > cd $DEMO
 

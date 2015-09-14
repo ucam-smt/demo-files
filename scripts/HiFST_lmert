@@ -3,12 +3,12 @@
 M=`cat RU/RU.tune.idx | wc -l`
 # N.B. uncomment the next line to only process 100 sentences
 # for debugging/demonstration. 
-# M=100
+# M=10
 
 # baseline params. from iteration 0.
 FW=1.0,0.697263,0.396540,2.270819,-0.145200,0.038503,29.518480,-3.411896,-3.732196,0.217455,0.041551,0.060136
 
-for it in $(seq 1 4)
+for it in $(seq 1 3)
  do 
 
 # begin

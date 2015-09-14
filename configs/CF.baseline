@@ -8,7 +8,7 @@ range=1:2
 # range of line numbers in the source text file to be translated
 
 [source]
-load=RU/RU.set1.idx
+load=RU/RU.tune.idx
 # path and filename of the source text file
 
 [target]
@@ -38,11 +38,10 @@ replacefstbyarc.nonterminals=X,V
 # in addition, other symbols Xn and Vn (e.g. X1 and V2) will be treated as non-terminals.  
 
 [lm]
-load=M/lm.4g.mmap
+load=M/interp.4g.arpa.newstest2012.tune.corenlp.ru.idx.withoptions.mmap
 # path and filename of the English n-gram language model in kenlm format
 # this particular language model is a modified Kneser-Ney 4-gram language model
-# trained on the English side of the parallel data provided for
-# the Russian-English task at WMT13 (http://statmt.org/wmt13/)
+# trained for the Russian-English task at WMT13 (http://statmt.org/wmt13/)
 # with the KenLM toolkit (http://kheafield.com/code/kenlm/)
 
 [grammar]

@@ -1,0 +1,26 @@
+range=1:2
+# range of line numbers in the source text file to be translated
+
+[source]
+load=RU/RU.tune.idx
+# path and filename of the source text file
+
+[target]
+store=output/exp.baseline.pdt/hyps
+# path and filename of the target text file; translations are written to this file
+
+[hifst]
+lattice.store=output/exp.baseline.pdt/LATS/?.fst.gz
+prune=9 
+replacefstbyarc.nonterminals=X,V 
+usepdt=yes
+# activates decoding with PDTs. The RTN is converted into a
+# PDA and efficiently composed with a first language model 
+# to produce another PDA. To obtain the output FSA, the PDA
+# is then expanded either entirely or via pruned expansion.
+
+[lm]
+load=M/interp.4g.arpa.newstest2012.tune.corenlp.ru.idx.withoptions.mmap
+
+[grammar]
+load=G/rules.shallow.gz
