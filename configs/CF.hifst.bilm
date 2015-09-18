@@ -1,0 +1,11 @@
+source.load=AR/mt02_05_tune.ara.10first.idx
+target.store=/dev/null
+grammar.load=G/grammar.affiliation.gz
+
+
+[hifst]
+replacefstbyarc.nonterminals=X,Z,T,R,V
+localprune.enable=yes
+localprune.lm.load=M/lm.aren-affi.gz
+localprune.conditions=X,7,1000,7,X,5,10000,9,T,7,1000,7,Z,5,2000,8,R,3,3000,9
+prune=7

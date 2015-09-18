@@ -146,7 +146,22 @@ C Weibel. Proceedings of ALENEX 2010<br>
 J. Pino, A. Waite, W. Byrne. Proceedings of PBML, 2012. <br>
 <http://ufal.mff.cuni.cz/pbml/98/art-pino-waite-byrne.pdf>
 
-\subsection othertools Language Modelling Toolkits
+
+\subsection nffstdisambig_refs Non-functional FST disambiguation
+\anchor Iglesias2015 [Iglesias2015]
+*Transducer Disambiguation with Sparse Topological Features
+G. Iglesias, A. de Gispert, W. Byrne. Proceedings of EMNLP, 2015 <br>
+<https://aclweb.org/anthology/D/D15/D15-1273.pdf>
+
+
+\subsection bilingualmodel_refs Rescoring with Bilingual Neural Network Models
+\anchor Devlin2014 [Devlin2014]
+*Fast and Robust Neural Network Joint Models for Statistical Machine Translation
+J. Devlin, R. Zbib, Z. Huang, T. Lamar, R. Schwartz, and J. Makhoul
+<http://acl2014.org/acl2014/P14-1/pdf/P14-1129.pdf>
+
+\subsection othertools Language Modelling Toolkits and Other Tools
+
 \anchor SRILM [SRILM]
 SRI Language Model Toolkit<br>
 <http://www.speech.sri.com/projects/srilm/>
@@ -155,3 +170,6 @@ SRI Language Model Toolkit<br>
 The KenLM Toolkit<br>
 <http://kheafield.com/code/kenlm/>
 
+\anchor NPLM [NPLM]
+Neural Probabilistic Language Model Toolkit <br>
+http://nlg.isi.edu/software/nplm/

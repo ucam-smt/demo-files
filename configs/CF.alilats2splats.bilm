@@ -1,0 +1,8 @@
+[sparseweightvectorlattice]
+stripspecialepsilonlabels=yes
+loadalilats=output/bilmexp/ALILATS/?.fst.gz
+store=output/bilmexp/VECFEA/?.fst.gz
+
+[ruleflowerlattice]
+load=G/grammar.affiliation.gz
+filterbyalilats=

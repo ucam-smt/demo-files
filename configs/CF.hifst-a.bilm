@@ -1,0 +1,6 @@
+[hifst]
+alilatsmode=yes
+
+[referencefilter]
+load=output/bilmexp/LATS/?.fst.gz
+prunereferenceshortestpath=100
