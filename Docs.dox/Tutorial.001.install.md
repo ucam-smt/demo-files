@@ -78,66 +78,21 @@ It is possible to use multiple builds of HiFST by changing the `TGTBINMK` variab
 \section rulextract_install Installation of the Hadoop-based Grammar Extraction Tools
 **Note:** These are not needed to run the basic HiFST \ref tutorial_.
 
-Requirements for building/running the rule extraction code:
-  + an Internet connection
-  + preferably 64-bit linux
-  + [sbt](http://www.scala-sbt.org/)
-  + java 1.7+
+Requirements for building the rule extraction software:
+  + [Java 8](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html "Download Java")
+  + [SBT 13.8 or greater](http://www.scala-sbt.org/download.html "Download SBT") 
 
-If you don't know how to install sbt, here's one way to do it
-on Ubuntu:
+The rule extraction code will be in the `$HiFSTROOT/java/ruleXtract` directory. Rule extraction is built as part of the full build. To build separatly use the folloing commands.
 
-    > wget http://dl.bintray.com/sbt/debian/sbt-0.13.5.deb
-    > sudo dpkg -i sbt-0.13.5.deb
-
-If you're not root or sudo, you can follow these
-[instructions](http://www.scala-sbt.org/0.13/tutorial/Manual-Installation.html)
-
-If you don't know how to install java, here's one way to install
-java 7 on Ubuntu, as described
-[here](http://www.webupd8.org/2012/01/install-oracle-java-jdk-7-in-ubuntu-via.html) (for java 8, see [here](http://www.webupd8.org/2012/09/install-oracle-java-8-in-ubuntu-via-ppa.html)):
-
-    > sudo add-apt-repository ppa:webupd8team/java
-    > sudo apt-get update
-    > sudo apt-get install oracle-java7-installer
-
-If you're not root or sudo, simply download
-JDK and update the `PATH` and `JAVA_HOME`
-accordingly.
-
-**Note**: the java version used to run your Hadoop cluster should be
-greater or equal to the java version used to compile the code; otherwise
-you may get an "Unsupported major.minor version" error.
-
-The rule extraction code will be in the `$HiFSTROOT/java/ruleXtract`
-directory. The variable `$RULEXTRACT` designates this directory
-from now on:
-
-    RULEXTRACT=$HiFSTROOT/java/ruleXtract
-
-To build the rule extraction software, simply run the
-following commands:
-
-    > cd $RULEXTRACT
-    > sbt package
+    > cd $HiFSTROOT/java/ruleXtract
+    > sbt assembly
 
 You will obtain a jar file named `ruleXtract.jar`
-located at `$RULEXTRACT/target/ruleXtract.jar` .
-The variable `$RULEXTRACTJAR` designates this
+located at `$HiFSTROOT/java/ruleXtract/target/ruleXtract.jar` .
+We use the variable `$RULEXTRACTJAR` to designate this
 jar from now on:
 
-    > RULEXTRACTJAR=$RULEXTRACT/target/ruleXtract.jar
-
-To run unit tests, simply run:
-
-    > cd $RULEXTRACT
-    > sbt test
-
-If all goes well, you should see a similar looking output:
-
-    [info] Passed: Total 1, Failed 0, Errors 0, Passed 1
-    [success] Total time: 3 s, completed 12-Aug-2014 10:49:51
-
+    > RULEXTRACTJAR=$HiFSTROOT/java/ruleXtract/target/ruleXtract.jar
 
 \section tutorial_install Tutorial Installation
 

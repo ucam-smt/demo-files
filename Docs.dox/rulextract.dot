@@ -1,0 +1,13 @@
+digraph rulextract {
+    td [label="Training data", shape=box];
+    rc [label="Rule counts", shape=box];
+    s2t [label="Target given source probabilities", shape=box];
+    t2s [label="Source given target probabilities", shape=box];
+    hf [label="HFile", shape=box];
+    td -> rc [label=" ExtractorJob"]; 
+    rc -> s2t [headlabel="Source2TargetJob", labeldistance=6, labelangle=25];
+    rc -> t2s [label=" Target2SourceJob"];
+    s2t -> hf [label=" MergeJob"];
+    rc -> hf [label=" MergeJob"];
+    t2s -> hf [label= "MergeJob"];
+}

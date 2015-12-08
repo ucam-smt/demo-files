@@ -1,653 +1,559 @@
 Rule Extraction                {#rulextract}
 =================
 
-\section rulextract_start_reminder Getting started
-
-See (\ref rulextract_install)
-
-\section rulextract_cluster_setup Hadoop Cluster Setup
-
-**Note**: a user already having access to a Hadoop cluster
-may wish to skip this section, after adding these dependencies
-to the `HADOOP_CLASSPATH` : `jcommander-1.35`, `hbase-0.92.0` and
-`guava-r09` .
-
-**Note**: we use Hadoop 1 as opposed to Hadoop 2
-(see [this discussion](http://hadoop.apache.org/docs/r2.3.0/hadoop-mapreduce-client/hadoop-mapreduce-client-core/MapReduce_Compatibility_Hadoop1_Hadoop2.html)).
-We also use the more recent API of Hadoop, which means
-that in general the import statements use the `org.apache.hadoop.mapreduce`
-package instead of the `org.apache.hadoop.mapred` package.
-
-We give instructions on how to set up a single
-node Hadoop cluster. Specifically, we follow instructions
-for the pseudo-distributed single node setup
-from http://hadoop.apache.org/docs/r1.2.1/single_node_setup.html .
-More information is available at http://hadoop.apache.org and
-in the book "Hadoop, The Definitive Guide" by Tom White.
-
-First, choose a working directory, for example `$HOME/hadoopcluster`, then
-run the following commands:
-
-    > mkdir -p $HOME/hadoopcluster
-    > cd $HOME/hadoopcluster
-    > $RULEXTRACT/scripts/hadoopClusterSetup.bash
-
-This should install the cluster in the `$HOME/hadoopcluster/hadoop-1.2.1`
-directory. In the remainder of this tutorial, the `$HADOOP_ROOT`
-variable designates the Hadoop installation directory:
-
-    > HADOOP_ROOT=$HOME/hadoopcluster/hadoop-1.2.1
-
-We now
-detail the steps in the `hadoopClusterSetup.bash` script. You can also
-have a look at the commands and comments inside the script for more information.
-  + The java version is checked. If java 1.7+ is not installed, then
-  a recent version of jdk is downloaded in the current directory, specifically
-  jdk1.8.0_05 .
-  + A recent version of Hadoop is downloaded, specifically version 1.2.1 .
-  + Libraries on which the code is dependent are downloaded.
-  + The configuration files in the Hadoop directory are modified to allow
-  pseudo-distributed mode and point to the correct `JAVA_HOME` . The
-  `HADOOP_CLASSPATH` is also modified to point to libraries that the code
-  depends on.
-  + Passwordless and passphraseless ssh is set. This is to make sure
-  that the command `ssh localhost` works without any password or passphrase
-  prompt.
-  + The Hadoop Distributed File System (HDFS) is formatted.
-  + Hadoop deamons are started. When this is done, you should
-  be able to check the status of HDFS and MapReduce with a browser
-  at the `localhost:50070` and `localhost:50030` respective addresses.
-  + The HDFS `ls` command is tested.
-  + The directory for your username (`/user/$USER`)
-  is created. Is is better to store your HDFS data in that directory rather
-  than the root directory or the `/tmp` directory.
-  + The cluster is shut down to avoid having java processes lying around.
-  You will need to restart the cluster to run MapReduce jobs with the following
-  command:
-
-      > $HADOOP_ROOT/bin/start-all.sh
-
-Once you are done with this tutorial, you can shut down the Hadoop
-cluster with this command:
-
-      > $HADOOP_ROOT/bin/stop-all.sh
-
-When running rule extraction commands, if you see a similar looking
-log message:
-
-      14/07/09 16:56:55 INFO ipc.Client: Retrying connect to server: localhost/127.0.0.1:9000. Already tried 0 time(s); retry policy is RetryUpToMaximumCountWithFixedSleep(maxRetries=10, sleepTime=1 SECONDS)
-
-this means that the Hadoop cluster is not running and needs to be (re)started.
-
-Note that this Hadoop cluster installation is for tutorial purposes.
-If you have a multi-core machine and enough memory (say 16G-32G), then
-this cluster may be sufficient for extracting relatively large grammars.
-However, a proper installation will use several nodes and a different
-username for the Hadoop administrator.
-
-After running the installation script, if you still run into
-trouble while running the rule extraction commands, you may run
-the following commands as a last resort (note that this
-will delete all your HDFS data):
-
-    > $HADOOP_ROOT/bin/stop-all.sh
-    > rm -rf /tmp/hadoop*
-    > $HADOOP_ROOT/bin/hadoop namenode -format
-	> $HADOOP_ROOT/bin/start-all.sh
-
-\section rulextract_pipeline_overview Pipeline Overview
-
-Grammar extraction is composed of two main steps: extraction
-and retrieval.
-
-Extraction consists in extracting all phrase-based and hierarchical
-rules from word-aligned parallel text and computing model scores
-for these rules. Extraction is itself
-decomposed into the following steps:
- + training data loading: the training data, i.e. word aligned
-parallel text, is loaded onto HDFS.
- + extraction: rules are simply extracted, no scores are computed
- + model score computation: scores are computed for the extracted
-rules. Currently, source-to-target and target-to-source probabilities
-are computed.
- + merging: the various outputs from the previous step (score computation)
-are merged so that a rule can be associated to multiple scores.
-
-Rule retrieval, or rule filtering, consists in obtaining
-rules and scores that are only relevant to a given input test
-set or a given input sentence to be translated.
-Rule retrieval is decomposed into the following steps:
- + launch lexical probability servers: lexical features
-are computed with a client/server architecture rather than
-with MapReduce because lexical models take a fair amount of memory.
- + rule retrieval: rules relevant to a test set are looked up
-in the HFiles produced by the extraction phase.
- + grammar formatting: a grammar with a format suitable for the HiFST
-decoder is produced.
-
-The next section details the various steps for grammar extraction.
-
-\section rulextract_grammar_extraction Grammar Extraction
-
-  \subsection rulextract_commands Running Commands
-
-  In the remainder of this tutorial, it is assumed that commands
-  are run from the `$DEMO` directory. Please change to that
-  directory:
-
-      > cd $DEMO
-
-  All commands look like:
-
-       > $HADOOP_ROOT/bin/hadoop jar $RULEXTRACTJAR class args
-
-  where `class` is a particular java class with a main method and
-  `args` are the command line arguments. We use [JCommander](http://jcommander.org/)
-  for command line argument parsing. You can therefore put all arguments
-  in a configuration file `config` and use the syntax `@config` to replace
-  the command line arguments (see the [@-syntax](http://jcommander.org/#Syntax)).
-
-  Create a directory to store logs:
-
-      > mkdir -p logs
-
-  After running rule extraction commands that produce an output
-  on HDFS, you can visualize the output using either the SequenceFile
-  printer or the HFile printer provided. For example, after having
-  run the extraction step (see below), you can see the extracted rules
-  as follows:
-
-      > $HADOOP_ROOT/bin/hadoop \
-          jar $RULEXTRACTJAR \
-          uk.ac.cam.eng.extraction.hadoop.util.SequenceFilePrint \
-          RUEN-WMT13/rules/part-r-00000 2>/dev/null
-
-  This will print the first chunk of rules extracted.
-  After the merging step, you can visualize rules, alignments and features
-  as follows:
-
-      > $HADOOP_ROOT/bin/hadoop \
-          jar $RULEXTRACTJAR \
-          uk.ac.cam.eng.extraction.hadoop.util.HFilePrint \
-          RUEN-WMT13/merge/part-r-00000.hfile 2>/dev/null
-
-  \subsection rulextract_load_data Data Loading
-
-  The first step in grammar extraction is to load the training data onto HDFS.
-  This is done via the following command:
-
-      > $HADOOP_ROOT/bin/hadoop \
-          jar $RULEXTRACTJAR \
-          uk.ac.cam.eng.extraction.hadoop.util.ExtractorDataLoader \
-          @configs/CF.rulextract.load \
-          >& logs/log.loaddata
-
-  You can see the following options in the `configs/CF.rulextract.load`
-  configuration file:
-
-    + `--source` : a gzipped text file with one source sentence per line.
-    + `--target` : a gzipped text file with one target sentence per line.
-    + `--alignment` : a gzipped text file with one sentence pair word alignment per line in
-    Berkeley format.
-    + `--provenance` : a gzipped text file with one set of space separated provenances for
-    a sentence pair per line. In general, each sentence pair has the 'main' provenance, unless
-    you want to exclude some sentence pairs from the general source-to-target and target-to-source
-    computation.
-    + `--hdfsout` : the location of the training data on HDFS.
-
-  For `--hdfsout`, you can specify a relative or absolute path. The relative path is relative
-  to your home directory on HDFS, that is `/user/$USER`.
-  Once the command is completed, you will find the training data at the following
-  location on HDFS:
-
-      /user/$USER/RUEN-WMT13/training_data
-
-  You can verify this by running the Hadoop ls command:
-
-      > $HADOOP_ROOT/bin/hadoop fs -ls RUEN-WMT13
-
-  **Note**: for this tutorial, we use a sample of the training data available
-  for the Russian-English
-  [translation task at WMT13](http://statmt.org/wmt13/translation-task.html).
-  If you wish to test rule extraction with the entire data, modify
-  `$DEMO/configs/CF.rulextract.load` with the following options:
-
-    + `--source=train/ru.gz`
-    + `--target=train/en.gz`
-    + `--alignment=train/align.berkeley.gz`
-    + `--provenance=train/provenance.gz`
-
-  For the full data, we give indicative timing measurements obtained
-  on our cluster of 12 machines with 16 cores and 47G RAM each:
-
-    + extraction: 106m
-    + s2t : 12m
-    + t2s : 13m
-    + merge : 41m
-    + retrieval : 11m
-
-  \subsection rulextract_extract Rule Extraction
-
-  Once the training data has been loaded onto HDFS, rules can be extracted.
-  This is done via the following command:
-
-      > $HADOOP_ROOT/bin/hadoop \
-          jar $RULEXTRACTJAR \
-          uk.ac.cam.eng.extraction.hadoop.extraction.ExtractorJob \
-          @configs/CF.rulextract.extract \
-          >& logs/log.extract
-
-  You can see the following options in the `configs/CF.rulextract.extract`
-  configuration file:
-
-    + `--input` : the input training data on HDFS. This was the output from data loading.
-    + `--output` : the extracted rules on HDFS. This is a directory.
-    + `--remove_monotonic_repeats` : clips counts. For example, given a monotonically aligned
-    phrase pair
-    <a b c, d e f>, the hiero rule <a X, d X> can be extracted from <a b, d e> and from
-    <a b c, d e f>, but the occurrence count is clipped to 1.
-    + `--max_source_phrase` : the maximum source phrase length for a phrase-based rule.
-    + `--max_source_elements` : the maximum number of source elements (terminal or nonterminal)
-    for a hiero rule.
-    + `--max_terminal_length` : the maximum number of consecutive source terminals for a hiero rule.
-    + `--max_nonterminal_span` : the maximum number of terminals covered by a source nonterminal.
-    + `--provenance` : comma-separated list of provenances.
-
-  Once the extraction is complete, you will find the rules
-  in the `/user/$USER/RUEN-WMT13/rules/` HDFS directory.
-  In this directory, you should see the following files:
-
-    + `_SUCCESS` : this file indicates that the job successfully completed.
-    + `_logs` : this directory contains metatdata about the job that has been run.
-    + `part-r-*` : these files are the output of the Hadoop job.
-
-  You can visualize the output by running the SequenceFile printing command:
-
-      > $HADOOP_ROOT/bin/hadoop \
-          jar $RULEXTRACTJAR \
-          uk.ac.cam.eng.extraction.hadoop.util.SequenceFilePrint \
-          RUEN-WMT13/rules/part-r-00000 2>/dev/null | head -n 3
-
-  You should see a similar looking output:
-
-      0 -1_10 -1_138_20  {0=1, 1=1}	   {0-0 1-2=1}
-      0 -1_100 -1_4_77   {0=2, 1=2}	   {0-0 1-2=2}
-      0 -1_100288_3 -1_1672_4	 {0=1, 1=1}		{0-0 1-1 2-2=1}
-
-  The first three fields correspond to the left-hand side, source side
-  and target side of a rule. The fourth field gives rule counts for
-  various provenances. The last field gives the word alignment for
-  the rule and its count.
-
-  \subsection rulextract_s2t Source-to-target Probability
-
-  The output of the previous job is the input to feature computation.
-  We start by computing source-to-target rule probabilities for each
-  provenance. This is done via the following command:
-
-      > $HADOOP_ROOT/bin/hadoop \
-          jar $RULEXTRACTJAR \
-          uk.ac.cam.eng.extraction.hadoop.features.phrase.Source2TargetJob \
-          -D mapred.reduce.tasks=16 \
-          @configs/CF.rulextract.s2t \
-          >& logs/log.s2t
-
-  You can see the following options in the `configs/CF.rulextract.s2t`
-  configuration file:
-
-    + `--input` : the extracted rules on HDFS. This was the output from rule extraction.
-    + `--output` : the source-to-target probabilities on HDFS.
-    + `--provenance` : comma-separated list of provenances.
-    + `--mapreduce_features` : comma-separated list of features. This is important
-    to give the correct index to each feature.
-
-  Note that the command line also has the option `-D mapred.reduce.tasks=16` .
-  This specifies the number of reducers at runtime. Unfortunately, the number
-  of reducers is not determined automatically by the Hadoop framework. You
-  can also specify the number of reducers in the `mapred-site.xml`
-  Hadoop cluster configuration file with the `mapred.reduce.tasks`
-  property.
-  Because main classes
-  all implement the `Tool` interface, you can specify generic options
-  at the command line (see [this example](http://hadoopi.wordpress.com/2013/06/05/hadoop-implementing-the-tool-interface-for-mapreduce-driver/)
-  and the [API documentation](https://hadoop.apache.org/docs/r1.2.1/api/org/apache/hadoop/util/Tool.html) for more detail).
-
-  Once the job is complete, you will find the source-to-target probabilities
-  in the `/user/$USER/RUEN-WMT13/s2t` HDFS directory.
-
-  You can visualize the output by running the SequenceFile printing command:
-
-      > $HADOOP_ROOT/bin/hadoop \
-          jar $RULEXTRACTJAR \
-          uk.ac.cam.eng.extraction.hadoop.util.SequenceFilePrint \
-          RUEN-WMT13/s2t/part-r-00000 2>/dev/null | head -n 3
-
-  You should see a similar looking output:
-
-      0 -1_10003_1428_3_1752 -1_6_3_1106_784_4_911	{0=1.0, 1=1.0, 4=1.0, 5=1.0}
-      0 -1_100521_277 -1_3191_471_151					{0=1.0, 1=1.0, 4=1.0, 5=1.0}
-      0 -1_100529_360070_9 -1_8906_41685_40			{0=1.0, 1=1.0, 4=1.0, 5=1.0}
-
-  The first three fields correspond to the left-hand side, source side
-  and target side of a rule. The last field represents the computed
-  features. In this example, the index 0 corresponds to the source-to-target
-  probability, the index 1 corresponds to the rule count, the index 4 correponds
-  to the "cc" provenance specific probability and the index 5 corresponds to the
-  "cc" provenance specific rule count. In the sample provided, "cc" is the only
-  provenance so features for indices 0, 1, 4 and 5 should be the same.
-
-  \subsection rulextract_t2s Target-to-source Probability
-
-  Computation of other features can be done simultaneously.
-  Computing target-to-source probabilities for each provenance
-  can be done as follows:
-
-      > $HADOOP_ROOT/bin/hadoop \
-          jar $RULEXTRACTJAR \
-          uk.ac.cam.eng.extraction.hadoop.features.phrase.Target2SourceJob \
-          -D mapred.reduce.tasks=16 \
-          @configs/CF.rulextract.t2s \
-          >& logs/log.t2s
-
-  You can see the following options in the `configs/CF.rulextract.t2s`
-  configuration file:
-
-    + `--input` : the extracted rules on HDFS.
-    + `--output` : the source-to-target probabilities on HDFS.
-    + `--provenance` : comma-separated list of provenances.
-    + `--mapreduce_features` : comma-separated list of features.
-
-  Once the job is complete, you will find the target-to-source probabilities
-  in the `/user/$USER/RUEN-WMT13/t2s` HDFS directory. The output is very similar
-  to the output of the source-to-target job but the features have indices
-  2, 3, 12 and 13:
-
-      > $HADOOP_ROOT/bin/hadoop \
-          jar $RULEXTRACTJAR \
-          uk.ac.cam.eng.extraction.hadoop.util.SequenceFilePrint \
-          RUEN-WMT13/t2s/part-r-00000 2>/dev/null | head -n 3
-      0 -1_1985 -1_100090			  {2=1.0, 3=1.0, 12=1.0, 13=1.0}
-      0 -1_1985_8_6 -1_100090_215_8		  {2=1.0, 3=1.0, 12=1.0, 13=1.0}
-      0 -1_234783_5289 -1_100148_3442		  {2=1.0, 3=1.0, 12=1.0, 13=1.0}
-
-  \subsection rulextract_merge Feature Merging
-
-  Once all features have been computed, rules and features
-  are merged into a single output. This can be done via the
-  following command:
-
-      > $HADOOP_ROOT/bin/hadoop \
-          jar $RULEXTRACTJAR \
-          uk.ac.cam.eng.extraction.hadoop.merge.MergeJob \
-          -D mapred.reduce.tasks=10 \
-          @configs/CF.rulextract.merge \
-          >& logs/log.merge
-
-  You can see the following options in the `configs/CF.rulextract.merge`
-  configuration file:
-
-    + `--input_features` : comma separated list of output from feature computation
-    + `--input_rules` : the extracted rules on HDFS
-    + `--output` : merged output
-
-  We need both rules and features as input because the merge job adds word alignment
-  information into the output using the rules.
-  Once this step is completed, there will be 10 output hfiles
-  in the `/user/$USER/RUEN-WMT13/merge` HDFS directory. For backup purposes
-  and in order to make the subsequent retrieval step faster,
-  copy these hfiles to local disk as follows:
-
-      > mkdir -p hfile
-      > $HADOOP_ROOT/bin/hadoop fs -copyToLocal RUEN-WMT13/merge/*.hfile hfile/
-
-  If you are using NFS, it's better to copy the hfiles to local disk, e.g.
-  `/tmp` or `/scratch` .
-
-  To visualize the output, run the HFile printing command:
-
-      > $HADOOP_ROOT/bin/hadoop \
-          jar $RULEXTRACTJAR \
-          uk.ac.cam.eng.extraction.hadoop.util.HFilePrint \
-          RUEN-WMT13/merge/part-r-00000.hfile 2>/dev/null | head -n 3
-      0 12 3	  {0-0=7}							  {0=0.01728395061728395, 1=7.0, 2=0.002145922746781116, 3=7.0, 4=0.01728395061728395, 5=7.0, 12=0.002145922746781116, 13=7.0}
-      0 12 6	  {0-0=5}							  {0=0.012345679012345678, 1=5.0, 2=0.010438413361169102, 3=5.0, 4=0.012345679012345678, 5=5.0, 12=0.010438413361169102, 13=5.0}
-      0 12 7	  {0-0=84}							  {0=0.2074074074074074, 1=84.0, 2=0.10218978102189781, 3=84.0, 4=0.2074074074074074, 5=84.0, 12=0.10218978102189781, 13=84.0}
-
-  The first three fields correspond to the rule, the fourth field to the word alignment and the last field to the computed features.
-
-\section rulextract_retrieval Grammar Filtering
-
-  \subsection lex_model Lexical Models Download
-
-  Lexical models are available as a separate download
-  as they take a fair amount of disk space. Run these commands:
+The rule extractor is a Hadoop MapReduce tool written in Java and Scala. It is fast, flexible, and can handle large amounts of training data. 
+
+\section rulextract_prerequisites Prerequisites
+
+ + [A Hadoop 2 cluster](http://hadoop.apache.org/releases.html "Download Hadoop")
+ + [Scala 2.11](http://www.scala-lang.org/download/)
+
+We assume that the Hadoop commands, including yarn and hdfs, are in your command path. If you do not have access to a Hadoop cluster, then a [single node cluster](http://hadoop.apache.org/docs/r2.6.0/hadoop-project-dist/hadoop-common/SingleCluster.html) is fine for the small amount of data in this tutorial.
+
+The jar located at $RULEXTRACTJAR is a "fat jar", which means that all the dependences of the rule extractor are also included. A fat jar simplifies submission to the Hadoop cluster because dependencies do not need to be specified at job submission.
+
+\section rulextract_tutorial_overview Tutorial
+
+Rule extraction is split into two stages:
+
+**Extraction**: Rules are extracted from the entire training set, counted, and rule probabilities are computed. This stage uses MapReduce for fast aggregation of statistics. The output is the set of all rules for the language pair stored in a simple database based on the HFile format.
+
+**Retrieval**: For a given test set of parallel sentences the HFile is queried for constituent rules. Many of the features are computed as this stage, including lexical features. The retrieval stage does not require a Hadoop MapReduce cluster to run.
+
+\subsection rulextract_tutorial_extraction Extraction
+
+The extraction stage of the pipeline is modelled as a typical MapReduce batch process. Datasets are transformed into new datasets by Hadoop jobs, as shown in the following diagram:
+
+![Extraction Pipeline](rulextract.svg)
+
+For the remainder of this tutorial, it is assumed that commands are run from the `$DEMO` directory. Please change to that directory and ensure a log directory exists:
+
+    > cd $DEMO
+    > mkdir -p logs
+
+Let us simplify the execution of the Hadoop commands by setting an environment variable:
+
+    > RULEXTRACT="yarn jar $RULEXTRACTJAR"
+
+The first step of the extraction pipeline is to load the training data on HDFS:
+
+     > $RULEXTRACT \
+         uk.ac.cam.eng.extraction.hadoop.util.ExtractorDataLoader \
+         --hdfsout=RUEN-WMT13/training_data \
+	     @configs/CF.rulextract \
+         >& logs/log.loaddata
+
+The extraction pipeline is driven by the configuration file `configs/CF.rulextract`. The configuration file specifies the source side of the training data (`--source=train/ru.sample.gz`), the target side (`--target=train/en.sample.gz`), and the alignments in the Berkeley format (`--alignment=train/align.berkeley.sample.gz`). The ExtractorDataLoader reads in the training data, and writes it in HDFS as a sequence file specified by the `--hdfsout` argument. 
+
+The ExtractorDataLoader also requires a provenance file to be specified (`--provenance_file=train/provenance.sample.gz`). Provenances specify subsets of the training data for which to compute separate translation and lexical models. These models are treated as extra features in the linear model used by the decoder. 
+
+The next step is to run the extractor:
+
+    > $RULEXTRACT \
+        uk.ac.cam.eng.extraction.hadoop.extraction.ExtractorJob \
+        --input=RUEN-WMT13/training_data \
+        --output=RUEN-WMT13/rules \
+        @configs/CF.rulextract \
+        >& logs/log.extract
+
+This command performs the first of transformations in the pipeline. It:
+
++ extracts rules from parallel sentences.
++ aggregate the rules, such that the resulting dataset has 1 row per unique rule.
++ counts the occurrences of the rule in the training data according to provenance.
+
+The output of most of the tools in the pipeline is a sequence file, which is difficult to inspect. To help visualize the data stored in sequence files we supply a tool that converts the sequence file to a text representation. To inspect the output of the extractor execute the following command:
+
+    > $RULEXTRACT \
+        uk.ac.cam.eng.extraction.hadoop.util.SequenceFilePrint \
+        RUEN-WMT13/rules/part-r-00000 2>/dev/null \
+        | head
+
+which prints the sequence file as tab-separated values:
+
+    3 6_18_4        {0=1, 1=1}      {0-2 =1}
+    3_4_6002_6 4_5_2725_8   {0=1, 1=1}      {2-2 1-1 3-3 0-0 =1}
+    3_5_64_266 370  {0=1, 1=1}      {2-0 3-0 =1}
+    3_5_266_123_10557_63306_3 4_370_123776_21235_4_3        {0=1, 1=1}      {2-1 5-2 5-3 4-3 3-2 6-4 0-0 =1}
+    3_5_399_1231_1940_24_3385_28107_3 4_171_10863_3334_6_16288_4089_4       {0=2, 1=2}      {8-7 2-2 5-4 4-2 4-3 7-5 1-1 3-1 3-2 6-6 0-0 =2}
+    3_5_458_V 9_3_1552_6_V  {0=1, 1=1}      {2-2 1-0 =1}
+    3_5_V_5291_V1 V_21498_6_V1      {0=1, 1=1}      {3-1 =1}
+    3_5_V_130_3 9_V_14_226_4        {0=1, 1=1}      {4-4 1-0 3-2 3-3 =1}
+    3_5_V_133_V1 8_9_V_206_10_V1    {0=1, 1=1}      {1-1 3-3 0-0 =1}
+    3_6_27_706_3140 8_48_36_1414_3  {0=1, 1=1}      {2-1 4-3 1-0 3-2 =1}
+
+Note that you may see different results due to the partitioning of the data by MapReduce. The first field is the rule, with the source and target side separated by a space. The second field is the map of counts by provenance. In this example each rule has two provenances indexed by 0 and 1. The 0 indexed value is the count across the whole of the training data, which is called the global provenance. The 1 indexed value is the count across the common crawl corpus (cc), and because the rule only occurs in this corpus both counts are equal. In the third field we see a list of the alignments which yield this rule and their associated global counts. In this example all of the rules are yielded by a single alignment, and the counts are equal to the global provenance count. 
+
+Once rules have been extracted, the next step is to compute the rule probabilities. Our approach is to use two jobs to compute the target given source (source2target) and source given target (target2source) probabilities. Here is a quick summary of how the source2target job computes the probabilities:
+
++ Hadoop sorts the rules lexicographically by the source side first, then the target side.
+    + The sort order is defined by a custom comparator.
+    + To ensure that all rules with the same source side are sent to the same partition, only the source side of the rule is hashed.
++ Once sorted, all the rules with the same source side will be contiguous in the sequence file.
++ The reducer loads all the rules with the same source side in memory.
++ The reducer then computes the probabilities for all rules with the same source side.
+
+The target2source job uses the same approach, but the lexicographic sort order is reversed such that all the target sides are contiguous in the sorted data.
+
+The rule probability jobs are run using the following commands:
+
+    > $RULEXTRACT \
+        uk.ac.cam.eng.extraction.hadoop.features.phrase.Source2TargetJob \
+        --input=RUEN-WMT13/rules \
+        --output=RUEN-WMT13/s2t \
+        >& logs/log.s2t 
+
+    > $RULEXTRACT \
+        uk.ac.cam.eng.extraction.hadoop.features.phrase.Target2SourceJob \
+        --input=RUEN-WMT13/rules \
+        --output=RUEN-WMT13/t2s \
+        >& logs/log.t2s
+
+We now have rule counts, and two sets of rule probabilities. The last step is to:
+
++ Merge all the statistics.
++ Filter rules with low counts and probabilities.
++ Create the file based database (HFile).
+
+We do this with the MergeJob. Before we can run this job we need to edit the configuration file to set the location of files necessary for filtering. These files are specified by the following command line options in `configs/CF.rulextract`:
+
++ `--allowed_patterns=file://$DEMO/configs/CF.rulextract.filter.allowedonly`
++ `--source_patterns=file://$DEMO/CF.rulextract.patterns`
+
+These files are specified by a full URI because they need to be accessible by every worker machine in the Hadoop cluster. For this tutorial we assume that the workers have access to a networked file system. If this is not the case, then you must load these files onto HDFS and use the `hdfs://` protocol in the configuration. Because the `file://` protocol does not allow for relative paths, the full path needs to added manually. For example:
+
+    > sed "s:\$DEMO:$DEMO:g" configs/CF.rulextract > configs/CF.rulextract.expanded
+
+The merge job can then be run as:
+
+    > $RULEXTRACT \
+        uk.ac.cam.eng.extraction.hadoop.merge.MergeJob \
+        -D mapred.reduce.tasks=4 \
+        --input_features=RUEN-WMT13/s2t,RUEN-WMT13/t2s \
+        --input_rules=RUEN-WMT13/rules \
+        --output=RUEN-WMT13/merge \
+        @configs/CF.rulextract.expanded  \
+        >& logs/log.merge
+
+The one unusual option here is ` -D mapred.reduce.tasks=4`. This option instructs Hadoop to use only 4 reducers when creating the HFile. The output directory `RUEN-WMT13/merge` will then contain the data partitioned into 4 files.
+
+It is useful to be able to fine tune `mapred.reduce.task` because the retriever queries each file in a separate thread. For the fastest retrieval times, the number of reducers should be set to be the same as number of threads as used in the retriever. Note that querying the HFile with a different number of threads does not change the results of the query. The query will just be slower.
+
+The HFile is a binary format, which can be viewed with the HFile print tool:
+
+          > $RULEXTRACT \
+              uk.ac.cam.eng.extraction.hadoop.util.HFilePrint \
+              RUEN-WMT13/merge/part-r-00000.hfile 2>/dev/null \
+         	  | head
+
+which yields
+
+    3 4     RuleData [provCounts={0=8272, 1=8272}, alignments={0-0 =8272}, features={SOURCE2TARGET_PROBABILITY={0=-0.08468153736026644}, TARGET2SOURCE_PROBABILITY={0=-0.03958331665033461}, PROVENANCE_SOURCE2TARGET_PROBABILITY={1=-0.08468153736026644}, PROVENANCE_TARGET2SOURCE_PROBABILITY={1=-0.03958331665033461}}]
+    3 8     RuleData [provCounts={0=287, 1=287}, alignments={0-0 =287}, features={SOURCE2TARGET_PROBABILITY={0=-3.4458309183488556}, TARGET2SOURCE_PROBABILITY={0=-1.7490483511350052}, PROVENANCE_SOURCE2TARGET_PROBABILITY={1=-3.4458309183488556}, PROVENANCE_TARGET2SOURCE_PROBABILITY={1=-1.7490483511350052}}]
+    7 7_3   RuleData [provCounts={0=18, 1=18}, alignments={0-0 =8, 0-0 0-1 =9, 0-1 =1}, features={SOURCE2TARGET_PROBABILITY={0=-3.6535400876686275}, TARGET2SOURCE_PROBABILITY={0=-1.7346010553881064}, PROVENANCE_SOURCE2TARGET_PROBABILITY={1=-3.6535400876686275}, PROVENANCE_TARGET2SOURCE_PROBABILITY={1=-1.7346010553881064}}]
+    7 17_11 RuleData [provCounts={0=10, 1=10}, alignments={0-0 =10}, features={SOURCE2TARGET_PROBABILITY={0=-4.241326752570746}, TARGET2SOURCE_PROBABILITY={0=-0.262364264467491}, PROVENANCE_SOURCE2TARGET_PROBABILITY={1=-4.241326752570746}, PROVENANCE_TARGET2SOURCE_PROBABILITY={1=-0.262364264467491}}]
+    7 6     RuleData [provCounts={0=14, 1=14}, alignments={0-0 =14}, features={SOURCE2TARGET_PROBABILITY={0=-3.9048545159495336}, TARGET2SOURCE_PROBABILITY={0=-3.5326432677956565}, PROVENANCE_SOURCE2TARGET_PROBABILITY={1=-3.9048545159495336}, PROVENANCE_TARGET2SOURCE_PROBABILITY={1=-3.5326432677956565}}]
+    7 9_3   RuleData [provCounts={0=11, 1=11}, alignments={0-0 =2, 0-0 0-1 =7, 0-1 =2}, features={SOURCE2TARGET_PROBABILITY={0=-4.146016572766421}, TARGET2SOURCE_PROBABILITY={0=-5.082533033275838}, PROVENANCE_SOURCE2TARGET_PROBABILITY={1=-4.146016572766421}, PROVENANCE_TARGET2SOURCE_PROBABILITY={1=-5.082533033275838}}]
+    7 17    RuleData [provCounts={0=195, 1=195}, alignments={0-0 =195}, features={SOURCE2TARGET_PROBABILITY={0=-1.2709122870010454}, TARGET2SOURCE_PROBABILITY={0=-0.535142931416697}, PROVENANCE_SOURCE2TARGET_PROBABILITY={1=-1.2709122870010454}, PROVENANCE_TARGET2SOURCE_PROBABILITY={1=-0.535142931416697}}]
+    7 7     RuleData [provCounts={0=53, 1=53}, alignments={0-0 =53}, features={SOURCE2TARGET_PROBABILITY={0=-2.5736199320126705}, TARGET2SOURCE_PROBABILITY={0=-2.741448481504058}, PROVENANCE_SOURCE2TARGET_PROBABILITY={1=-2.5736199320126705}, PROVENANCE_TARGET2SOURCE_PROBABILITY={1=-2.741448481504058}}]
+    7 9_11  RuleData [provCounts={0=10, 1=10}, alignments={0-0 =1, 0-0 0-1 =9}, features={SOURCE2TARGET_PROBABILITY={0=-4.241326752570746}, TARGET2SOURCE_PROBABILITY={0=-1.9459101490553135}, PROVENANCE_SOURCE2TARGET_PROBABILITY={1=-4.241326752570746}, PROVENANCE_TARGET2SOURCE_PROBABILITY={1=-1.9459101490553135}}]
+    7 17_3  RuleData [provCounts={0=67, 1=67}, alignments={0-0 =67}, features={SOURCE2TARGET_PROBABILITY={0=-2.3392192261738263}, TARGET2SOURCE_PROBABILITY={0=-0.5993284253422904}, PROVENANCE_SOURCE2TARGET_PROBABILITY={1=-2.3392192261738263}, PROVENANCE_TARGET2SOURCE_PROBABILITY={1=-0.5993284253422904}}]
+
+In practise the HFile is queried by the retriever tool, but it can be useful for debugging to be see the raw output. Finally we need to copy the merge directory to local disk. Execute the following:
+
+    > hdfs dfs -copyToLocal RUEN-WMT13/merge hfile
+
+The Hadoop cluster is no longer needed, and can be shut down.
+
+\subsection rulextract_tutorial_retrieval Retrieval
+
+The HFile produced by the extraction stage contains all the rules extracted from the entire training data. In the retrieval stage the HFile is queried to produce a subset of the rules that can be applied to a test set. The retrieval tool also computes many of the features, including the lexical features, used in the decoder's linear model.
+
+Lexical features require IBM Model 1 probabilities in the [GIZA](http://www.statmt.org/moses/giza/GIZA++.html) format. Lexical models are available as a separate download as they take a fair amount of disk space. To get these models run the following commands:
 
       > wget http://mi.eng.cam.ac.uk/~jmp84/share/giza_ibm_model1_filtered.tar.gz
       > tar -xvf giza_ibm_model1_filtered.tar.gz
 
-  These lexical models were filtered with the source vocabulary and
-  target vocabulary of the test set for this tutorial to obtain
-  a reasonable size for these models (the source vocabulary is easily
-  obtained from the test set, the target vocabulary is obtained by taking
-  target words from relevant translation rules for that test set).
-  If you wish, you can also download
-  the [full models](http://mi.eng.cam.ac.uk/~jmp84/share/giza_ibm_model1_filtered.tar.gz)
-  but you will require a machine with about 30G RAM to load the servers.
+These lexical models were filtered with the source vocabulary and target vocabulary of the test set for this tutorial to obtain a reasonable size for these models (the source vocabulary is easily obtained from the test set, the target vocabulary is obtained by taking target words from relevant translation rules for that test set).
+If you wish, you can also download the [full models](http://mi.eng.cam.ac.uk/~jmp84/share/giza_ibm_model1_filtered.tar.gz)  but you will require a machine with about 30G RAM to load the data. 
 
-  \subsection lex_prob_server Lexical Probability Servers
+The retrieval tool assumes that the lexical models are stored in a directory structure that can be split by provenance and direction. This structure is reflected in the configuration option `--ttable_server_template=giza_ibm_model1_filtered/genres/$GENRE/align/$DIRECTION/$DIRECTION.mode1.final.gz`. The variables `$GENRE` and `$DIRECTION` are used internally by the retriever to formulate the correct path to a model. For example, to get the source-to-target direction for the cc provenance the retriever sets `GENRE=cc` and `DIRECTION=en2ru` to locate:
 
-  A preliminary step prior to grammar filtering is to launch lexical
-  probability servers. These servers load IBM Model 1 probabilities
-  for various provenances and for source-to-target and
-  target-to-source directions. These probabilities have
-  been obtained by the GIZA++ toolkit. For convenience, for this
-  tutorial, we provide pretrained models. The source-to-target
-  and target-to-source servers are launched as follows:
+    giza_ibm_model1_filtered/genres/cc/align/en2ru/en2ru.mode1.final.gz
 
-      > export HADOOP_HEAPSIZE=3000
-      > export HADOOP_OPTS="-XX:+UseConcMarkSweepGC -verbose:gc -server -Xms3000M"
-      > $HADOOP_ROOT/bin/hadoop \
-          jar $RULEXTRACTJAR \
-          uk.ac.cam.eng.extraction.hadoop.features.lexical.TTableServer \
-          @configs/CF.rulextract.lexserver \
-          --ttable_direction=s2t \
-          --ttable_language_pair=en2ru \
-          --min_lex_prob=0.001
-      > $HADOOP_ROOT/bin/hadoop \
-          jar $RULEXTRACTJAR \
-          uk.ac.cam.eng.extraction.hadoop.features.lexical.TTableServer \
-          @configs/CF.rulextract.lexserver \
-          --ttable_direction=t2s \
-          --ttable_language_pair=ru2en \
-          --min_lex_prob=0.001
+Here is a quick summary of what the retriever does:
 
-  Both servers should be launched in a separate terminal and without
-  trailing ampersand to the commands. Once the servers are ready, a message
-  similar to `"TTable server ready on port: 4949"` will be printed out.
++ Generate all the possible source sides of a rule that can be found in a source sentence.
++ Partition the sets of source sides into queries for each file contained in the HFile directory.
++ Sort the queries.
++ Execute the queries and return rule counts, probabilities, and alignments for each rule found in the HFile.
++ Filter the rules for a second time.
++ Compute additional features, such as the lexical features.
++ Generate OOV, deletion rules, and pass-through rules based on the query results.
++ Write the results as shallow grammar.
 
-  You can see the following options in the `configs/CF.rulextract.lexserver`
-  configuration file:
+Let us now run the retriever. Because retrieval also performs filtering, we need to use the `CF.rulextract.expanded` configuration from the previous section. Run the following Scala script:
 
-    + `--ttable_s2t_server_port` : the port for the source-to-target server.
-    + `--ttable_s2t_host` : the host for the source-to-target server.
-    + `--ttable_t2s_server_port` : the port for the target-to-source server.
-    + `--ttable_t2s_host` : the host for the target-to-source server.
-    + `--ttable_server_template` : indicates a templated path to the lexical model
-    where the templates `$GENRE` and `$DIRECTION` are replaced by their actual
-	value.
-    + `--provenance` : comma-separated provenances. This is used to search
-    for the lexical models in the template.
-    + `--min_lex_prob` : this option is used to keep the memory usage relatively low.
-	Probabilities in the Model 1 table that are lower than a certain threshold are
-	discarded. By default, no entry is discarded.
+    > $HiFSTROOT/java/ruleXtract/scripts/retrieve.scala \
+        --s2t_language_pair en2ru --t2s_language_pair ru2en \
+        --test_file=RU/RU.tune.idx \
+        --rules=G/rules.RU.tune.idx.gz \
+        --vocab=RU.tune.idx.vocab \
+        @configs/CF.rulextract.expanded \
+        >& logs/log.retrieval
 
-  \subsection hadoop_local_conf Hadoop Local Configuration
+The `s2t_language_pair` and `t2s_language_pair` options are used to set the `$DIRECTION` variable when locating lexical models. The `--test_file` option is the input file to translate and the output is stored in `--rules`. The output is stored as a gzipped shallow grammar, and can be used as input to HiFST:
 
-  We have mentioned that retrieval is faster from local disk than
-  from HDFS. In order to run Hadoop commands locally, we need
-  to use a local configuration. This can be done by modifying
-  the Hadoop configuration file that was prepared when setting
-  up the Hadoop cluster:
+    > /home/blue7/aaw35/tools/demo-files$ zcat G/rules.RU.tune.idx.gz | head
+       V 542 2143 2.036882 0.980829 -1 -1 0 0 0 0 -1 0.841104 0.500422 2.036882 4.700000 4.700000 4.700000 0.980829 7 7 7 0.873349 0.652270 0.811145 40.001968 0.518248 0.367899 0.452543 40.001968
+       V 435 7_3 2.197225 4.624973 -2 -1 0 0 -1 0 0 5.103256 5.981430 2.197225 4.700000 4.700000 4.700000 4.624973 7 7 7 7.014742 7.818437 5.184339 40.695116 6.225953 6.485531 6.219496 41.864230
+       V 109 106 1.312186 1.189584 -1 -1 0 0 0 0 -1 1.206707 1.617768 1.312186 4.700000 4.700000 4.700000 1.189584 7 7 7 1.722831 1.505299 0.770817 40.001968 2.897182 0.356538 0.494034 40.001968
+       V 298 12 2.302585 5.918894 -1 -1 0 0 -1 0 0 5.881671 8.218089 2.302585 4.700000 4.700000 4.700000 5.918894 7 7 7 6.500572 10.274702 7.688218 40.001968 7.903815 8.429022 8.320468 40.001968
+       V 99 17_426 3.433987 0.693147 -2 -1 0 0 -1 0 0 1.033376 4.712400 3.433987 4.700000 4.700000 4.700000 0.693147 7 7 7 0.988207 0.782317 1.029978 1.290824 4.763535 5.242606 4.932181 45.396855
+       V 79 40_83_13_27_180_19 3.433987 0.693147 -6 -1 0 0 -1 0 0 3.828080 24.055434 3.433987 4.700000 4.700000 4.700000 0.693147 7 7 7 3.752430 3.816584 3.814278 41.793728 26.486789 30.225935 26.563699 244.170694
+       V 931 821_11 2.995732 1.945910 -2 -1 0 0 -1 0 0 1.060779 5.414462 2.995732 4.700000 4.700000 4.700000 1.945910 7 7 7 1.034481 0.940884 1.005978 40.695116 5.487767 5.069144 5.481220 48.615538
+       V 454 21_499 3.401197 2.079442 -2 -1 0 0 -1 0 0 7.166555 10.007927 3.401197 4.700000 4.700000 4.700000 2.079442 7 7 7 6.709149 40.695116 9.531266 40.695116 10.229790 44.330405 12.247832 81.390231
+       V 79 13_27_180 3.433987 0.693147 -3 -1 0 0 -1 0 0 3.172935 10.576585 3.433987 4.700000 4.700000 4.700000 0.693147 7 7 7 3.095097 3.152567 3.148776 41.100581 11.037732 14.379323 11.622925 122.085347
+       V 735 7_603 2.772589 0 -2 -1 0 0 -1 0 0 1.801323 4.825997 2.772589 4.700000 4.700000 4.700000 0 7 7 7 1.909558 1.684512 1.756053 1.390172 5.103973 4.726153 4.772959 41.388263
 
-      > cp -r $HADOOP_ROOT/conf configs/hadoopLocalConf
-      > cat $HADOOP_ROOT/conf/mapred-site.xml | \
-          $RULEXTRACT/scripts/makeHadoopLocalConfig.pl \
-          > configs/hadoopLocalConf/mapred-site.xml
-      > cat $HADOOP_ROOT/conf/hdfs-site.xml | \
-          $RULEXTRACT/scripts/makeHadoopLocalConfig.pl \
-          > configs/hadoopLocalConf/hdfs-site.xml
-      > cat $HADOOP_ROOT/conf/core-site.xml | \
-          $RULEXTRACT/scripts/makeHadoopLocalConfig.pl \
-          > configs/hadoopLocalConf/core-site.xml
+If the optional `--vocab` value is set then the retriever will write out the target side vocabulary for each sentence on separate lines. [KenLM](https://kheafield.com/code/kenlm/) can use files in this format to filter large language models. 
 
-  \subsection retrieval Grammar Filtering
+\subsection rulextract_pipeline_lexserve Lexical Servers
 
-  Once the lexical probability servers are up, the Hadoop local
-  configuration has been prepared, one can proceed to
-  actual grammar filtering. This is done via the following
-  command:
+As we have seen in the previous section, the lexical models can be very large. So large that they do not fit in memory of a single machine.  To deal with this problem the retriever uses a client-server model. The lexical models are stored in two servers, one for each direction, and the retriever requests probabilities from the servers as rules are read from the HFile. The Scala script in the previous section starts the two servers, waits for them to load the lexical models, and then starts the retriever.
 
-      > $HADOOP_ROOT/bin/hadoop \
-          --config configs/hadoopLocalConf \
-          jar $RULEXTRACTJAR \
-          uk.ac.cam.eng.rule.retrieval.RuleRetriever \
-          @configs/CF.rulextract.retrieval \
-          >& logs/log.retrieval
+Starting the lexical servers separately is only necessary if the lexical models are very large. In most cases the Scala script is the recommended approach. For the sole purpose of demonstrating the lexical servers in action, we now quickly retrieve the rules for individual sentences. Although the retriever was designed for batch processing, we can still achieve respectable query speeds that are close to real time by preloading the lexical models. First we need to start the servers:
 
-  You can see the following options in the `configs/CF.rulextract.retrieval`
-  configuration file:
+    > java -Xmx5G -server \
+       -classpath $RULEXTRACTJAR \
+       uk.ac.cam.eng.extraction.hadoop.features.lexical.TTableServer \
+	   @configs/CF.rulextract \
+       --ttable_direction=s2t \
+	   --ttable_language_pair=en2ru \
+	   >& logs/log.s2t_server
 
-    + `--max_source_phrase` : the maximum source phrase length for a phrase-based rule.
-    This option is used to control how source patterns are generated from the
-    test file. The value for this option should be at most the value
-    chosen when extracting rules. Otherwise, no rules will be found for certain
-    patterns.
-    + `--max_source_elements` : the maximum number of source elements (terminal
-    or nonterminal) for a hiero rule. Same remarks as for `--max_source_phrase`
-    apply.
-    + `--max_terminal_length` : the maximum number of consecutive source terminals
-    for a hiero rule. Same remarks as for `--max_source_phrase` apply.
-    + `--max_nonterminal_span` : the maximum number of terminals covered by a
-    source nonterminal. Usually we set the value for this option to be equal
-    to the one used in the extraction phase but it's possible to choose any
-    value smaller that the value of `--hr_max_height` .
-    + `--hr_max_height` : the maximum number of terminals covered by the entire
-    source side of a rule. The value for this option should be at most the value
-    chosen for the `--cykparser.hrmaxheight` option in the HiFST decoder, otherwise
-    some rules will never be used in decoding.
-    + `--mapreduce_features` : comma-separated list of mapreduce features. Note that
-    for the value for this option, we have used the value from the extraction phase
-    and added lexical features.
-    + `--provenance` : comma-separated list of provenances.
-    + `--features`: comma-separated list of features.
-    + `--pass_through_rules` : file containing special translation rules
-    that copy source words or source word sequences to the target.
-    + `--filter_config` : file with additional filter options. This configuration
-    file determines what patterns are allowed, minimum source-to-target and target-to-source
-    probabilities for phrase-based and hierarchical rules, etc. See the
-    comments in `$DEMO/configs/CF.rulextract.filter` for details.
-    + `--source_patterns` : list of source patterns to be used in order to
-    generate source pattern instances.
-    + `--ttable_s2t_server_port` : the port for the source-to-target server. The
-    value for this option should be same as the one used to launch the servers.
-    + `--ttable_s2t_host` : the host for the source-to-target server.
-    + `--ttable_t2s_server_port` : the port for the target-to-source server.
-    + `--ttable_t2s_host` : the host for the target-to-source server.
-    + `--retrieval_threads` : the number of threads. The value for this option
-    should be equal to the number of HFiles obtained in the merge step.
-    + `--hfile` : the directory containing the HFiles.
-    + `--test_file` : the test set to be translated.
-    + `--rules` : the output file containing relevant rules for the test set.
+and
 
-  Once this step is completed, you should obtain a rule file
-  at this location: `$DEMO/G/rules.RU.tune.idx.gz`
+    > java -Xmx5G -server \
+       -classpath $RULEXTRACTJAR \
+       uk.ac.cam.eng.extraction.hadoop.features.lexical.TTableServer \
+	   @configs/CF.rulextract \
+       --ttable_direction=t2s \
+	   --ttable_language_pair=ru2en \
+	   >& logs/log.t2s_server
 
-  \subsection grammar_conversion Grammar Formatting
+Inspect the logs and wait until the lexical servers report they are ready. Once the models are loaded this message will appear in the logs:
 
-  In order to obtain a shallow grammar ready to use by the HiFST
-  decoder, a postprocessing step is needed. This can be
-  achieved via the following command:
+    TTable server ready on port: ...
 
-      > zcat -f G/rules.RU.tune.idx.gz | \
-          $RULEXTRACT/scripts/prepareShallow.pl | \
-          $RULEXTRACT/scripts/shallow2hifst.pl | \
-          $RULEXTRACT/scripts/sparse2nonsparse.pl 27 | \
-          gzip > G/rules.shallow.vecfea.sample.prov.gz
+Let us now create an input file of a single sentence. For this example let us use sentence 2 because it is a long sentence.
 
-  The `G/rules.shallow.vecfea.sample.prov.gz` file should
-  be ready to be used by the HiFST decoder with the
-  `--grammar.load` option. If you've changed
-  the `configs/CF.rulextract.load` configuration
-  file to use the entire training data, and if you have
-  used the option `--min_lex_prob` set to zero for the
-  lexical probability servers, then you should
-  obtain a file with the same rules as in
-  `G/rules.shallow.vecfea.all.gz` with the same
-  first 11 features and additional provenance features.
+    > head -n2 RU/RU.tune.idx | tail -n1 > 2.idx
 
-\section Development
+Now we run the retriever for this single sentence, using the time command to see how long it takes:
 
-  \subsection ide IDE Development
+    > time java \
+       -classpath $RULEXTRACTJAR \
+       uk.ac.cam.eng.rule.retrieval.RuleRetriever \
+        --test_file=2.idx \
+        --rules=2.shallow.gz \
+        --vocab=2.vocab \
+        @configs/CF.rulextract.expanded \
+        >& logs/log.2_retrieval
 
-In order to generate a project file for Eclipse,
-please follow these [instructions](https://github.com/typesafehub/sbteclipse).
-For IntelliJ IDEA, follow these [instructions](https://github.com/mpeltonen/sbt-idea).
+and we can see the output that the grammar was generated in around 1.5 seconds:
 
-  \subsection local_feature Adding a Local Feature
+    real    0m1.644s
+    user    0m6.816s
+    sys     0m0.324s
 
-  We give instructions on how to add a local feature to rule extraction.
-  In order to compute a local feature for a rule, we only need to consider
-  that rule. For example, the number of target terminals in a rule is a
-  local feature. Let's add that feature:
+A respectable result considering that the pipeline is designed for batch processing.
 
-    + In the `uk.ac.cam.eng.rulebuilding.features` package, create
-    a new class called `NumberTargetElements` . Its featureName
-    field can be for example "number_target_elements".
-    + This class should implement the `Feature` class from the same
-    package.
-    + Implement the required methods for that class. You can
-    look at the WordInsertionPenalty class in the same package for an example.
-    + In the constructor of the FeatureCreator class in the same package,
-    add the following line:
+\section rulextract_filtering Filtering
 
-        features.put("number_target_elements", new NumberTargetElements());
+Most grammars will yield rules that are seen very infrequently in the training data. These rules cause the decoder search space to expand with very little benefit. To speed up decoding the low frequency rules are filtered out when generating grammars.
 
-    + Modify the `--features` option to include `number_target_elements`
-    in the comma-separated list of features. If you follow the tutorial
-    commands, you can modify the `configs/CF.rulextract.retrieval` configuration
-    file.
+The rule extraction pipeline allows for fine-grained control of how rules are filtered. Filtering is performed twice, once during extraction, and once during retrieval. The reason for performing filtering twice is to enable experiments that determine the correct level of filtering. A more generous threshold can be applied at extraction, and then tightened at retrieval time.
 
-  If you get stuck, you can see what modifications are needed
-  [here](https://github.com/ucam-smt/ucam-smt/commit/09f697d1e7e6f35e9e04c37e3f00b0c7780b6d67)
+Filtering is controlled by command line options, and two files:
 
-  \subsection mapreduce_feature Adding a MapReduce Feature
++ A list of allowed rule patterns (`--allowed_patterns`).
++ A list of allowed source side patterns, with extra filtering criteria (`--source_patterns`).
 
-  We now give instructions on how to add a MapReduce feature.
-  In order to compute a MapReduce feature, we need to consider
-  all rules extracted from the training data rather than
-  a single rule at a time. For example, let's add source-to-target
-  and provenance source-to-target probabilities with add-one smoothing:
+The allowed rule patterns take the following form:
 
-    + In the `uk.ac.cam.eng.extraction.hadoop.features.phrase` package, create
-	a new class called `Source2TargetAddOneSmoothedJob` . This class
-	is very similar to `Source2TargetJob` except that the mapper
-	adds one to the rule counts.
-    + Modify the `MapReduceFeature` class to add the new feature.
-    + Follow the steps to add a local feature.
-    + Change the `--mapreduce_feature` option to be the following:
+    V1_W_V-W_V_W_V1
 
-        --mapreduce_features=source2target_probability,target2source_probability,provenance_source2target_probability,provenance_target2source_probability,source2target_addonesmoothed_probability,provenance_source2target_addonesmoothed_probability
+The `W` symbol denotes any terminal symbol, and the `V` and `V1` symbols denote non-terminals. Any rules that do not fit these patterns are filtered from the final grammar.
 
-    + For merging, change the `--input_features` option to be the following:
+Lines in the source patterns file have the following format:
 
-        --input_features=RUEN-WMT13/s2t,RUEN-WMT13/t2s,RUEN-WMT13/s2taddone
+    V_W_V1 2 10
 
-    + Since there is a new feature, you need to run a command analogous to
-    the one run to obtain source-to-target probabilities
-    + For retrieval, modify the `--mapreduce_features` and the `--features`
-    options to be as follows:
++ The first field is an acceptable source side pattern, and the symbols have the same meaning as the allowed rules patterns.
++ The second field is the minimum number of times a rule with this source pattern must occur to be accepted into the final grammar.
++ The third field is the maximum number of rules that share the same source side that can be in the final grammar. If more than the maximum number of rules are found, then only the rules with the highest frequency are chosen.
 
-        --mapreduce_features=source2target_probability,target2source_probability,provenance_source2target_probability,provenance_target2source_probability,source2target_addonesmoothed_probability,provenance_source2target_addonesmoothed_probability,source2target_lexical_probability,target2source_lexical_probability,provenance_source2target_lexical_probability,provenance_target2source_lexical_probability
-        --features=source2target_probability,target2source_probability,word_insertion_penalty,rule_insertion_penalty,glue_rule,insert_scale,rule_count_1,rule_count_2,rule_count_greater_than_2,source2target_lexical_probability,target2source_lexical_probability,provenance_source2target_probability,provenance_target2source_probability,provenance_source2target_lexical_probability,provenance_target2source_lexical_probability,source2target_addonesmoothed_probability,provenance_source2target_addonesmoothed_probability
+We cover the rest of the filtering command line options in the next section.
 
-  The code modifications are [here](https://github.com/ucam-smt/ucam-smt/commit/7cba14a596f5e428ce69fe2620e411ecfe0e8d71).
+
+\section rulextract_configuration_overview Configuration 
+
+In the following table we list all possible command line options used in rule extraction. All options can be used either on the command line or specified in a configuration file. Configuration files are specified on the command line with the `@` symbol. Some tools share options and many tools specify `--input` and `--output` options, which we omit from the table. The tools also print help messages with a description of the required options.
+
+The Source2TargetJob and Target2SourceJob tools only require `--input` and `--output` options and have been omitted from this table.
+
+Note that the Scala script used for retrieval starts both lexical servers and then the retriever. Its command line options are a union of the lexical server and retriever options listed here.
+
+<table>
+	<tr> <th>Option</th> <th>Description</th> <th>ExtractorJob</th> <th>MergeJob</th><th>Lexical Server</th><th>Retrieval</th>    </tr>
+	<tr>
+		<td>remove_monotonic_repeats</td>
+		<td>Clips counts. For example, given a monotonically aligned phrase pair <a b c, d e f>, the hiero rule <a X, d X> can be extracted from <a b, d e> and from <a b c, d e f>, but the occurrence count is clipped to 1.</td>
+		<td > ✔ </td>
+		<td>  </td>
+		<td>  </td>
+		<td>  </td>
+	</tr>
+	<tr>
+		<td>max_source_phrase</td>
+		<td>The maximum source phrase length for a phrase-based rule.</td>
+		<td > ✔ </td>
+		<td>  </td>
+		<td>  </td>
+		<td> ✔ </td>
+	</tr>
+	<tr>
+		<td>max_source_elements</td>
+		<td> The maximum number of source elements (terminal or nonterminal)</td>
+		<td > ✔ </td>
+		<td>  </td>
+		<td>  </td>
+		<td> ✔ </td>
+	</tr>
+	<tr>
+		<td>max_terminal_length</td>
+		<td> The maximum number of consecutive source terminals for a hiero rule.</td>
+		<td > ✔ </td>
+		<td>  </td>
+		<td>  </td>
+		<td> ✔ </td>
+	</tr>
+	<tr>
+		<td>max_nonterminal_span</td>
+		<td> The maximum number of terminals covered by a source nonterminal.</td>
+		<td > ✔ </td>
+		<td>  </td>
+		<td>  </td>
+		<td> ✔ </td>
+	</tr>
+	<tr>
+		<td>provenance</td>
+		<td> Comma-separated list of provenances.</td>
+		<td > ✔ </td>
+		<td>  </td>
+		<td> ✔</td>
+		<td> ✔ </td>
+	</tr>
+	<tr>
+		<td>allowed_patterns</td>
+		<td> The location of the allowed patterns file. It must be specified as a URI.</td>
+		<td > </td>
+		<td> ✔  </td>
+		<td>  </td>
+		<td> ✔ </td>
+	</tr>
+	<tr>
+		<td>source_patterns</td>
+		<td> The location of the source patterns file. It must be specified as a URI.</td>
+		<td > </td>
+		<td> ✔  </td>
+		<td>  </td>
+		<td> ✔ </td>
+	</tr>
+	<tr>
+		<td>min_source2target_phrase</td>
+		<td> Minimum source-to-target probability for filtering phrase-based rules.</td>
+		<td > </td>
+		<td> ✔  </td>
+		<td>  </td>
+		<td> ✔ </td>
+	</tr>
+	<tr>
+		<td>min_target2source_phrase</td>
+		<td> Minimum target-to-source probability for filtering phrase-based rules.</td>
+		<td > </td>
+		<td> ✔  </td>
+		<td>  </td>
+		<td> ✔ </td>
+	</tr>
+	<tr>
+		<td>min_source2target_rule</td>
+		<td> Minimum source-to-target probability for filtering hierarchical rules.</td>
+		<td > </td>
+		<td> ✔  </td>
+		<td>  </td>
+		<td> ✔ </td>
+	</tr>
+	<tr>
+		<td>min_target2source_rule</td>
+		<td> Minimum target-to-source probability for filtering hierarchical rules.</td>
+		<td > </td>
+		<td> ✔  </td>
+		<td>  </td>
+		<td> ✔ </td>
+	</tr>
+	<tr>
+		<td>provenance_union</td>
+		<td> Some rules may have a low global probability that falls below the filtering threshold, but high enough in a particular provenance to pass the threshold. The provenance union option allows these rules to pass through into the final grammar.</td>
+		<td > </td>
+		<td> ✔  </td>
+		<td>  </td>
+		<td> ✔ </td>
+	</tr>
+	<tr>
+		<td>input_features</td>
+		<td> A comma separated list of the output of the Source2TargetJob and Target2SourceJob.</td>
+		<td > </td>
+		<td> ✔  </td>
+		<td>  </td>
+		<td>  </td>
+	</tr>
+	<tr>
+		<td>input_rules</td>
+		<td> The output of the extractor job.</td>
+		<td > </td>
+		<td> ✔  </td>
+		<td>  </td>
+		<td> </td>
+	</tr>
+	<tr>
+		<td>ttable_s2t_server_port</td>
+		<td> Source-to-target lexical server port.</td>
+		<td > </td>
+		<td>  </td>
+		<td> ✔</td>
+		<td> ✔ </td>
+	</tr>
+	<tr>
+		<td>ttable_t2s_server_port</td>
+		<td>Target-to-source lexical server port.</td>
+		<td > </td>
+		<td>  </td>
+		<td> ✔</td>
+		<td> ✔ </td>
+	</tr>
+	<tr>
+		<td>ttable_s2t_host</td>
+		<td>Source-to-target lexical server hostname.</td>
+		<td > </td>
+		<td>  </td>
+		<td> ✔</td>
+		<td> ✔ </td>
+	</tr>			
+	<tr>
+		<td>ttable_t2s_host</td>
+		<td>Target-to-source lexical server hostname.</td>
+		<td > </td>
+		<td>  </td>
+		<td> ✔</td>
+		<td> ✔ </td>
+	</tr>
+	<tr>
+		<td>ttable_server_template</td>
+		<td>Template string indicating the directory structure of the Giza lexical models. The template string can include $GENRE and $DIRECTION variables.</td>
+		<td > </td>
+		<td>  </td>
+		<td> ✔</td>
+		<td> </td>
+	</tr>
+	<tr>	
+		<td>ttable_language_pair</td>
+		<td>String to substitute in the $DIRECTION variable.</td>
+		<td > </td>
+		<td>  </td>
+		<td> ✔</td>
+		<td> </td>
+	</tr>
+	<tr>	
+	<td>ttable_direction</td>
+		<td>The direction of the ttable server. Valid values are "s2t" and "t2s".</td>
+		<td > </td>
+		<td>  </td>
+		<td> ✔</td>
+		<td> </td>
+	</tr>
+	<tr>		
+		<td>min_lex_prob</td>
+		<td>Minimum probability for a Model 1 entry. Entries with lower probability are discarded. Used for reducing the memory consumed by a lexical server.</td>
+		<td > </td>
+		<td>  </td>
+		<td> ✔</td>
+		<td> </td>
+	</tr>
+	<tr>		
+		<td>hr_max_height</td>
+		<td>Maximum number of source terminals covered by the left-hand-side non-terminal in a hierarchical rule.</td>
+		<td > </td>
+		<td>  </td>
+		<td> </td>
+		<td> ✔</td>
+	</tr>
+	<tr>	
+		<td>features</td>
+		<td>Comma separated list of features to include in the final grammar.</td>
+		<td > </td>
+		<td>  </td>
+		<td> </td>
+		<td> ✔</td>
+	</tr>
+	<tr>
+		<td>pass_through_rules</td>
+		<td>File containing pass-through rules.</td>
+		<td > </td>
+		<td>  </td>
+		<td> </td>
+		<td> ✔</td>
+	</tr>
+	<tr>
+		<td>retrieval_threads</td>
+		<td>The number of threads used to query the HFile. </td>
+		<td > </td>
+		<td>  </td>
+		<td> </td>
+		<td> ✔</td>
+	</tr>
+	<tr>
+		<td>hfile</td>
+		<td>Directory containing the HFile. </td>
+		<td > </td>
+		<td>  </td>
+		<td> </td>
+		<td> ✔</td>
+	</tr>
+	<tr>
+		<td>test_file</td>
+		<td>File containing the sentences to be translated. </td>
+		<td > </td>
+		<td>  </td>
+		<td> </td>
+		<td> ✔</td>
+	</tr>
+	<tr>
+		<td>rules</td>
+		<td>Gzipped output file containing the shallow grammar. </td>
+		<td > </td>
+		<td>  </td>
+		<td> </td>
+		<td> ✔</td>
+	</tr>
+	<tr>
+		<td>vocab</td>
+		<td>File containing target side vocabulary for KENLM filtering. </td>
+		<td > </td>
+		<td>  </td>
+		<td> </td>
+		<td> ✔</td>
+	</tr>		
+</table>
+
