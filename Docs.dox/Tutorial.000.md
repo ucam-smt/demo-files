@@ -149,16 +149,21 @@ J. Pino, A. Waite, W. Byrne. Proceedings of PBML, 2012. <br>
 
 \subsection nffstdisambig_refs Non-functional FST disambiguation
 \anchor Iglesias2015 [Iglesias2015]
-*Transducer Disambiguation with Sparse Topological Features
+*Transducer Disambiguation with Sparse Topological Features*
 G. Iglesias, A. de Gispert, W. Byrne. Proceedings of EMNLP, 2015 <br>
 <https://aclweb.org/anthology/D/D15/D15-1273.pdf>
 
 
 \subsection bilingualmodel_refs Rescoring with Bilingual Neural Network Models
 \anchor Devlin2014 [Devlin2014]
-*Fast and Robust Neural Network Joint Models for Statistical Machine Translation
+*Fast and Robust Neural Network Joint Models for Statistical Machine Translation*
 J. Devlin, R. Zbib, Z. Huang, T. Lamar, R. Schwartz, and J. Makhoul
 <http://acl2014.org/acl2014/P14-1/pdf/P14-1129.pdf>
+
+\subsection nmt_refs Neural Machine Translation
+\anchor Stahlberg2016 [Stahlberg2016]
+*Syntactically guided neural machine translation*.<br>
+F. Stahlberg, E. Hasler, A. Waite, and B. Byrne. Proceedings of ACL. 2016. <br>
 
 \subsection othertools Language Modelling Toolkits and Other Tools
 
