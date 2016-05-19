@@ -5,5 +5,5 @@ div#command-line-reference table.docutils {
 
 
 div#command-line-reference table.docutils td {
-  white-space: normal
+  white-space: pre-wrap
 }
