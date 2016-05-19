@@ -55,8 +55,8 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'SGNMT'
-copyright = u'2016, Felix Stahlberg, University of Cambridge'
-author = u'Felix Stahlberg, University of Cambridge'
+copyright = u'2016, University of Cambridge'
+author = u'University of Cambridge'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -243,7 +243,7 @@ latex_elements = {
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
     (master_doc, 'SGNMT.tex', u'SGNMT Documentation',
-     u'Felix Stahlberg, University of Cambridge', 'manual'),
+     u'University of Cambridge', 'manual'),
 ]
 
 # The name of an image file (relative to this directory) to place at the top of

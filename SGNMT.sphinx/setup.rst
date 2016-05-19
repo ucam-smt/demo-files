@@ -73,6 +73,8 @@ Installing NPLM
 
 Download NPLM from the `project homepage <http://nlg.isi.edu/software/nplm/>`_ and install it. You can also
 use the `UCAM NPLM fork <https://github.com/ucam-smt/nplm>`_ from Gonzalo Iglesias for threadsafety and efficiency.
+If you are using nplm 0.3 there might be a bug in the Python module that prevents the nplm predictor to read model files.
+Try to replace *nplm.py* in the *python/* directory of your NPLM installation with `this file <http:///ucam-smt.io/sgnmt/html/_static/nplm.py>`_.
 
 Setting up SGNMT
 ------------------
@@ -82,6 +84,10 @@ add */usr/local/lib* to your ``LD_LIBRARY_PATH`` (default location for OpenFST):
 
     $ export LD_LIBRARY_PATH=/usr/local/lib/:/path/to/swig-srilm/:/path/to/nplm/src/python:$LD_LIBRARY_PATH
     $ export PYTHONPATH=/path/to/swig-srilm/:/path/to/nplm/python/:$PYTHONPATH
+
+For setting up blocks, you'll also need to add ``on_unused_input='ignore'`` to your Theano flags as discussed `here <https://github.com/mila-udem/blocks-examples/issues/58>`_::
+
+    $ export THEANO_FLAGS="on_unused_input='ignore'"
 
 Clone the GIT repository and try to start ``decode.py`` and ``train.py``::
 

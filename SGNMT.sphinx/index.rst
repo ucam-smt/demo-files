@@ -21,10 +21,11 @@ Contents
    setup
    tutorial
    command_line
-   Predictors <cam.sgnmt.predictors>
-   Decoders <cam.sgnmt.decoding>
-   All modules <cam.sgnmt>
+   predictors
+   decoders
+   faq
    publications
+   All modules <cam.sgnmt>
 
 Quickstart
 ------------
@@ -53,11 +54,17 @@ Features
 - NMT training with options for reshuffling and fixing word embeddings
 - ...
 
+.. warning:: 
+
+      SGNMT is indended for quick prototyping of new ideas. Therefore, it is not 
+      optimised for productive purposes or decoding speed but aims to be as
+      flexible as possible.
+
 Project links
 --------------
 
-- Issue Tracker: http://github.com/ucam-smt/sgnmt/issues
-- Source Code: http://github.com/ucam-smt/sgnmt
+- Issue tracker: http://github.com/ucam-smt/sgnmt/issues
+- Source code: http://github.com/ucam-smt/sgnmt
 
 License
 ---------
