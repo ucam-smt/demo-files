@@ -39,7 +39,7 @@ lattices with NMT is also straight-forward::
 
     $ python decode.py --predictors nmt,fst --fst_path lattices/%d.fst --src_test sentences.txt
 
-See the documentation for more information.
+See the :ref:`tutorial-label` for more examples.
 
 Features
 ------------

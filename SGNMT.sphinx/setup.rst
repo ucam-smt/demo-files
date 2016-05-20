@@ -9,11 +9,8 @@ SGNMT depends on the following libraries:
 
 * `Blocks <http://blocks.readthedocs.io/en/latest/>`_ for neural machine translation support (>=0.1)
 * `OpenFST <http://openfst.org/>`_ for reading and writing FSTs (e.g. translation lattices) (>=1.5.2)
-* `srilm-swig <https://github.com/desilinguist/swig-srilm>`_ for reading ARPA language model files
-* `NPLM <http://nlg.isi.edu/software/nplm/>`_ for using feed-forward neural language models (>=0.3)
-
-SGNMT does not work without blocks, but the other dependencies can be bypassed by
-commenting out the predictor imports in ``cam.sgnmt.blocks.decode.py``.
+* Optional: `srilm-swig <https://github.com/desilinguist/swig-srilm>`_ for reading ARPA language model files
+* Optional: `NPLM <http://nlg.isi.edu/software/nplm/>`_ for using feed-forward neural language models (>=0.3)
 
 Installing Blocks
 **********************
@@ -27,6 +24,11 @@ the blocks documentation to install the blocks framework and all its dependencie
 
          $ sudo apt-get install libhdf5-dev 
 
+.. tip::
+    
+      Make sure that all dependencies of blocks are updated. On systems where you don't have root access,
+      use the pip options ``--user`` and ``--force-reinstall`` to install updated packages locally.
+
 Installing OpenFST
 **********************
 
@@ -37,8 +39,14 @@ sure to enable the Python support when compiling OpenFST::
     $ make
     $ make install
 
-SGNMT requires OpenFST 1.5.2 because it uses the extended Python support added in this version. For more information
+SGNMT requires OpenFST 1.5.2 because it is based on the extended Python API added in this version. For more information
 see the documentation for the `OpenFST Python extension <http://www.openfst.org/twiki/bin/view/FST/PythonExtension>`_.
+
+If you wish to use SGNMT in combination with the hierachical phrase-pased SMT system `HiFST <http://ucam-smt.github.io/>`_,
+you can directly use the OpenFST installation under *externals/* in the HiFST installation directory. This will make
+it possible to create translation lattices with tropicalsparsetuple arcs with SGNMT to keep predictor scores separated 
+(see *fst* output format).
+
 
 Installing SRILM
 ************************
@@ -73,7 +81,7 @@ Installing NPLM
 
 Download NPLM from the `project homepage <http://nlg.isi.edu/software/nplm/>`_ and install it. You can also
 use the `UCAM NPLM fork <https://github.com/ucam-smt/nplm>`_ from Gonzalo Iglesias for threadsafety and efficiency.
-If you are using nplm 0.3 there might be a bug in the Python module that prevents the nplm predictor to read model files.
+If you are using nplm 0.3 there might be a bug in the Python module that prevents the nplm predictor from reading model files.
 Try to replace *nplm.py* in the *python/* directory of your NPLM installation with `this file <http:///ucam-smt.io/sgnmt/html/_static/nplm.py>`_.
 
 Setting up SGNMT
@@ -96,6 +104,5 @@ Clone the GIT repository and try to start ``decode.py`` and ``train.py``::
     $ python train.py --help
     $ python decode.py --help
 
-If you see the help texts for both commands, you are ready for the :ref:`tutorial-label`. If both commands fail, there is probably
-something wrong with your blocks installation. If only ``decode.py`` fails, double-check that OpenFST, SRILM, and NPLM are
-properly installed as described above, and that they are added to your ``PYTHONPATH``.
+If you see the help texts for both commands, you are ready for the :ref:`tutorial-label`. Otherwise, there is probably
+something wrong with your Blocks or OpenFST installation. 

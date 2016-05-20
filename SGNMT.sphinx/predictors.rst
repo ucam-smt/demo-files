@@ -51,7 +51,7 @@ The following predictors are available:
 
 All predictors can be combined with one or more wrapper predictors by adding the wrapper name separated by a _ symbol. Following wrappers are available: 
 
-* *idxmap*: Add this wrapper to predictors which use an alternative word map. 
+* **idxmap**: Add this wrapper to predictors which use an alternative word map. 
   Options: ``src_idxmap``, ``trg_idxmap`` 
 
 Note that you can use multiple instances of the same predictor. For example, 'nmt,nmt,nmt' can be used for ensembling three NMT systems. 
