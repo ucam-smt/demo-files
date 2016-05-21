@@ -10,6 +10,13 @@ Frequently Asked Questions
       If you don't find an answer here, check out the `issue tracker on Github <http://github.com/ucam-smt/sgnmt/issues>`_.
 
 
+ImportError: No module named pywrapfst
+-------------------------------------------------
+
+SGNMT could not find the path to OpenFST, or you use a wrong OpenFST version (>=1.5.2). Make sure that
+OpenFST is in your ``PYTHONPATH`` and ``LD_LIBRARY_PATH`` as explained on the :ref:`setup-label` page. 
+
+
 'Dimension mismatch' warnings with neural models
 -------------------------------------------------
 

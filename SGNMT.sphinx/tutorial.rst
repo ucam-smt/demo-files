@@ -277,11 +277,52 @@ Simple NMT translation lattices can be generated with the *sfst* output format::
   5 6 30  30
   6 7 8 8
 
-If you wish to keep predictor scores separated in the generated lattices, use the *fst* output format to create lattices with sparse tuple arcs.
-You'll need to `install HiFST <http://ucam-smt.github.io/tutorial/build.html>`_ to enable support for the tropicalsparsetuple arc type.
+If you wish to keep predictor scores separated in the generated lattices, use the *fst* output format to create lattices with 
+`sparse tuple arcs <http://ucam-smt.github.io/tutorial/basictrans.html#lmert_veclats_tst>`_.
+You'll need to `install HiFST <http://ucam-smt.github.io/tutorial/build.html>`_ to enable support for the tropicalsparsetuple arc type::
+
+  $ python $SGNMT/decode.py --outputs fst --predictors nmt,fst --fst_path hiero/lats/%d.fst --use_fst_weights true --predictor_weights 2.7,24.4 --config_file tut.ini
+  (...)
+  $ TUPLEARC_WEIGHT_VECTOR=2.7,24.4 fstshortestpath sgnmt-out.fst/1.fst | fsttopsort | fstprint
+  0 1 1 1
+  1 2 1511  1511  0,1,0.420832008,2,0.00846654177
+  2 3 7 7 0,1,0.129989997
+  3 4 1422  1422  0,1,0.0673521981,2,0.00468987226
+  4 5 3278  3278  0,1,9.95738029,2,0.680079401
+  5 6 7 7 0,1,0.0128448997
+  6 7 2830  2830  0,1,0.0604516007
+  7 8 894 894 0,1,0.287970006,2,0.0195894614
+  8 9 30  30  0,1,0.173721001,2,0.0528452434
+  9 10  8 8 0,1,0.354806006,2,0.000487923622
+  10  11  10453 10453 0,1,0.0348698013,2,0.017698925
+  11  12  2 2 0,1,0.0774876028
+  12
+
+The weights in the generated FST correspond to the unweighted predictor scores in order of how they are defined in ``--predictors``.
 
 
 Distributed decoding using the Grid Engine
 -------------------------------------------
 
-TODO
+Large decoding jobs can be distributed over multiple nodes with the Grid Engine using the ``--range`` argument. First, we create a configuration file for SGNMT
+which specifies the decoding parameters. Here is a example .ini file for distributing lattice rescoring on the WMT'15 English-German test set::
+
+  $ cat scripts/grid/example.ini 
+  src_test: data/test15.ids.en
+  src_vocab_size: 50003
+  trg_vocab_size: 50003
+  predictors: nmt,fst
+  fst_path: hiero/lats/%d.fst
+  use_fst_weights: true
+  predictor_weights: 2.7,24.4
+
+
+Make sure that the .ini file does not contain ``output_path`` or ``range``. Next, open *scripts/grid/decode_on_grid_cpu_worker.sh* and, if
+necessary, change the environment variables PATH, LD_LIBRARY_PATH, and PYTHONPATH as described on the :ref:`setup-label` page. Start the
+distributed decoding with the following command::
+
+  $ bash scripts/grid/decode_on_grid_cpu.sh 40 1:2169 scripts/grid/example.ini grid-output
+
+This will submit an array of 40 jobs to the grid, and each worker calls decode.py with a different ``--range``. Worker jobs write their
+output files to *grid-output/<worker-id>*, and their logs to *grid-output/logs*. When all workers are finished, the combination job
+combines the output files and writes the requested output formats to *grid-output/out.%s*.

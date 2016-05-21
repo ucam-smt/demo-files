@@ -1,4 +1,6 @@
 
+.. _setup-label:
+
 Installation
 =============
 
@@ -92,6 +94,11 @@ add */usr/local/lib* to your ``LD_LIBRARY_PATH`` (default location for OpenFST):
 
     $ export LD_LIBRARY_PATH=/usr/local/lib/:/path/to/swig-srilm/:/path/to/nplm/src/python:$LD_LIBRARY_PATH
     $ export PYTHONPATH=/path/to/swig-srilm/:/path/to/nplm/python/:$PYTHONPATH
+
+If OpenFST was not installed globally, you need to add it to your environment variables::
+
+    $ export LD_LIBRARY_PATH=/path/to/openfst/lib:$LD_LIBRARY_PATH
+    $ export PYTHONPATH=/path/to/openfst/lib/python2.7/site-packages:$PYTHONPATH
 
 For setting up blocks, you'll also need to add ``on_unused_input='ignore'`` to your Theano flags as discussed `here <https://github.com/mila-udem/blocks-examples/issues/58>`_::
 
