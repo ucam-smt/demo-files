@@ -31,6 +31,11 @@ the blocks documentation to install the blocks framework and all its dependencie
       Make sure that all dependencies of blocks are updated. On systems where you don't have root access,
       use the pip options ``--user`` and ``--force-reinstall`` to install updated packages locally.
 
+      `Anaconda <https://www.continuum.io/>`_ is another good option for
+      local installations as it already sets up all packages Theano and Blocks depend on correctly. You still need
+      to install Blocks with the `pip command <http://blocks.readthedocs.io/en/latest/setup.html>`_ using
+      Anaconda's pip.
+
 Installing OpenFST
 **********************
 

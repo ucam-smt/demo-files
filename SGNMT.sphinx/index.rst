@@ -7,7 +7,7 @@ SGNMT
 ========
 
 SGNMT is a tool for neural machine translation (NMT). It stands for Syntactically
-Guided Neural Machnie Translation as it is designed to work well with the
+Guided Neural Machine Translation as it is designed to work well with the
 ucam-smt syntactical SMT system or other non-neural SMT systems. It builds up on the 
 Blocks NMT example and adds support for n-best and lattice recoring, language models 
 and much more. 
