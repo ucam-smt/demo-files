@@ -4,15 +4,12 @@
 Tutorial
 ========
 
-.. warning:: 
+This tutorial describes common use cases for SGNMT. The tutorial data is available under the following DOI:
 
-      This tutorial is currently under development!
+http://dx.doi.org/10.17863/CAM.282
 
-This tutorial describes common use cases for SGNMT. Please
-download the `WMT'15 tutorial data <https://www.repository.cam.ac.uk/#will-be-available-soon>`_ archive
-and extract it::
+Please download the archive and extract it::
 
-  $ wget http://example.org/
   $ tar xzf tutorial-ende-wmt15.tar.gz
   $ cd tutorial-ende-wmt15
 
@@ -37,6 +34,18 @@ For this tutorial, we assume that you set the ``$SGNMT`` environment variable to
 
   $ export SGNMT=/path/to/sgnmt
 
+Introduction
+----------------------------------------
+
+The two central concepts in SGNMT are *predictors* and *decoders*. *Predictors* are scoring modules which define scores over
+the target language vocabulary given the current internal predictor state, the history, the source sentence, and external side information. 
+Predictors have a strict left-to-right semantic. They can represent translation models like NMT or language models. In a more general sense, 
+translation lattices or n-best lists can also be represented in this framework. Predictors can be combined with other predictors to form
+complex decoding tasks. 
+
+*Decoders* are search strategies which traverse the space spanned by the predictors. SGNMT provides implementations of common
+search tree traversal algorithms like beam search. Since decoders differ in runtime complexity and the kind of search errors they make,
+different decoders are appropriate for different predictor constellations.
 
 Pure NMT decoding (single)
 ----------------------------------------
@@ -209,7 +218,8 @@ Working with language models
 ----------------------------------------
 
 Language model scores can be added to the lattices before passing them through to SGNMT. This is the approach we took in the
-`ACL 2016 paper <http://arxiv.org/abs/1605.04569>`_. Alternatively, the nplm predictor can be used directly in SGNMT. A German NPLM model file
+`ACL 2016 paper <http://arxiv.org/abs/1605.04569>`_. Alternatively, the nplm predictor can be used directly in SGNMT for incorporating a
+feedforward neural language model trained with `NPLM <http://nlg.isi.edu/software/nplm/>`_. A German NPLM model file
 can be found in *./lm/nplm*. However, this model has been trained with a different word map. Therefore, we add the *idxmap* wrapper predictor
 to the *nplm* predictor. This wrapper translates between word indices used by SGNMT, and indices used by the NPLM predictor. The mapping between
 indices is defined with the ``--src_idxmap`` and ``--trg_idxmap`` arguments::
