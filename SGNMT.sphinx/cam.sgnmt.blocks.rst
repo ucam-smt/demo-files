@@ -6,10 +6,34 @@ Subpackages
 
 .. toctree::
 
-    cam.sgnmt.blocks.machine_translation
+    cam.sgnmt.blocks.alignment
 
 Submodules
 ----------
+
+cam.sgnmt.blocks.align module
+-----------------------------
+
+.. automodule:: cam.sgnmt.blocks.align
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+cam.sgnmt.blocks.attention module
+---------------------------------
+
+.. automodule:: cam.sgnmt.blocks.attention
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+cam.sgnmt.blocks.checkpoint module
+----------------------------------
+
+.. automodule:: cam.sgnmt.blocks.checkpoint
+    :members:
+    :undoc-members:
+    :show-inheritance:
 
 cam.sgnmt.blocks.decode module
 ------------------------------
@@ -19,18 +43,66 @@ cam.sgnmt.blocks.decode module
     :undoc-members:
     :show-inheritance:
 
-cam.sgnmt.blocks.train module
------------------------------
+cam.sgnmt.blocks.decoder module
+-------------------------------
 
-.. automodule:: cam.sgnmt.blocks.train
+.. automodule:: cam.sgnmt.blocks.decoder
     :members:
     :undoc-members:
     :show-inheritance:
 
-cam.sgnmt.blocks.ui module
---------------------------
+cam.sgnmt.blocks.encoder module
+-------------------------------
 
-.. automodule:: cam.sgnmt.blocks.ui
+.. automodule:: cam.sgnmt.blocks.encoder
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+cam.sgnmt.blocks.model module
+-----------------------------
+
+.. automodule:: cam.sgnmt.blocks.model
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+cam.sgnmt.blocks.nmt module
+---------------------------
+
+.. automodule:: cam.sgnmt.blocks.nmt
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+cam.sgnmt.blocks.sampling module
+--------------------------------
+
+.. automodule:: cam.sgnmt.blocks.sampling
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+cam.sgnmt.blocks.sparse_search module
+-------------------------------------
+
+.. automodule:: cam.sgnmt.blocks.sparse_search
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+cam.sgnmt.blocks.stream module
+------------------------------
+
+.. automodule:: cam.sgnmt.blocks.stream
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+cam.sgnmt.blocks.train module
+-----------------------------
+
+.. automodule:: cam.sgnmt.blocks.train
     :members:
     :undoc-members:
     :show-inheritance:

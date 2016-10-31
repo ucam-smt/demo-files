@@ -8,10 +8,8 @@ SGNMT
 
 SGNMT is a tool for neural machine translation (NMT). It stands for Syntactically
 Guided Neural Machine Translation as it is designed to work well with the
-ucam-smt syntactical SMT system or other non-neural SMT systems. It builds up on the 
-Blocks NMT example and adds support for n-best and lattice recoring, language models 
-and much more. 
-
+ucam-smt syntactical SMT system or other non-neural SMT systems. SGNMT supports neural
+machine translation using Blocks (Theano) and TensorFlow.
 
 Contents
 -------------
@@ -45,18 +43,25 @@ Features
 ------------
 
 - Syntactically guided neural machine translation (NMT lattice rescoring)
+- NMT support for Blocks/Theano and TensorFlow
 - n-best list rescoring with NMT
 - Ensemble NMT decoding
 - Forced NMT decoding
-- Integrating n-gram language models (srilm and nplm)
+- Integrating language models (Kneser-Ney, NPLM, RNNLM)
 - Different search algorithms (beam, A*, depth first search, greedy...)
 - Target sentence length modelling
 - NMT training with options for reshuffling and fixing word embeddings
+- Bag2Sequence models and decoding algorithms
+- Custom distributed word representations
+- Joint decoding with word- and subword/character-level models
+- Hypothesis recombination
+- Heuristic search
+- Neural word alignment
 - ...
 
 .. warning:: 
 
-      SGNMT is indended for quick prototyping of new ideas. Therefore, it is not 
+      SGNMT is designed for quick prototyping of new ideas. Therefore, it is not 
       optimised for productive purposes or decoding speed but aims to be as
       flexible as possible.
 

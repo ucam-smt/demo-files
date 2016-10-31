@@ -4,6 +4,46 @@ cam.sgnmt.decoding package
 Submodules
 ----------
 
+cam.sgnmt.decoding.astar module
+-------------------------------
+
+.. automodule:: cam.sgnmt.decoding.astar
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+cam.sgnmt.decoding.beam module
+------------------------------
+
+.. automodule:: cam.sgnmt.decoding.beam
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+cam.sgnmt.decoding.bigramgreedy module
+--------------------------------------
+
+.. automodule:: cam.sgnmt.decoding.bigramgreedy
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+cam.sgnmt.decoding.bow module
+-----------------------------
+
+.. automodule:: cam.sgnmt.decoding.bow
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+cam.sgnmt.decoding.bucket module
+--------------------------------
+
+.. automodule:: cam.sgnmt.decoding.bucket
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 cam.sgnmt.decoding.core module
 ------------------------------
 
@@ -20,10 +60,42 @@ cam.sgnmt.decoding.decoder module
     :undoc-members:
     :show-inheritance:
 
+cam.sgnmt.decoding.dfs module
+-----------------------------
+
+.. automodule:: cam.sgnmt.decoding.dfs
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+cam.sgnmt.decoding.flip module
+------------------------------
+
+.. automodule:: cam.sgnmt.decoding.flip
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+cam.sgnmt.decoding.greedy module
+--------------------------------
+
+.. automodule:: cam.sgnmt.decoding.greedy
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 cam.sgnmt.decoding.heuristics module
 ------------------------------------
 
 .. automodule:: cam.sgnmt.decoding.heuristics
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+cam.sgnmt.decoding.restarting module
+------------------------------------
+
+.. automodule:: cam.sgnmt.decoding.restarting
     :members:
     :undoc-members:
     :show-inheritance:

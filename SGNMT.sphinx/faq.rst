@@ -13,7 +13,7 @@ Frequently asked questions
 ImportError: No module named pywrapfst
 -------------------------------------------------
 
-SGNMT could not find the path to OpenFST, or you use a wrong OpenFST version (>=1.5.2). Make sure that
+SGNMT could not find the path to OpenFST, or you use a wrong OpenFST version (>=1.5.4). Make sure that
 OpenFST is in your ``PYTHONPATH`` and ``LD_LIBRARY_PATH`` as explained on the :ref:`setup-label` page. 
 
 
@@ -47,6 +47,13 @@ KeyError when using NPLM
 
 If you are using nplm 0.3 there might be a bug in the Python module that prevents the nplm predictor to read model files.
 Try to replace *nplm.py* in the *python/* directory of your NPLM installation with `this file <http:///ucam-smt.io/sgnmt/html/_static/nplm.py>`_.
+
+Segmentation fault using SRILM
+-------------------------------
+
+The `swig-srilm <https://github.com/desilinguist/swig-srilm>`_ package used in SGNMT often does not produce very helpful error messages.
+Usually, segmentation faults with the srilm predictor are due to a LM file which is not in the expected format. Double-check that you are
+using well-formed ARPA files in plain text format (not gzipped!) with word IDs.
 
 Beam decoder with beam=12 does not create 12-best lists
 ---------------------------------------------------------

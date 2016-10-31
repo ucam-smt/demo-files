@@ -7,13 +7,13 @@ Install the sphinx extensions::
 How to generate the docs::
 
     make clean
-    sphinx-apidoc -f -o . ../../sgnmt/ ../../sgnmt/cam/sgnmt/blocks/machine_translation
+    sphinx-apidoc -f -o . ../../sgnmt/
     make html
 
 Or if sphinx is installed locally
 
     make clean
-    ~/.local/bin/sphinx-apidoc -f -o . ../../sgnmt/ ../../sgnmt/blocks/machine_translation
+    ~/.local/bin/sphinx-apidoc -f -o . ../../sgnmt/
     make html
 
 If it doesn't work, change the path to sphinx-build in the Makefile.

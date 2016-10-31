@@ -9,10 +9,32 @@ Installing dependencies
 
 SGNMT depends on the following libraries:
 
-* `Blocks <http://blocks.readthedocs.io/en/latest/>`_ for neural machine translation support (>=0.1)
-* `OpenFST <http://openfst.org/>`_ for reading and writing FSTs (e.g. translation lattices) (>=1.5.2)
+* `OpenFST <http://openfst.org/>`_ for reading and writing FSTs (e.g. translation lattices) (>=1.5.4)
+* Optional: `Blocks <http://blocks.readthedocs.io/en/latest/>`_ for neural machine translation support based on Theano (>=0.1)
 * Optional: `srilm-swig <https://github.com/desilinguist/swig-srilm>`_ for reading ARPA language model files
 * Optional: `NPLM <http://nlg.isi.edu/software/nplm/>`_ for using feed-forward neural language models (>=0.3)
+
+
+Installing OpenFST
+**********************
+
+We recommend to install `OpenFST 1.5.4 <http://openfst.org/twiki/bin/view/FST/FstDownload>`_. Make
+sure to enable the Python support when compiling OpenFST::
+
+    $ ./configure --enable-far --enable-python
+    $ make
+    $ make install
+
+SGNMT requires OpenFST 1.5.4 because it is based on the extended Python API added in this version. For more information
+see the documentation for the `OpenFST Python extension <http://www.openfst.org/twiki/bin/view/FST/PythonExtension>`_.
+
+Newer OpenFST versions might not work since the Python API is under constant change.
+
+If you wish to use SGNMT in combination with the hierachical phrase-pased SMT system `HiFST <http://ucam-smt.github.io/>`_,
+you can directly use the OpenFST installation under *externals/* in the HiFST installation directory. This will make
+it possible to create translation lattices with tropicalsparsetuple arcs with SGNMT to keep predictor scores separated 
+(see *fst* output format).
+
 
 Installing Blocks
 **********************
@@ -35,24 +57,6 @@ the blocks documentation to install the blocks framework and all its dependencie
       local installations as it already sets up all packages Theano and Blocks depend on correctly. You still need
       to install Blocks with the `pip command <http://blocks.readthedocs.io/en/latest/setup.html>`_ using
       Anaconda's pip.
-
-Installing OpenFST
-**********************
-
-We recommend to install the most recent `OpenFST version <http://openfst.org/twiki/bin/view/FST/FstDownload>`_. Make
-sure to enable the Python support when compiling OpenFST::
-
-    $ ./configure --enable-far --enable-python
-    $ make
-    $ make install
-
-SGNMT requires OpenFST 1.5.2 because it is based on the extended Python API added in this version. For more information
-see the documentation for the `OpenFST Python extension <http://www.openfst.org/twiki/bin/view/FST/PythonExtension>`_.
-
-If you wish to use SGNMT in combination with the hierachical phrase-pased SMT system `HiFST <http://ucam-smt.github.io/>`_,
-you can directly use the OpenFST installation under *externals/* in the HiFST installation directory. This will make
-it possible to create translation lattices with tropicalsparsetuple arcs with SGNMT to keep predictor scores separated 
-(see *fst* output format).
 
 
 Installing SRILM

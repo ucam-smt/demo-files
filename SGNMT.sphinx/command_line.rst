@@ -2,12 +2,14 @@
 Command-line reference
 =======================
 
-SGNMT provides ``decode.py`` for decoding and ``train.py`` for NMT training. Both
-scripts can be configured via command line or configuration file. For a quick
-overview of available parameters use ``--help``::
+SGNMT provides ``decode.py`` for decoding and ``train.py`` for NMT training. The
+neural word alignment script ``align.py`` is only available for the Blocks 
+implementation. The scripts can be configured via command line or configuration file. 
+For a quick overview of available parameters use ``--help``::
 
     python decode.py --help
     python train.py --help
+    python align.py --help
 
 The complete and detailed list of parameters is provided below.
 
@@ -15,7 +17,7 @@ Decoding
 ---------
 
 .. argparse::
-   :module: cam.sgnmt.blocks.ui
+   :module: cam.sgnmt.ui
    :func: get_parser
    :prog: decode.py
 
@@ -27,7 +29,19 @@ option for enabling reshuffling the training data between epochs, and fixing
 word embedding which might be used in later training stages.
 
 .. argparse::
-   :module: cam.sgnmt.blocks.ui
+   :module: cam.sgnmt.ui
    :func: get_train_parser
    :prog: train.py
+
+Alignment
+---------
+
+Only available for the Blocks (Theano) NMT engine. Supports two different
+neural word alignment models which both utilize the concept of attention in
+NMT.
+
+.. argparse::
+   :module: cam.sgnmt.ui
+   :func: get_align_parser
+   :prog: align.py
 

@@ -20,6 +20,46 @@ cam.sgnmt.predictors.blocks_neural module
     :undoc-members:
     :show-inheritance:
 
+cam.sgnmt.predictors.blocks_nmt module
+--------------------------------------
+
+.. automodule:: cam.sgnmt.predictors.blocks_nmt
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+cam.sgnmt.predictors.bow module
+-------------------------------
+
+.. automodule:: cam.sgnmt.predictors.bow
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+cam.sgnmt.predictors.chainer_lstm module
+----------------------------------------
+
+.. automodule:: cam.sgnmt.predictors.chainer_lstm
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+cam.sgnmt.predictors.core module
+--------------------------------
+
+.. automodule:: cam.sgnmt.predictors.core
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+cam.sgnmt.predictors.ffnnlm module
+----------------------------------
+
+.. automodule:: cam.sgnmt.predictors.ffnnlm
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 cam.sgnmt.predictors.forced module
 ----------------------------------
 
@@ -60,10 +100,18 @@ cam.sgnmt.predictors.ngram module
     :undoc-members:
     :show-inheritance:
 
-cam.sgnmt.predictors.nnlm module
---------------------------------
+cam.sgnmt.predictors.tf_nmt module
+----------------------------------
 
-.. automodule:: cam.sgnmt.predictors.nnlm
+.. automodule:: cam.sgnmt.predictors.tf_nmt
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+cam.sgnmt.predictors.tf_rnnlm module
+------------------------------------
+
+.. automodule:: cam.sgnmt.predictors.tf_rnnlm
     :members:
     :undoc-members:
     :show-inheritance:

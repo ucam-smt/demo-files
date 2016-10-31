@@ -4,7 +4,11 @@
 Tutorial
 ========
 
-This tutorial describes common use cases for SGNMT. The tutorial data is available under the following DOI:
+This tutorial describes common use cases for SGNMT. We will use the Blocks NMT implementation (not TensorFlow) in this
+tutorial. Please make sure that you have installed (at least) OpenFST and Blocks correctly as described 
+on the :ref:`setup-label` page.
+
+The tutorial data is available under the following DOI:
 
 http://dx.doi.org/10.17863/CAM.282
 
