@@ -16,6 +16,10 @@ ImportError: No module named pywrapfst
 SGNMT could not find the path to OpenFST, or you use a wrong OpenFST version (>=1.5.4). Make sure that
 OpenFST is in your ``PYTHONPATH`` and ``LD_LIBRARY_PATH`` as explained on the :ref:`setup-label` page. 
 
+'int' object is not callable (fst, nfst, rtn predictors)
+-------------------------------------------------------
+
+You are likely to use an outdated OpenFST version. The required version is 1.5.4.
 
 'Dimension mismatch' warnings with neural models
 -------------------------------------------------
@@ -24,6 +28,7 @@ This warning often indicates that the NMT model configuration does not match the
 loaded NMT model, e.g. because the model has been trained with a different vocabulary size. Double-check the NMT
 configuration parameters, especially ``--src_vocab_size``, ``--trg_vocab_size``, ``--enc_nhids``, ``--enc_embed``,
 ``--dec_nhids``, and ``--dec_embed``.
+
 
 
 No such file or directory: 'test_en'

@@ -24,18 +24,30 @@ The following predictors are available:
 * **nplm**: neural n-gram language model (NPLM). 
 
   Options: ``nplm_path``, ``normalize_nplm_probs`` 
+* **rnnlm**: RNN language model based on TensorFlow. 
+
+  Options: ``rnnlm_path`` 
+* **lstm**: Pure lstm predictor (chainer-based).
+
+  Options: ``lstm_path`` 
 * **forced**: Forced decoding with one reference 
 
   Options: ``trg_test`` 
 * **forcedlst**: Forced decoding with a Moses n-best list (n-best list rescoring) 
 
   Options: ``trg_test``, ``forcedlst_sparse_feat``, ``use_nbest_weights`` 
+* **bow**: Forced decoding with one bag-of-words ref.
+
+  Options: ``trg_test``, ``heuristic_scores_file``, ``bow_heuristic_strategies``, ``bow_accept_subsets``, ``bow_accept_duplicates``, ``bow_equivalence_vocab_size``
+* **bowsearch**: Forced decoding with one bag-of-words ref.
+
+  Options: ``hypo_recombination``, ``trg_test``, ``heuristic_scores_file``, ``bow_heuristic_strategies``, ``bow_accept_subsets``, ``bow_accept_duplicates``, ``bow_equivalence_vocab_size``
 * **fst**: Deterministic translation lattices 
 
-  Options: ``fst_path``, ``use_fst_weights``, ``normalize_fst_weights``, ``fst_to_log``, ``add_fst_bos_to_eos_weight`` 
+  Options: ``fst_path``, ``use_fst_weights``, ``normalize_fst_weights``, ``fst_to_log``, ``fst_skip_bos_weight`` 
 * **nfst**: Non-deterministic translation lattices 
 
-  Options: ``fst_path``, ``use_fst_weights``, ``normalize_fst_weights``, ``fst_to_log``, ``add_fst_bos_to_eos_weight``
+  Options: ``fst_path``, ``use_fst_weights``, ``normalize_fst_weights``, ``fst_to_log``, ``fst_skip_bos_weight``
 * **rtn**: Recurrent transition networks as created by HiFST with late expansion. 
 
   Options: ``rtn_path``, ``use_rtn_weights``, ``minimize_rtns``, ``remove_epsilon_in_rtns``, ``normalize_rtn_weights``
@@ -44,15 +56,28 @@ The following predictors are available:
   Options: ``rules_path``, ``grammar_feature_weights``, ``use_grammar_weights``
 * **wc**: Number of words feature. 
 
-  Options: no options. 
-* **length**: Target sentence length model Options: 
+  Options: ``wc_word``
+* **unkc**: Poisson model for number of UNKs.
 
-  ``src_test_raw``, ``length_model_weights``, ``use_length_point_probs`` 
+  Options: ``unk_count_lambdas``
+* **length**: Target sentence length model. 
+
+  Options: ``src_test_raw``, ``length_model_weights``, ``use_length_point_probs`` 
+* **extlength**: External target sentence lengths. 
+
+  Options: ``extlength_path`` 
 
 All predictors can be combined with one or more wrapper predictors by adding the wrapper name separated by a _ symbol. Following wrappers are available: 
 
 * **idxmap**: Add this wrapper to predictors which use an alternative word map. 
+
   Options: ``src_idxmap``, ``trg_idxmap`` 
+* **altsrc**: This wrapper loads source sentences from an alternative source.
+
+  Options: ``altsrc_test`` 
+* **word2char**: Wraps word-level predictors when SGNMT is running on character level.
+
+  Options: ``word2char_map`` 
 
 Note that you can use multiple instances of the same predictor. For example, 'nmt,nmt,nmt' can be used for ensembling three NMT systems. 
 You can often override parts of the predictor configurations for subsequent predictors by adding the predictor number (e.g. see ``--nmt_config2`` or ``--fst_path2``)
@@ -72,7 +97,7 @@ cam.sgnmt.predictors.automata module
     :noindex:
 
 cam.sgnmt.predictors.blocks_neural module
-*****************************************************
+****************************************
 
 .. automodule:: cam.sgnmt.predictors.blocks_neural
     :members:
@@ -80,8 +105,53 @@ cam.sgnmt.predictors.blocks_neural module
     :show-inheritance:
     :noindex:
 
+cam.sgnmt.predictors.blocks_nmt module
+****************************************
+
+.. automodule:: cam.sgnmt.predictors.blocks_nmt
+    :members:
+    :undoc-members:
+    :show-inheritance:
+    :noindex:
+
+cam.sgnmt.predictors.bow module
+****************************************
+
+.. automodule:: cam.sgnmt.predictors.bow
+    :members:
+    :undoc-members:
+    :show-inheritance:
+    :noindex:
+
+cam.sgnmt.predictors.chainer_lstm module
+****************************************
+
+.. automodule:: cam.sgnmt.predictors.chainer_lstm
+    :members:
+    :undoc-members:
+    :show-inheritance:
+    :noindex:
+
+cam.sgnmt.predictors.core module
+****************************************
+
+.. automodule:: cam.sgnmt.predictors.core
+    :members:
+    :undoc-members:
+    :show-inheritance:
+    :noindex:
+
+cam.sgnmt.predictors.ffnnlm module
+****************************************
+
+.. automodule:: cam.sgnmt.predictors.ffnnlm
+    :members:
+    :undoc-members:
+    :show-inheritance:
+    :noindex:
+
 cam.sgnmt.predictors.forced module
-*****************************************************
+****************************************
 
 .. automodule:: cam.sgnmt.predictors.forced
     :members:
@@ -90,7 +160,7 @@ cam.sgnmt.predictors.forced module
     :noindex:
 
 cam.sgnmt.predictors.grammar module
-*****************************************************
+****************************************
 
 .. automodule:: cam.sgnmt.predictors.grammar
     :members:
@@ -99,7 +169,7 @@ cam.sgnmt.predictors.grammar module
     :noindex:
 
 cam.sgnmt.predictors.length module
-*****************************************************
+****************************************
 
 .. automodule:: cam.sgnmt.predictors.length
     :members:
@@ -108,7 +178,7 @@ cam.sgnmt.predictors.length module
     :noindex:
 
 cam.sgnmt.predictors.misc module
-*****************************************************
+****************************************
 
 .. automodule:: cam.sgnmt.predictors.misc
     :members:
@@ -117,7 +187,7 @@ cam.sgnmt.predictors.misc module
     :noindex:
 
 cam.sgnmt.predictors.ngram module
-*****************************************************
+****************************************
 
 .. automodule:: cam.sgnmt.predictors.ngram
     :members:
@@ -125,10 +195,19 @@ cam.sgnmt.predictors.ngram module
     :show-inheritance:
     :noindex:
 
-cam.sgnmt.predictors.nnlm module
-*****************************************************
+cam.sgnmt.predictors.tf_nmt module
+****************************************
 
-.. automodule:: cam.sgnmt.predictors.nnlm
+.. automodule:: cam.sgnmt.predictors.tf_nmt
+    :members:
+    :undoc-members:
+    :show-inheritance:
+    :noindex:
+
+cam.sgnmt.predictors.tf_rnnlm module
+****************************************
+
+.. automodule:: cam.sgnmt.predictors.tf_rnnlm
     :members:
     :undoc-members:
     :show-inheritance:
@@ -136,10 +215,11 @@ cam.sgnmt.predictors.nnlm module
 
 
 Module contents
-*****************************************************
+****************************************
 
 .. automodule:: cam.sgnmt.predictors
     :members:
     :undoc-members:
     :show-inheritance:
     :noindex:
+
