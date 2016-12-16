@@ -35,14 +35,6 @@ cam.sgnmt.blocks.checkpoint module
     :undoc-members:
     :show-inheritance:
 
-cam.sgnmt.blocks.decode module
-------------------------------
-
-.. automodule:: cam.sgnmt.blocks.decode
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 cam.sgnmt.blocks.decoder module
 -------------------------------
 

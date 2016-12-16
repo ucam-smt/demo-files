@@ -4,10 +4,10 @@ cam.sgnmt.tf package
 Submodules
 ----------
 
-cam.sgnmt.tf.nmt module
------------------------
+cam.sgnmt.tf.interface module
+-----------------------------
 
-.. automodule:: cam.sgnmt.tf.nmt
+.. automodule:: cam.sgnmt.tf.interface
     :members:
     :undoc-members:
     :show-inheritance:

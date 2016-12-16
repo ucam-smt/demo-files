@@ -17,7 +17,7 @@ The following predictors are available:
 
 * **nmt**: neural machine translation predictor. 
 
-  Options: see the NMT model configurations plus ``proto``, ``nmt_model_selector``, ``cache_nmt_posteriors``. 
+  Options: ``nmt_config``, ``nmt_path``, ``nmt_model_selector``, ``cache_nmt_posteriors`` 
 * **srilm**: n-gram language model. 
 
   Options: ``srilm_path``, ``srilm_order``
@@ -26,7 +26,7 @@ The following predictors are available:
   Options: ``nplm_path``, ``normalize_nplm_probs`` 
 * **rnnlm**: RNN language model based on TensorFlow. 
 
-  Options: ``rnnlm_path`` 
+  Options: ``rnnlm_config, rnnlm_path`` 
 * **lstm**: Pure lstm predictor (chainer-based).
 
   Options: ``lstm_path`` 
@@ -60,6 +60,9 @@ The following predictors are available:
 * **unkc**: Poisson model for number of UNKs.
 
   Options: ``unk_count_lambdas``
+* **ngramc**: For using MBR n-gram posteriors.
+
+  Options: ``ngramc_path``, ``ngramc_order``
 * **length**: Target sentence length model. 
 
   Options: ``src_test_raw``, ``length_model_weights``, ``use_length_point_probs`` 
@@ -96,15 +99,6 @@ cam.sgnmt.predictors.automata module
     :show-inheritance:
     :noindex:
 
-cam.sgnmt.predictors.blocks_neural module
-****************************************
-
-.. automodule:: cam.sgnmt.predictors.blocks_neural
-    :members:
-    :undoc-members:
-    :show-inheritance:
-    :noindex:
-
 cam.sgnmt.predictors.blocks_nmt module
 ****************************************
 
@@ -118,15 +112,6 @@ cam.sgnmt.predictors.bow module
 ****************************************
 
 .. automodule:: cam.sgnmt.predictors.bow
-    :members:
-    :undoc-members:
-    :show-inheritance:
-    :noindex:
-
-cam.sgnmt.predictors.chainer_lstm module
-****************************************
-
-.. automodule:: cam.sgnmt.predictors.chainer_lstm
     :members:
     :undoc-members:
     :show-inheritance:
@@ -208,6 +193,15 @@ cam.sgnmt.predictors.tf_rnnlm module
 ****************************************
 
 .. automodule:: cam.sgnmt.predictors.tf_rnnlm
+    :members:
+    :undoc-members:
+    :show-inheritance:
+    :noindex:
+
+cam.sgnmt.predictors.tokenization module
+****************************************
+
+.. automodule:: cam.sgnmt.predictors.tokenization
     :members:
     :undoc-members:
     :show-inheritance:

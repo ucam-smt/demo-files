@@ -29,7 +29,7 @@ directory structure is as follows:
 * *./hiero/100best.txt* is an n-best list generated with Hiero.
 * *./scripts/* contains helper scripts for creating lattice directories or applying word maps.
 
-This structure is indended to be used as starting point for your own experiments.
+This structure is intended to be used as starting point for your own experiments.
 
 The `ucam-smt tutorial <http://ucam-smt.github.io/tutorial/nmt.html>`_ explains how to generate translation lattices
 for SGNMT in general.
@@ -56,7 +56,7 @@ Pure NMT decoding (single)
 
 Start the NMT decoder with the following command::
 
-  $ python $SGNMT/decode.py --predictors nmt --src_test data/test15.ids.en --range 1:1 --src_vocab_size 50003 --trg_vocab_size 50003
+  $ python $SGNMT/decode.py --predictors nmt --src_test data/test15.ids.en --range 1:1 --nmt_config src_vocab_size=50003,trg_vocab_size=50003
   2016-05-19 12:59:07,348 INFO: Creating theano variables
   2016-05-19 12:59:07,350 INFO: Building RNN encoder-decoder
   (...)
@@ -70,7 +70,7 @@ Start the NMT decoder with the following command::
 
 The ``--predictors nmt`` argument tells SGNMT to use the NMT scoring module. The ``--src_test`` option defines the location of the
 source sentences to translate (words are represented by IDs), and ``--range 1:1`` limits the decoding to the first sentence. SGNMT will
-search for NMT model files in the default location *./train/*. The arguments ``--src_vocab_size`` and ``--trg_vocab_size`` specify that the 
+search for NMT model files in the default location *./train/*. The arguments ``src_vocab_size`` and ``trg_vocab_size`` specify that the 
 NMT model has been trained with vocabulary sizes of 50003. Since we will use the last four options throughout this tutorial, we load them
 from a configuration file instead of adding them separately::
 
@@ -79,7 +79,7 @@ from a configuration file instead of adding them separately::
   range: '1:1'
   src_vocab_size: 50003
   trg_vocab_size: 50003
-  $ python $SGNMT/decode.py --predictors nmt --config_file tut.ini
+  $ python $SGNMT/decode.py --predictors nmt --config_file tut.ini --nmt_config tut.ini
   (...)
   2016-05-19 12:59:59,183 INFO: Decoded (ID: 1): 1511 7 1422 894 30 8 10453
 
@@ -91,7 +91,7 @@ You can look at our first translation by using the *apply_wmap.py* script::
 
 For single NMT decoding, you have the option to use an optimised version of the beam decoder::
 
-  $ python $SGNMT/decode.py --decoder vanilla --config_file tut.ini
+  $ python $SGNMT/decode.py --decoder vanilla --config_file tut.ini --nmt_config tut.ini
   (...)
   2016-05-19 13:14:27,040 INFO: Next sentence (ID: 1): 1543 7 1491 1359 1532 692 9 6173
   2016-05-19 13:14:34,009 INFO: Decoded (ID: 1): 1511 7 1422 894 30 8 10453
@@ -106,10 +106,10 @@ Ensemble NMT decoding
 ----------------------------------------
 
 NMT ensembling can be done by simply adding a second NMT predictor. However, we need to override the NMT configuration
-for the second NMT predictor to load a different NMT model. We can use ``--nmt_config2`` for this. Therefore,
-to override the ``saveto`` options which stores the NMT training directory, we add ``--nmt_config2 saveto=train2``::
+for the second NMT predictor to load a different NMT model. We can use ``--nmt_config2`` for changing the second NMT
+configuration in general, or ``--nmt_path2`` to only change the model path::
 
-  $ python $SGNMT/decode.py --predictors nmt,nmt --nmt_config2 saveto=train2 --config_file tut.ini
+  $ python $SGNMT/decode.py --predictors nmt,nmt --nmt_path2 train2 --config_file tut.ini --nmt_config tut.ini
   (...)
   2016-05-19 13:24:36,060 INFO: Loading the model from ./train/params.npz
   (...)
@@ -128,7 +128,7 @@ Lattice rescoring (SGNMT)
 
 For restricting NMT to a translation lattice, we need the *fst* predictor::
 
-  $ python $SGNMT/decode.py --predictors nmt,fst --fst_path hiero/lats/%d.fst --config_file tut.ini
+  $ python $SGNMT/decode.py --predictors nmt,fst --fst_path hiero/lats/%d.fst --config_file tut.ini --nmt_config tut.ini
   (...)
   2016-05-19 15:37:29,601 INFO: Next sentence (ID: 1): 1543 7 1491 1359 1532 692 9 6173
   2016-05-19 15:37:36,437 INFO: Decoded (ID: 1): 1511 7 1422 84829 894 30 8 10453
@@ -142,7 +142,7 @@ For restricting NMT to a translation lattice, we need the *fst* predictor::
 This command loads the determinised lattice *./hiero/lats/1.fst* from the file system and runs the NMT beam search decoder on it. For non-deterministic lattices use
 the *nfst* predictor instead. Per default, SGNMT ignores the scores in the translation lattices. To change this, use ``--use_fst_weights``::
 
-  $ python $SGNMT/decode.py --predictors nmt,fst --fst_path hiero/lats/%d.fst --use_fst_weights true --predictor_weights 2.7,24.4 --config_file tut.ini
+  $ python $SGNMT/decode.py --predictors nmt,fst --fst_path hiero/lats/%d.fst --use_fst_weights true --predictor_weights 2.7,24.4 --config_file tut.ini --nmt_config tut.ini
   (...)
   2016-05-19 15:41:19,878 INFO: Next sentence (ID: 1): 1543 7 1491 1359 1532 692 9 6173
   2016-05-19 15:41:28,228 INFO: Decoded (ID: 1): 1511 7 1422 3278 7 2830 894 30 8 10453
@@ -157,7 +157,7 @@ This command uses ``--predictor_weights`` to weight the NMT scores against the l
 So far, we applied beam decoding as search strategy. However, the beam decoder introduces search errors. SGNMT supports a variety of decoding strategies such 
 as greedy, beam, depth-first search, and A* search. To do an exhaustive search over the lattice, use the depth-first search decoder::
 
-  $ python $SGNMT/decode.py --decoder dfs --predictors nmt,fst --fst_path hiero/lats/%d.fst --config_file tut.ini
+  $ python $SGNMT/decode.py --decoder dfs --predictors nmt,fst --fst_path hiero/lats/%d.fst --config_file tut.ini --nmt_config tut.ini
   (...)
   2016-05-19 15:43:33,713 INFO: Next sentence (ID: 1): 1543 7 1491 1359 1532 692 9 6173
   2016-05-19 15:43:35,926 INFO: Decoded (ID: 1): 1511 7 1422 84829 894 30 8 10453
@@ -168,7 +168,7 @@ In this case, the exact decoding was very fast because DFS automatically enables
 worse than the current best hypothesis. If we disable this feature with ``--early_stopping false``, we see that SGNMT finds the same hypothesis but with 
 much more node expansions::
 
-  $ python $SGNMT/decode.py --decoder dfs --early_stopping false --predictors nmt,fst --fst_path hiero/lats/%d.fst --config_file tut.ini
+  $ python $SGNMT/decode.py --decoder dfs --early_stopping false --predictors nmt,fst --fst_path hiero/lats/%d.fst --config_file tut.ini --nmt_config tut.ini
   (...)
   2016-05-19 15:44:28,765 INFO: Next sentence (ID: 1): 1543 7 1491 1359 1532 692 9 6173
   2016-05-19 15:45:12,650 INFO: Decoded (ID: 1): 1511 7 1422 84829 894 30 8 10453
@@ -177,7 +177,7 @@ much more node expansions::
 
 Informed search is implemented by the *astar* search strategy::
 
-  $ python $SGNMT/decode.py --decoder astar --heuristics predictor --predictors nmt,fst --fst_path hiero/lats/%d.fst --use_fst_weights true --predictor_weights 2.7,24.4 --config_file tut.ini
+  $ python $SGNMT/decode.py --decoder astar --heuristics predictor --predictors nmt,fst --fst_path hiero/lats/%d.fst --use_fst_weights true --predictor_weights 2.7,24.4 --config_file tut.ini --nmt_config tut.ini
   (...)
   2016-05-19 18:28:05,618 INFO: Next sentence (ID: 1): 1543 7 1491 1359 1532 692 9 6173
   2016-05-19 18:28:06,897 INFO: Decoded (ID: 1): 1511 7 1422 3278 7 2830 894 30 8 10453
@@ -195,7 +195,7 @@ N-best list rescoring
 The *forced* predictor implements single best rescoring (i.e. forced decoding). The ``--trg_test`` option needs to point to a plain text file with
 the reference sentences::
 
-  $ python $SGNMT/decode.py --predictors nmt,forced --trg_test data/test15.ids.de --config_file tut.ini
+  $ python $SGNMT/decode.py --predictors nmt,forced --trg_test data/test15.ids.de --config_file tut.ini --nmt_config tut.ini
   (...)
   2016-05-20 10:21:07,916 INFO: Next sentence (ID: 1): 1543 7 1491 1359 1532 692 9 6173
   2016-05-20 10:21:09,200 INFO: Decoded (ID: 1): 5 3316 7930 7 7312 9864 30 8 10453 4
@@ -204,7 +204,7 @@ the reference sentences::
 
 For NMT n-best list rescoring, use the *forcedlst* predictor::
 
-  $ python $SGNMT/decode.py --predictors nmt,forcedlst --decoder dfs --trg_test hiero/100best.txt --config_file tut.ini
+  $ python $SGNMT/decode.py --predictors nmt,forcedlst --decoder dfs --trg_test hiero/100best.txt --config_file tut.ini --nmt_config tut.ini
   (...)
   2016-05-20 10:46:12,884 INFO: Next sentence (ID: 1): 1543 7 1491 1359 1532 692 9 6173
   2016-05-20 10:46:15,049 INFO: Decoded (ID: 1): 1511 7 1422 84829 894 30 8 10453
@@ -228,7 +228,7 @@ can be found in *./lm/nplm*. However, this model has been trained with a differe
 to the *nplm* predictor. This wrapper translates between word indices used by SGNMT, and indices used by the NPLM predictor. The mapping between
 indices is defined with the ``--src_idxmap`` and ``--trg_idxmap`` arguments::
 
-  $ python $SGNMT/decode.py --predictors nmt,fst,idxmap_nplm --fst_path hiero/lats/%d.fst --nplm_path lm/nplm --src_idxmap data/idxmap.nplm.en --trg_idxmap data/idxmap.nplm.de --config_file tut.ini
+  $ python $SGNMT/decode.py --predictors nmt,fst,idxmap_nplm --fst_path hiero/lats/%d.fst --nplm_path lm/nplm --src_idxmap data/idxmap.nplm.en --trg_idxmap data/idxmap.nplm.de --config_file tut.ini --nmt_config tut.ini
   2016-05-19 16:24:47,811 INFO: Start time: 1463671487.81
   2016-05-19 16:24:47,811 INFO: Next sentence (ID: 1): 1543 7 1491 1359 1532 692 9 6173
   2016-05-19 16:24:54,768 INFO: Decoded (ID: 1): 1511 7 1422 84829 8 10453
@@ -253,7 +253,7 @@ SGNMT supports four different output formats:
 
 They can be activated with ``--outputs``. For example, this adds NMT scores to the Hiero n-best list *hiero/100best.txt*::
 
-  $ python $SGNMT/decode.py --outputs text,nbest --predictors nmt,forcedlst --use_nbest_weights true --trg_test hiero/100best.txt --decoder dfs --early_stopping false --config_file tut.ini
+  $ python $SGNMT/decode.py --outputs text,nbest --predictors nmt,forcedlst --use_nbest_weights true --trg_test hiero/100best.txt --decoder dfs --early_stopping false --config_file tut.ini --nmt_config tut.ini
   (...)
   $ head sgnmt-out.*
   ==> sgnmt-out.nbest <==
@@ -277,7 +277,7 @@ to the hypothesis score in the Hiero n-best list *hiero/100best.txt*.
 
 Simple NMT translation lattices can be generated with the *sfst* output format::
 
-  $ python $SGNMT/decode.py --outputs sfst --predictors nmt --config_file tut.ini
+  $ python $SGNMT/decode.py --outputs sfst --predictors nmt --config_file tut.ini --nmt_config tut.ini
   (...)
   $ fstprint sgnmt-out.sfst/1.fst | head
   0 1 1 1 3.70089412
@@ -295,7 +295,7 @@ If you wish to keep predictor scores separated in the generated lattices, use th
 `sparse tuple arcs <http://ucam-smt.github.io/tutorial/basictrans.html#lmert_veclats_tst>`_.
 You'll need to `install HiFST <http://ucam-smt.github.io/tutorial/build.html>`_ to enable support for the tropicalsparsetuple arc type::
 
-  $ python $SGNMT/decode.py --outputs fst --predictors nmt,fst --fst_path hiero/lats/%d.fst --use_fst_weights true --predictor_weights 2.7,24.4 --config_file tut.ini
+  $ python $SGNMT/decode.py --outputs fst --predictors nmt,fst --fst_path hiero/lats/%d.fst --use_fst_weights true --predictor_weights 2.7,24.4 --config_file tut.ini --nmt_config tut.ini
   (...)
   $ TUPLEARC_WEIGHT_VECTOR=2.7,24.4 fstshortestpath sgnmt-out.fst/1.fst | fsttopsort | fstprint
   0 1 1 1

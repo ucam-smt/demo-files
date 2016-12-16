@@ -8,8 +8,9 @@ Available decoders
 ----------------------
 
 * **greedy**: Greedy decoding (similar to beam=1) 
-* **beam**: Beam search like in Bahdanau et al, 2015 
-* **dfs**: Depth-first search. This should be used for exact decoding or the complete enumeration of the search space, 
+* **beam**: Beam search like in Bahdanau et al, 2015 .
+* **multisegbeam**: Beam search with multiple segmentations. 
+* **dfs**: Depth-first search. This should be used for exact decoding or the complete enumeration of the search space. 
   but it cannot be used if the search space is too large (like for unrestricted NMT) as it performs exhaustive search. 
   If you have not only negative predictor scores, set ``--early_stopping`` to false. 
 * **restarting**: Like DFS but with better admissible pruning behavior. 
@@ -121,6 +122,15 @@ cam.sgnmt.decoding.heuristics module
 ****************************************
 
 .. automodule:: cam.sgnmt.decoding.heuristics
+    :members:
+    :undoc-members:
+    :show-inheritance:
+    :noindex:
+
+cam.sgnmt.decoding.multisegbeam module
+****************************************
+
+.. automodule:: cam.sgnmt.decoding.multisegbeam
     :members:
     :undoc-members:
     :show-inheritance:

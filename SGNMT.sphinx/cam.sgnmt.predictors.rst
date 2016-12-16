@@ -12,14 +12,6 @@ cam.sgnmt.predictors.automata module
     :undoc-members:
     :show-inheritance:
 
-cam.sgnmt.predictors.blocks_neural module
------------------------------------------
-
-.. automodule:: cam.sgnmt.predictors.blocks_neural
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 cam.sgnmt.predictors.blocks_nmt module
 --------------------------------------
 
@@ -112,6 +104,14 @@ cam.sgnmt.predictors.tf_rnnlm module
 ------------------------------------
 
 .. automodule:: cam.sgnmt.predictors.tf_rnnlm
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+cam.sgnmt.predictors.tokenization module
+----------------------------------------
+
+.. automodule:: cam.sgnmt.predictors.tokenization
     :members:
     :undoc-members:
     :show-inheritance:
