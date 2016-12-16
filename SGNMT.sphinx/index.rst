@@ -46,6 +46,7 @@ Features
 - Syntactically guided neural machine translation (NMT lattice rescoring)
 - NMT support for Blocks/Theano and TensorFlow
 - n-best list rescoring with NMT
+- Integrating external n-gram posterior probabilities used in MBR
 - Ensemble NMT decoding
 - Forced NMT decoding
 - Integrating language models (Kneser-Ney, NPLM, RNNLM)
@@ -59,12 +60,6 @@ Features
 - Heuristic search
 - Neural word alignment
 - ...
-
-.. warning:: 
-
-      SGNMT is designed for quick prototyping of new ideas. Therefore, it is not 
-      optimised for productive purposes or decoding speed but aims to be as
-      flexible as possible.
 
 Project links
 --------------
