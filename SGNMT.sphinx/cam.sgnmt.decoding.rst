@@ -52,14 +52,6 @@ cam.sgnmt.decoding.core module
     :undoc-members:
     :show-inheritance:
 
-cam.sgnmt.decoding.decoder module
----------------------------------
-
-.. automodule:: cam.sgnmt.decoding.decoder
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 cam.sgnmt.decoding.dfs module
 -----------------------------
 
@@ -104,6 +96,22 @@ cam.sgnmt.decoding.restarting module
 ------------------------------------
 
 .. automodule:: cam.sgnmt.decoding.restarting
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+cam.sgnmt.decoding.sepbeam module
+---------------------------------
+
+.. automodule:: cam.sgnmt.decoding.sepbeam
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+cam.sgnmt.decoding.syncbeam module
+----------------------------------
+
+.. automodule:: cam.sgnmt.decoding.syncbeam
     :members:
     :undoc-members:
     :show-inheritance:

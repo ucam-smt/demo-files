@@ -9,6 +9,8 @@ Available decoders
 
 * **greedy**: Greedy decoding (similar to beam=1) 
 * **beam**: Beam search like in Bahdanau et al, 2015 .
+* **sepbeam**: Associates predictors with hypos in beam search and applies only one predictor instead of all for hypo expansion.
+* **syncbeam**: Beam search which compares after consuming a special synchronization symbol instead of after each iteration.
 * **multisegbeam**: Beam search with multiple segmentations. 
 * **dfs**: Depth-first search. This should be used for exact decoding or the complete enumeration of the search space. 
   but it cannot be used if the search space is too large (like for unrestricted NMT) as it performs exhaustive search. 
@@ -145,6 +147,23 @@ cam.sgnmt.decoding.restarting module
     :show-inheritance:
     :noindex:
 
+cam.sgnmt.decoding.sepbeam module
+****************************************
+
+.. automodule:: cam.sgnmt.decoding.sepbeam
+    :members:
+    :undoc-members:
+    :show-inheritance:
+    :noindex:
+
+cam.sgnmt.decoding.syncbeam module
+****************************************
+
+.. automodule:: cam.sgnmt.decoding.syncbeam
+    :members:
+    :undoc-members:
+    :show-inheritance:
+    :noindex:
 
 Module contents
 ****************************************

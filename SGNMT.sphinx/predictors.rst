@@ -78,6 +78,12 @@ All predictors can be combined with one or more wrapper predictors by adding the
 * **altsrc**: This wrapper loads source sentences from an alternative source.
 
   Options: ``altsrc_test`` 
+* **unkvocab**: This wrapper explicitly excludes matching word indices higher than trg_vocab_size with UNK scores.
+
+  Options: ``trg_vocab_size``
+* **fsttok**: Uses an FST to transduce SGNMT tokens to predictor tokens.
+
+  Options: ``fsttok_path``, ``fsttok_max_pending_score``, ``fst_unk_id``
 * **word2char**: Wraps word-level predictors when SGNMT is running on character level.
 
   Options: ``word2char_map`` 
