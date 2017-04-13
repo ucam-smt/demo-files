@@ -28,14 +28,6 @@ cam.sgnmt.predictors.bow module
     :undoc-members:
     :show-inheritance:
 
-cam.sgnmt.predictors.chainer_lstm module
-----------------------------------------
-
-.. automodule:: cam.sgnmt.predictors.chainer_lstm
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 cam.sgnmt.predictors.core module
 --------------------------------
 

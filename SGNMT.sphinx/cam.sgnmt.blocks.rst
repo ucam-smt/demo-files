@@ -27,6 +27,14 @@ cam.sgnmt.blocks.attention module
     :undoc-members:
     :show-inheritance:
 
+cam.sgnmt.blocks.batch_decode module
+------------------------------------
+
+.. automodule:: cam.sgnmt.blocks.batch_decode
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 cam.sgnmt.blocks.checkpoint module
 ----------------------------------
 
@@ -63,6 +71,14 @@ cam.sgnmt.blocks.nmt module
 ---------------------------
 
 .. automodule:: cam.sgnmt.blocks.nmt
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+cam.sgnmt.blocks.pruning module
+-------------------------------
+
+.. automodule:: cam.sgnmt.blocks.pruning
     :members:
     :undoc-members:
     :show-inheritance:

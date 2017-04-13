@@ -27,9 +27,6 @@ The following predictors are available:
 * **rnnlm**: RNN language model based on TensorFlow. 
 
   Options: ``rnnlm_config, rnnlm_path`` 
-* **lstm**: Pure lstm predictor (chainer-based).
-
-  Options: ``lstm_path`` 
 * **forced**: Forced decoding with one reference 
 
   Options: ``trg_test`` 
