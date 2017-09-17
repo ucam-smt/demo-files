@@ -100,6 +100,14 @@ cam.sgnmt.predictors.tf_rnnlm module
     :undoc-members:
     :show-inheritance:
 
+cam.sgnmt.predictors.tf_t2t module
+----------------------------------
+
+.. automodule:: cam.sgnmt.predictors.tf_t2t
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 cam.sgnmt.predictors.tokenization module
 ----------------------------------------
 

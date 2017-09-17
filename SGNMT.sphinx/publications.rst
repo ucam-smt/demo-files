@@ -18,6 +18,7 @@ Additionally, SGNMT has been used in the following publications:
 * Eva Hasler, Felix Stahlberg, Marcus Tomalin, Adrià de Gispert, Bill Byrne.
   A Comparison of Neural Models for Word Ordering
   In *Proceedings of the 10th International Conference on Natural Language Generation (INLG 2017)*, September 2017. Santiago de Compostela, Spain.
+  `arXiv/1708.01809 <https://arxiv.org/abs/1708.01809>`_
 * Felix Stahlberg, Adrià de Gispert, Eva Hasler, and Bill Byrne.
   Neural machine translation by minimising the Bayes-risk with respect to syntactic translation lattices.
   In *Proceedings of the 15th annual meeting of the European Chapter of the Association for Computational Linguistics (EACL 17)*, April 2017. Valencia, Spain.

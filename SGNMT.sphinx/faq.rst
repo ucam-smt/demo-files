@@ -17,7 +17,7 @@ SGNMT could not find the path to OpenFST, or you use a wrong OpenFST version (>=
 OpenFST is in your ``PYTHONPATH`` and ``LD_LIBRARY_PATH`` as explained on the :ref:`setup-label` page. 
 
 'int' object is not callable (fst, nfst, rtn predictors)
--------------------------------------------------------
+--------------------------------------------------------
 
 You are likely to use an outdated OpenFST version. The required version is 1.5.4.
 

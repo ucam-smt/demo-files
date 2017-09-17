@@ -22,8 +22,8 @@ Decoding
    :func: get_parser
    :prog: decode.py
 
-Batch Decoding
---------------
+Batch Decoding (Blocks only)
+----------------------------
 
 This is a fast decoder for pure NMT which does not process sentences
 in a sequential order. It is optimized for GPU decoding. For maximum
@@ -36,8 +36,8 @@ TensorFlow.
    :func: get_batch_decode_parser
    :prog: batch_decode.py
 
-Training
----------
+Training (Blocks only)
+----------------------
 
 The training script follows the NMT training example in blocks, but it adds an
 option for enabling reshuffling the training data between epochs, and fixing
@@ -48,8 +48,8 @@ word embedding which might be used in later training stages.
    :func: get_train_parser
    :prog: train.py
 
-Alignment
----------
+Alignment (Blocks only)
+-----------------------
 
 Only available for the Blocks (Theano) NMT engine. Supports two different
 neural word alignment models which both utilize the concept of attention in

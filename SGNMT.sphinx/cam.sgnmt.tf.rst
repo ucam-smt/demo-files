@@ -12,14 +12,6 @@ cam.sgnmt.tf.interface module
     :undoc-members:
     :show-inheritance:
 
-cam.sgnmt.tf.vanilla_decoder module
------------------------------------
-
-.. automodule:: cam.sgnmt.tf.vanilla_decoder
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 
 Module contents
 ---------------

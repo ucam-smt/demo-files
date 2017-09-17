@@ -15,16 +15,19 @@ Available predictors
 
 The following predictors are available:
 
-* **nmt**: neural machine translation predictor. 
+* **nmt**: neural machine translation predictor. Requires Blocks/Theano or TensorFlow.
 
-  Options: ``nmt_config``, ``nmt_path``, ``nmt_model_selector``, ``cache_nmt_posteriors`` 
-* **srilm**: n-gram language model. 
+  Options: ``nmt_config``, ``nmt_path``, ``nmt_model_selector``, ``cache_nmt_posteriors``, ``nmt_engine`` 
+* **t2t**: Predictor for tensor2tensor models. Requires Tensor2Tensor.
+
+  Options: ``t2t_usr_dir``, ``t2t_model``, ``t2t_problem``, ``t2t_hparams_set``, ``t2t_checkpoint_dir``, ``t2t_src_vocab_size``, ``t2t_trg_vocab_size``
+* **srilm**: n-gram language model. Requires swig-srilm.
 
   Options: ``srilm_path``, ``srilm_order``
-* **nplm**: neural n-gram language model (NPLM). 
+* **nplm**: neural n-gram language model. Requires nplm.
 
   Options: ``nplm_path``, ``normalize_nplm_probs`` 
-* **rnnlm**: RNN language model based on TensorFlow. 
+* **rnnlm**: RNN language model following Zaremba et al. (2014). Requires TensorFlow. 
 
   Options: ``rnnlm_config, rnnlm_path`` 
 * **forced**: Forced decoding with one reference 
@@ -196,6 +199,15 @@ cam.sgnmt.predictors.tf_rnnlm module
 ****************************************
 
 .. automodule:: cam.sgnmt.predictors.tf_rnnlm
+    :members:
+    :undoc-members:
+    :show-inheritance:
+    :noindex:
+
+cam.sgnmt.predictors.tf_t2t module
+****************************************
+
+.. automodule:: cam.sgnmt.predictors.tf_t2t
     :members:
     :undoc-members:
     :show-inheritance:
