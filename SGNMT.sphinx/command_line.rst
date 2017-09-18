@@ -33,7 +33,7 @@ TensorFlow.
 
 .. argparse::
    :module: cam.sgnmt.ui
-   :func: get_batch_decode_parser
+   :func: get_blocks_batch_decode_parser
    :prog: batch_decode.py
 
 Training (Blocks only)
@@ -45,7 +45,7 @@ word embedding which might be used in later training stages.
 
 .. argparse::
    :module: cam.sgnmt.ui
-   :func: get_train_parser
+   :func: get_blocks_train_parser
    :prog: train.py
 
 Alignment (Blocks only)
@@ -57,6 +57,6 @@ NMT.
 
 .. argparse::
    :module: cam.sgnmt.ui
-   :func: get_align_parser
+   :func: get_blocks_align_parser
    :prog: align.py
 
