@@ -116,6 +116,14 @@ cam.sgnmt.predictors.tokenization module
     :undoc-members:
     :show-inheritance:
 
+cam.sgnmt.predictors.vocabulary module
+--------------------------------------
+
+.. automodule:: cam.sgnmt.predictors.vocabulary
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 
 Module contents
 ---------------

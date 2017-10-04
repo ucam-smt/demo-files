@@ -78,6 +78,9 @@ All predictors can be combined with one or more wrapper predictors by adding the
 * **altsrc**: This wrapper loads source sentences from an alternative source.
 
   Options: ``altsrc_test`` 
+* **skipvocab**: Uses internal beam search to skip a subset of the predictor vocabulary.
+
+  Options: ``beam``, ``skipvocab_max_id``, ``skipvocab_stop_size`` 
 * **unkvocab**: This wrapper explicitly excludes matching word indices higher than trg_vocab_size with UNK scores.
 
   Options: ``trg_vocab_size``
@@ -217,6 +220,15 @@ cam.sgnmt.predictors.tokenization module
 ****************************************
 
 .. automodule:: cam.sgnmt.predictors.tokenization
+    :members:
+    :undoc-members:
+    :show-inheritance:
+    :noindex:
+
+cam.sgnmt.predictors.vocabulary module
+****************************************
+
+.. automodule:: cam.sgnmt.predictors.vocabulary
     :members:
     :undoc-members:
     :show-inheritance:

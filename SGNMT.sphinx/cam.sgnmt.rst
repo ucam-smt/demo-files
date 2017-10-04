@@ -23,6 +23,14 @@ cam.sgnmt.decode module
     :undoc-members:
     :show-inheritance:
 
+cam.sgnmt.decode_utils module
+-----------------------------
+
+.. automodule:: cam.sgnmt.decode_utils
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 cam.sgnmt.output module
 -----------------------
 
