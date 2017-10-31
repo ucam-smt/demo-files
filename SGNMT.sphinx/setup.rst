@@ -37,7 +37,7 @@ you can directly use the OpenFST installation under *externals/* in the HiFST in
 it possible to create translation lattices with tropicalsparsetuple arcs with SGNMT to keep predictor scores separated 
 (see *fst* output format).
 
-*Tested versions: OpenFST 1.5.4-OpenFST 1.6.3*
+*Tested versions: OpenFST 1.5.4-1.6.3*
 
 
 Installing Tensor2Tensor
@@ -54,7 +54,7 @@ registry of T2T to your custom directory.
       The Tensor2Tensor code base is still under constant change, and SGNMT might not be compatible with the latest version.
       The latest tensor2tensor version which is supported by SGNMT is available in `this fork <https://github.com/fstahlberg/tensor2tensor>`_.
 
-*Tested versions: Tensor2Tensor 1.2.2-1.2.4, TensorFlow 1.3*
+*Tested versions: Tensor2Tensor 1.2.2-1.2.5, TensorFlow 1.3*
 
 
 Installing TensorFlow (not T2T)

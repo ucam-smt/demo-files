@@ -39,7 +39,7 @@ TensorFlow.
 Training (Blocks only)
 ----------------------
 
-The training script follows the NMT training example in blocks, but it adds an
+The training script follows the NMT training example in Blocks, but it adds an
 option for enabling reshuffling the training data between epochs, and fixing
 word embedding which might be used in later training stages.
 

@@ -21,7 +21,7 @@ Available decoders
 * **flip**: This decoder works only for bag problems. It traverses the search space by switching two words in the hypothesis. Do not use bow predictor.
 * **bow**: Restarting decoder optimized for bag-of-words problems.
 * **bigramgreedy**: Works best for bag problems. Collects bigram statistics and constructs hypos to score by greedily selecting high scoring bigrams. Do not use bow predictor with this search strategy.
-* **vanilla**: Original blocks beam decoder. This bypasses the predictor framework and directly performs pure NMT beam 
+* **vanilla**: Original Blocks beam decoder. This bypasses the predictor framework and directly performs pure NMT beam 
   decoding on the GPU. Use this when you do pure NMT decoding as this is usually faster then using a single nmt predictor 
   as the search can be parallelized on the GPU.
 

@@ -21,6 +21,12 @@ The following predictors are available:
 * **t2t**: Predictor for tensor2tensor models. Requires Tensor2Tensor.
 
   Options: ``t2t_usr_dir``, ``t2t_model``, ``t2t_problem``, ``t2t_hparams_set``, ``t2t_checkpoint_dir``, ``t2t_src_vocab_size``, ``t2t_trg_vocab_size``
+* **bfslayerbylayer**: T2T-based Layer-by-layer models (BFS order). Requires Tensor2Tensor.
+
+  Options: ``t2t_usr_dir``, ``t2t_model``, ``t2t_problem``, ``t2t_hparams_set``, ``t2t_checkpoint_dir``, ``t2t_src_vocab_size``, ``t2t_trg_vocab_size``. ``syntax_root_id``, ``syntax_max_terminal_id``, ``syntax_terminal_list``, ``syntax_pop_id``, ``syntax_max_depth``, ``layerbylayer_terminal_strategy``
+* **dfslayerbylayer**: T2T-based Layer-by-layer models (DFS order). Requires Tensor2Tensor.
+
+  Options: ``t2t_usr_dir``, ``t2t_model``, ``t2t_problem``, ``t2t_hparams_set``, ``t2t_checkpoint_dir``, ``t2t_src_vocab_size``, ``t2t_trg_vocab_size``. ``syntax_root_id``, ``syntax_max_terminal_id``, ``syntax_terminal_list``, ``syntax_pop_id``, ``syntax_max_depth``, ``layerbylayer_terminal_strategy``
 * **srilm**: n-gram language model. Requires swig-srilm.
 
   Options: ``srilm_path``, ``srilm_order``
@@ -33,6 +39,9 @@ The following predictors are available:
 * **forced**: Forced decoding with one reference 
 
   Options: ``trg_test`` 
+* **bracket**: Enforces well-formed bracket expressions 
+
+  Options: ``syntax_pop_id`` , ``syntax_max_terminal_id``, ``syntax_max_depth``
 * **forcedlst**: Forced decoding with a Moses n-best list (n-best list rescoring) 
 
   Options: ``trg_test``, ``forcedlst_sparse_feat``, ``use_nbest_weights`` 
@@ -51,7 +60,7 @@ The following predictors are available:
 * **rtn**: Recurrent transition networks as created by HiFST with late expansion. 
 
   Options: ``rtn_path``, ``use_rtn_weights``, ``minimize_rtns``, ``remove_epsilon_in_rtns``, ``normalize_rtn_weights``
-* **lrhiero**: Direct Hiero (left-to-right Hiero). This is a EXPERIMENTAL implementation of LRHiero. 
+* **lrhiero**: Direct Hiero (left-to-right Hiero). This is an EXPERIMENTAL implementation of LRHiero. 
 
   Options: ``rules_path``, ``grammar_feature_weights``, ``use_grammar_weights``
 * **wc**: Number of words feature. 

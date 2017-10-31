@@ -1,5 +1,5 @@
 
-Frequently asked questions
+Common issues
 ===========================
 
 .. toctree::
@@ -16,6 +16,13 @@ ImportError: No module named pywrapfst
 SGNMT could not find the path to OpenFST, or you use a wrong OpenFST version (>=1.5.4). Make sure that
 OpenFST is in your ``PYTHONPATH`` and ``LD_LIBRARY_PATH`` as explained on the :ref:`setup-label` page. 
 
+'No complete hypothesis found' when combining models with different tokenizations
+---------------------------------------------------------------------------------
+
+Make sure that all your word maps use the standard names for reserved tokens (``<eps>``, ``<s>``, ``</s>``). Also, 
+double-check that your ``--indexing_scheme`` parameter is consistent with the word maps and the indexing schemes 
+in your models.
+
 'int' object is not callable (fst, nfst, rtn predictors)
 --------------------------------------------------------
 
@@ -29,8 +36,6 @@ loaded NMT model, e.g. because the model has been trained with a different vocab
 configuration parameters, especially ``--src_vocab_size``, ``--trg_vocab_size``, ``--enc_nhids``, ``--enc_embed``,
 ``--dec_nhids``, and ``--dec_embed``.
 
-
-
 No such file or directory: 'test_en'
 ---------------------------------------------
 
@@ -41,7 +46,7 @@ for interactive usage.
 Theano error: UnusedInputError
 -------------------------------------------------------
 
-This is blocks related and has been discussed `here <https://github.com/mila-udem/blocks-examples/issues/58>`_. The solution is
+This is Blocks related and has been discussed `here <https://github.com/mila-udem/blocks-examples/issues/58>`_. The solution is
 to add ``on_unused_input='ignore'`` to your ``THEANO_FLAGS``::
 
   $ export THEANO_FLAGS="on_unused_input='ignore'"

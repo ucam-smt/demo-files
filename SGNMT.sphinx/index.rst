@@ -22,6 +22,7 @@ Contents
 
    setup
    tutorial
+   adding_components
    command_line
    predictors
    decoders
