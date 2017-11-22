@@ -41,7 +41,7 @@ The following predictors are available:
   Options: ``trg_test`` 
 * **bracket**: Enforces well-formed bracket expressions 
 
-  Options: ``syntax_pop_id`` , ``syntax_max_terminal_id``, ``syntax_max_depth``
+  Options: ``syntax_pop_id`` , ``syntax_max_terminal_id``, ``syntax_max_depth``, ``extlength_path``
 * **forcedlst**: Forced decoding with a Moses n-best list (n-best list rescoring) 
 
   Options: ``trg_test``, ``forcedlst_sparse_feat``, ``use_nbest_weights`` 
