@@ -10,6 +10,13 @@ Common issues
       If you don't find an answer here, check out the `issue tracker on Github <http://github.com/ucam-smt/sgnmt/issues>`_.
 
 
+Decoding continues after the end-of-sentence symbol
+---------------------------------------------------
+
+Double-check that the reserved IDs in your predictor are consistent with SGNMT. You can change the
+reserved IDs used by SGNMT with the ``indexing_scheme`` parameter, or mask predictors with their
+own reserved IDs with the ``idxmap`` predictor wrapper.
+
 ImportError: No module named pywrapfst
 -------------------------------------------------
 
@@ -20,7 +27,7 @@ OpenFST is in your ``PYTHONPATH`` and ``LD_LIBRARY_PATH`` as explained on the :r
 ---------------------------------------------------------------------------------
 
 Make sure that all your word maps use the standard names for reserved tokens (``<eps>``, ``<s>``, ``</s>``). Also, 
-double-check that your ``--indexing_scheme`` parameter is consistent with the word maps and the indexing schemes 
+double-check that your ``indexing_scheme`` parameter is consistent with the word maps and the indexing schemes 
 in your models.
 
 'int' object is not callable (fst, nfst, rtn predictors)
@@ -33,8 +40,8 @@ You are likely to use an outdated OpenFST version. The required version is 1.5.4
 
 This warning often indicates that the NMT model configuration does not match the training configuration of the
 loaded NMT model, e.g. because the model has been trained with a different vocabulary size. Double-check the NMT
-configuration parameters, especially ``--src_vocab_size``, ``--trg_vocab_size``, ``--enc_nhids``, ``--enc_embed``,
-``--dec_nhids``, and ``--dec_embed``.
+configuration parameters, especially ``src_vocab_size``, ``trg_vocab_size``, ``enc_nhids``, ``enc_embed``,
+``dec_nhids``, and ``dec_embed``.
 
 No such file or directory: 'test_en'
 ---------------------------------------------
