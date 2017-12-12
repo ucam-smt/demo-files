@@ -20,13 +20,16 @@ The following predictors are available:
   Options: ``nmt_config``, ``nmt_path``, ``nmt_model_selector``, ``cache_nmt_posteriors``, ``nmt_engine`` 
 * **t2t**: Predictor for tensor2tensor models. Requires Tensor2Tensor.
 
-  Options: ``t2t_usr_dir``, ``t2t_model``, ``t2t_problem``, ``t2t_hparams_set``, ``t2t_checkpoint_dir``, ``t2t_src_vocab_size``, ``t2t_trg_vocab_size``
+  Options: ``t2t_usr_dir``, ``t2t_model``, ``t2t_problem``, ``t2t_hparams_set``, ``t2t_checkpoint_dir``, ``pred_src_vocab_size``, ``pred_trg_vocab_size``
 * **bfslayerbylayer**: T2T-based Layer-by-layer models (BFS order). Requires Tensor2Tensor.
 
-  Options: ``t2t_usr_dir``, ``t2t_model``, ``t2t_problem``, ``t2t_hparams_set``, ``t2t_checkpoint_dir``, ``t2t_src_vocab_size``, ``t2t_trg_vocab_size``. ``syntax_root_id``, ``syntax_max_terminal_id``, ``syntax_terminal_list``, ``syntax_pop_id``, ``syntax_max_depth``, ``layerbylayer_terminal_strategy``
+  Options: ``t2t_usr_dir``, ``t2t_model``, ``t2t_problem``, ``t2t_hparams_set``, ``t2t_checkpoint_dir``, ``pred_src_vocab_size``, ``pred_trg_vocab_size``. ``syntax_root_id``, ``syntax_max_terminal_id``, ``syntax_terminal_list``, ``syntax_pop_id``, ``syntax_max_depth``, ``layerbylayer_terminal_strategy``
 * **dfslayerbylayer**: T2T-based Layer-by-layer models (DFS order). Requires Tensor2Tensor.
 
-  Options: ``t2t_usr_dir``, ``t2t_model``, ``t2t_problem``, ``t2t_hparams_set``, ``t2t_checkpoint_dir``, ``t2t_src_vocab_size``, ``t2t_trg_vocab_size``. ``syntax_root_id``, ``syntax_max_terminal_id``, ``syntax_terminal_list``, ``syntax_pop_id``, ``syntax_max_depth``, ``layerbylayer_terminal_strategy``
+  Options: ``t2t_usr_dir``, ``t2t_model``, ``t2t_problem``, ``t2t_hparams_set``, ``t2t_checkpoint_dir``, ``pred_src_vocab_size``, ``pred_trg_vocab_size``. ``syntax_root_id``, ``syntax_max_terminal_id``, ``syntax_terminal_list``, ``syntax_pop_id``, ``syntax_max_depth``, ``layerbylayer_terminal_strategy``
+* **nizza**: Nizza alignment models. Requires Nizza.
+
+  Options: ``nizza_model``, ``nizza_hparams_set``, ``nizza_checkpoint_dir``, ``pred_src_vocab_size``, ``pred_trg_vocab_size``
 * **srilm**: n-gram language model. Requires swig-srilm.
 
   Options: ``srilm_path``, ``srilm_order``
@@ -47,10 +50,10 @@ The following predictors are available:
   Options: ``trg_test``, ``forcedlst_sparse_feat``, ``use_nbest_weights`` 
 * **bow**: Forced decoding with one bag-of-words ref.
 
-  Options: ``trg_test``, ``heuristic_scores_file``, ``bow_heuristic_strategies``, ``bow_accept_subsets``, ``bow_accept_duplicates``, ``bow_equivalence_vocab_size``
+  Options: ``trg_test``, ``heuristic_scores_file``, ``bow_heuristic_strategies``, ``bow_accept_subsets``, ``bow_accept_duplicates``, ``pred_trg_vocab_size``
 * **bowsearch**: Forced decoding with one bag-of-words ref.
 
-  Options: ``hypo_recombination``, ``trg_test``, ``heuristic_scores_file``, ``bow_heuristic_strategies``, ``bow_accept_subsets``, ``bow_accept_duplicates``, ``bow_equivalence_vocab_size``
+  Options: ``hypo_recombination``, ``trg_test``, ``heuristic_scores_file``, ``bow_heuristic_strategies``, ``bow_accept_subsets``, ``bow_accept_duplicates``, ``pred_trg_vocab_size``
 * **fst**: Deterministic translation lattices 
 
   Options: ``fst_path``, ``use_fst_weights``, ``normalize_fst_weights``, ``fst_to_log``, ``fst_skip_bos_weight`` 
@@ -68,7 +71,7 @@ The following predictors are available:
   Options: ``wc_word``
 * **unkc**: Poisson model for number of UNKs.
 
-  Options: ``unk_count_lambdas``
+  Options: ``unk_count_lambdas``, ``pred_trg_vocab_size``
 * **ngramc**: For using MBR n-gram posteriors.
 
   Options: ``ngramc_path``, ``ngramc_order``
@@ -87,12 +90,15 @@ All predictors can be combined with one or more wrapper predictors by adding the
 * **altsrc**: This wrapper loads source sentences from an alternative source.
 
   Options: ``altsrc_test`` 
+* **ngramize**: Extracts n-gram posteriors from a predictor without feedback loop.
+
+  Options: ``ngramize_min_order``, ``ngramize_max_order``, ``max_len_factor``
 * **skipvocab**: Uses internal beam search to skip a subset of the predictor vocabulary.
 
   Options: ``beam``, ``skipvocab_max_id``, ``skipvocab_stop_size`` 
-* **unkvocab**: This wrapper explicitly excludes matching word indices higher than trg_vocab_size with UNK scores.
+* **unkvocab**: This wrapper explicitly excludes matching word indices higher than ``pred_trg_vocab_size`` with UNK scores.
 
-  Options: ``trg_vocab_size``
+  Options: ``pred_trg_vocab_size``
 * **fsttok**: Uses an FST to transduce SGNMT tokens to predictor tokens.
 
   Options: ``fsttok_path``, ``fsttok_max_pending_score``, ``fst_unk_id``
@@ -193,6 +199,15 @@ cam.sgnmt.predictors.ngram module
 ****************************************
 
 .. automodule:: cam.sgnmt.predictors.ngram
+    :members:
+    :undoc-members:
+    :show-inheritance:
+    :noindex:
+
+cam.sgnmt.predictors.tf_nizza module
+****************************************
+
+.. automodule:: cam.sgnmt.predictors.tf_nizza
     :members:
     :undoc-members:
     :show-inheritance:

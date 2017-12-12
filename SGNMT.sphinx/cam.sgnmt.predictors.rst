@@ -84,6 +84,14 @@ cam.sgnmt.predictors.ngram module
     :undoc-members:
     :show-inheritance:
 
+cam.sgnmt.predictors.tf_nizza module
+------------------------------------
+
+.. automodule:: cam.sgnmt.predictors.tf_nizza
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 cam.sgnmt.predictors.tf_nmt module
 ----------------------------------
 
