@@ -26,6 +26,7 @@ Contents
    command_line
    predictors
    decoders
+   examples
    faq
    publications
    All modules <cam.sgnmt>

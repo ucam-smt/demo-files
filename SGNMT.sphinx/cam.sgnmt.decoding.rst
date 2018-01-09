@@ -116,6 +116,14 @@ cam.sgnmt.decoding.syncbeam module
     :undoc-members:
     :show-inheritance:
 
+cam.sgnmt.decoding.syntaxbeam module
+------------------------------------
+
+.. automodule:: cam.sgnmt.decoding.syntaxbeam
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 
 Module contents
 ---------------

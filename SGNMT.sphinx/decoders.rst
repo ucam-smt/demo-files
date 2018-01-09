@@ -11,6 +11,7 @@ Available decoders
 * **beam**: Beam search like in Bahdanau et al, 2015 .
 * **sepbeam**: Associates predictors with hypos in beam search and applies only one predictor instead of all for hypo expansion.
 * **syncbeam**: Beam search which compares after consuming a special synchronization symbol instead of after each iteration.
+* **syntaxbeam**: Beam search which ensures diversity amongst terminal symbol histories.
 * **multisegbeam**: Beam search with multiple segmentations. 
 * **dfs**: Depth-first search. This should be used for exact decoding or the complete enumeration of the search space. 
   but it cannot be used if the search space is too large (like for unrestricted NMT) as it performs exhaustive search. 
@@ -160,6 +161,15 @@ cam.sgnmt.decoding.syncbeam module
 ****************************************
 
 .. automodule:: cam.sgnmt.decoding.syncbeam
+    :members:
+    :undoc-members:
+    :show-inheritance:
+    :noindex:
+
+cam.sgnmt.decoding.syntaxbeam module
+****************************************
+
+.. automodule:: cam.sgnmt.decoding.syntaxbeam
     :members:
     :undoc-members:
     :show-inheritance:
