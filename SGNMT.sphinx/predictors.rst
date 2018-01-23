@@ -45,6 +45,9 @@ The following predictors are available:
 * **bracket**: Enforces well-formed bracket expressions 
 
   Options: ``syntax_pop_id`` , ``syntax_max_terminal_id``, ``syntax_max_depth``, ``extlength_path``
+* **osm**: Constraints output to valid OSM sequences 
+
+  Options: None
 * **forcedlst**: Forced decoding with a Moses n-best list (n-best list rescoring) 
 
   Options: ``trg_test``, ``forcedlst_sparse_feat``, ``use_nbest_weights`` 
@@ -92,7 +95,7 @@ All predictors can be combined with one or more wrapper predictors by adding the
   Options: ``altsrc_test`` 
 * **ngramize**: Extracts n-gram posteriors from a predictor without feedback loop.
 
-  Options: ``ngramize_min_order``, ``ngramize_max_order``, ``max_len_factor``
+  Options: ``min_ngram_order``, ``max_ngram_order``, ``max_len_factor``
 * **skipvocab**: Uses internal beam search to skip a subset of the predictor vocabulary.
 
   Options: ``beam``, ``skipvocab_max_id``, ``skipvocab_stop_size`` 
@@ -199,6 +202,15 @@ cam.sgnmt.predictors.ngram module
 ****************************************
 
 .. automodule:: cam.sgnmt.predictors.ngram
+    :members:
+    :undoc-members:
+    :show-inheritance:
+    :noindex:
+
+cam.sgnmt.predictors.structure module
+****************************************
+
+.. automodule:: cam.sgnmt.predictors.structure
     :members:
     :undoc-members:
     :show-inheritance:

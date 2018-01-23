@@ -44,6 +44,14 @@ cam.sgnmt.decoding.bucket module
     :undoc-members:
     :show-inheritance:
 
+cam.sgnmt.decoding.combibeam module
+-----------------------------------
+
+.. automodule:: cam.sgnmt.decoding.combibeam
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 cam.sgnmt.decoding.core module
 ------------------------------
 

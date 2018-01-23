@@ -278,6 +278,8 @@ SGNMT supports four different output formats:
 * *nbest*: n-best list in 
 * *sfst*: OpenFST translation lattices with standard arcs
 * *fst*: OpenFST translation lattices with sparse tuple arcs
+* *ngram*: MBR-style n-gram posteriors
+* *timecsv*: CSV with predictor scores over time
 
 They can be activated with ``--outputs``. For example, this adds NMT scores to the Hiero n-best list *hiero/100best.txt*::
 
