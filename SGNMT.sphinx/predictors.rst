@@ -30,6 +30,9 @@ The following predictors are available:
 * **nizza**: Nizza alignment models. Requires Nizza.
 
   Options: ``nizza_model``, ``nizza_hparams_set``, ``nizza_checkpoint_dir``, ``pred_src_vocab_size``, ``pred_trg_vocab_size``
+* **lexnizza**: Uses Nizza lexical scores to check coverage. Requires Nizza.
+
+  Options: ``nizza_model``, ``nizza_hparams_set``, ``nizza_checkpoint_dir``, ``pred_src_vocab_size``, ``pred_trg_vocab_size``
 * **srilm**: n-gram language model. Requires swig-srilm.
 
   Options: ``srilm_path``, ``srilm_order``
@@ -48,6 +51,9 @@ The following predictors are available:
 * **osm**: Constraints output to valid OSM sequences 
 
   Options: None
+* **forcedosm**: Forced alignment with an OSM model
+
+  Options: ``trg_test``
 * **forcedlst**: Forced decoding with a Moses n-best list (n-best list rescoring) 
 
   Options: ``trg_test``, ``forcedlst_sparse_feat``, ``use_nbest_weights`` 
