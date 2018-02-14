@@ -21,18 +21,12 @@ The following predictors are available:
 * **t2t**: Predictor for tensor2tensor models. Requires Tensor2Tensor.
 
   Options: ``t2t_usr_dir``, ``t2t_model``, ``t2t_problem``, ``t2t_hparams_set``, ``t2t_checkpoint_dir``, ``pred_src_vocab_size``, ``pred_trg_vocab_size``
-* **bfslayerbylayer**: T2T-based Layer-by-layer models (BFS order). Requires Tensor2Tensor.
-
-  Options: ``t2t_usr_dir``, ``t2t_model``, ``t2t_problem``, ``t2t_hparams_set``, ``t2t_checkpoint_dir``, ``pred_src_vocab_size``, ``pred_trg_vocab_size``. ``syntax_root_id``, ``syntax_max_terminal_id``, ``syntax_terminal_list``, ``syntax_pop_id``, ``syntax_max_depth``, ``layerbylayer_terminal_strategy``
-* **dfslayerbylayer**: T2T-based Layer-by-layer models (DFS order). Requires Tensor2Tensor.
-
-  Options: ``t2t_usr_dir``, ``t2t_model``, ``t2t_problem``, ``t2t_hparams_set``, ``t2t_checkpoint_dir``, ``pred_src_vocab_size``, ``pred_trg_vocab_size``. ``syntax_root_id``, ``syntax_max_terminal_id``, ``syntax_terminal_list``, ``syntax_pop_id``, ``syntax_max_depth``, ``layerbylayer_terminal_strategy``
 * **nizza**: Nizza alignment models. Requires Nizza.
 
   Options: ``nizza_model``, ``nizza_hparams_set``, ``nizza_checkpoint_dir``, ``pred_src_vocab_size``, ``pred_trg_vocab_size``
 * **lexnizza**: Uses Nizza lexical scores to check coverage. Requires Nizza.
 
-  Options: ``nizza_model``, ``nizza_hparams_set``, ``nizza_checkpoint_dir``, ``pred_src_vocab_size``, ``pred_trg_vocab_size``
+  Options: ``nizza_model``, ``nizza_hparams_set``, ``nizza_checkpoint_dir``, ``pred_src_vocab_size``, ``pred_trg_vocab_size``, ``lexnizza_alpha``, ``lexnizza_beta``, ``lexnizza_shortlist_strategies``, ``lexnizza_max_shortlist_length``
 * **srilm**: n-gram language model. Requires swig-srilm.
 
   Options: ``srilm_path``, ``srilm_order``

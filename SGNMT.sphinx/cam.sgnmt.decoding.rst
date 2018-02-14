@@ -92,6 +92,14 @@ cam.sgnmt.decoding.heuristics module
     :undoc-members:
     :show-inheritance:
 
+cam.sgnmt.decoding.mbrbeam module
+---------------------------------
+
+.. automodule:: cam.sgnmt.decoding.mbrbeam
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 cam.sgnmt.decoding.multisegbeam module
 --------------------------------------
 

@@ -31,6 +31,14 @@ cam.sgnmt.decode_utils module
     :undoc-members:
     :show-inheritance:
 
+cam.sgnmt.extract_scores_along_reference module
+-----------------------------------------------
+
+.. automodule:: cam.sgnmt.extract_scores_along_reference
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 cam.sgnmt.output module
 -----------------------
 

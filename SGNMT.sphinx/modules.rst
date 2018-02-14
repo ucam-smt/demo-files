@@ -8,4 +8,5 @@ sgnmt
    batch_decode
    cam
    decode
+   extract_scores_along_reference
    train

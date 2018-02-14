@@ -2,17 +2,26 @@
 Command-line reference
 =======================
 
-SGNMT provides ``decode.py`` for decoding and ``train.py`` for NMT training. The
-neural word alignment script ``align.py`` is only available for the Blocks 
-implementation. The scripts can be configured via command line or configuration file. 
+The main runner script in SGNMT is ``decode.py``. The script can be configured 
+via command line or configuration file. 
 For a quick overview of available parameters use ``--help``::
 
     python decode.py --help
-    python batch_decode.py --help
-    python train.py --help
-    python align.py --help
 
 The complete and detailed list of parameters is provided below.
+
+SGNMT supports NMT training with Blocks/Theano. However, this will be removed in
+future releases since Theano has been discontinued. We refer to other packages
+such as Tensor2Tensor or the seq2seq TF tutorial for training, which are
+supported by the SGNMT decoder.
+
+Besides ``decode.py`` following additional scripts are available:
+
+  * ``extract_scores_along_reference.py``: Generates a JSON file which contains the complete posteriors of all
+    predictors along a reference decoding path. Can be used for tuning predictor weights. Same arguments as ``decode.py``.
+  * ``train.py``: NMT training and shrinking script for attentional RNN models (Blocks/Theano only).
+  * ``batch_decode.py``: Very fast beam decoder (over 800 words per second on a Titan X GPU) for pure NMT decoding (Blocks/Theano only).
+  * ``align.py``: Neural word alignment using attentional RNN seq2seq models (Blocks/Theano only).
 
 Decoding
 ---------
@@ -21,42 +30,4 @@ Decoding
    :module: cam.sgnmt.ui
    :func: get_parser
    :prog: decode.py
-
-Batch Decoding (Blocks only)
-----------------------------
-
-This is a fast decoder for pure NMT which does not process sentences
-in a sequential order. It is optimized for GPU decoding. For maximum
-decoding speed we recommend using the Theano flags ``lib.cnmem=1,allow_gc=False``
-and the most recent versions of cuDNN and Theano. Not implemented for 
-TensorFlow.
-
-.. argparse::
-   :module: cam.sgnmt.ui
-   :func: get_blocks_batch_decode_parser
-   :prog: batch_decode.py
-
-Training (Blocks only)
-----------------------
-
-The training script follows the NMT training example in Blocks, but it adds an
-option for enabling reshuffling the training data between epochs, and fixing
-word embedding which might be used in later training stages.
-
-.. argparse::
-   :module: cam.sgnmt.ui
-   :func: get_blocks_train_parser
-   :prog: train.py
-
-Alignment (Blocks only)
------------------------
-
-Only available for the Blocks (Theano) NMT engine. Supports two different
-neural word alignment models which both utilize the concept of attention in
-NMT.
-
-.. argparse::
-   :module: cam.sgnmt.ui
-   :func: get_blocks_align_parser
-   :prog: align.py
 
