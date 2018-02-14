@@ -12,6 +12,7 @@ Available decoders
 * **sepbeam**: Associates predictors with hypos in beam search and applies only one predictor instead of all for hypo expansion.
 * **syncbeam**: Beam search which compares after consuming a special synchronization symbol instead of after each iteration.
 * **syntaxbeam**: Beam search which ensures diversity amongst terminal symbol histories.
+* **mbrbeam**: Diversity encouraging beam search which maximizes the expected BLEU.
 * **combibeam**: Beam search which applies ``--combination_scheme`` at each time step.
 * **multisegbeam**: Beam search with multiple segmentations. 
 * **dfs**: Depth-first search. This should be used for exact decoding or the complete enumeration of the search space. 
@@ -135,6 +136,15 @@ cam.sgnmt.decoding.heuristics module
 ****************************************
 
 .. automodule:: cam.sgnmt.decoding.heuristics
+    :members:
+    :undoc-members:
+    :show-inheritance:
+    :noindex:
+
+cam.sgnmt.decoding.mbrbeam module
+****************************************
+
+.. automodule:: cam.sgnmt.decoding.mbrbeam
     :members:
     :undoc-members:
     :show-inheritance:
