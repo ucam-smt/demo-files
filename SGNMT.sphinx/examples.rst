@@ -36,7 +36,7 @@ Fast decoding of three BPE-based NMT systems on ja-en WAT with GNMT coverage pen
     nmt_path3: ../jaen-wat-bpe3/train
 
 Lattice rescoring with three NMT systems (Blocks/Theano)
-**************************************************
+********************************************************
 
 Rescoring an SMT lattice on ja-en WAT with an ensemble of three NMT systems (ja-en WAT)::
 

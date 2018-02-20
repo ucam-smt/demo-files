@@ -23,6 +23,7 @@ Contents
    setup
    tutorial
    adding_components
+   kyoto_nmt
    command_line
    predictors
    decoders

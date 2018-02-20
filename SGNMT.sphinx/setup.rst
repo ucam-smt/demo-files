@@ -15,7 +15,7 @@ Installing dependencies
 SGNMT depends on the following libraries:
 
 * `OpenFST <http://openfst.org/>`_ for reading and writing FSTs (e.g. translation lattices) (>=1.5.4)
-* Optional: `Tensor2Tensor <https://github.com/tensorflow/tensor2tensor>`_ for a wide range of different sequence models (>=1.3.1)
+* Optional: `Tensor2Tensor <https://github.com/tensorflow/tensor2tensor>`_ for a wide range of different sequence models (=1.3.x)
 * Optional: `Eva Hasler's TensorFlow fork <https://github.com/ehasler/tensorflow>`_ for an extended version of TensorFlow's seq2seq tutorial (latest)
 * Optional: `Blocks <http://blocks.readthedocs.io/en/latest/>`_ for neural machine translation support based on Theano (>=0.1)
 * Optional: `srilm-swig <https://github.com/desilinguist/swig-srilm>`_ for reading ARPA language model files

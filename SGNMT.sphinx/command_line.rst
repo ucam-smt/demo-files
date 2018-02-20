@@ -10,11 +10,6 @@ For a quick overview of available parameters use ``--help``::
 
 The complete and detailed list of parameters is provided below.
 
-SGNMT supports NMT training with Blocks/Theano. However, this will be removed in
-future releases since Theano has been discontinued. We refer to other packages
-such as Tensor2Tensor or the seq2seq TF tutorial for training, which are
-supported by the SGNMT decoder.
-
 Besides ``decode.py`` following additional scripts are available:
 
   * ``extract_scores_along_reference.py``: Generates a JSON file which contains the complete posteriors of all
