@@ -52,6 +52,14 @@ cam.sgnmt.decoding.combibeam module
     :undoc-members:
     :show-inheritance:
 
+cam.sgnmt.decoding.combination module
+-------------------------------------
+
+.. automodule:: cam.sgnmt.decoding.combination
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 cam.sgnmt.decoding.core module
 ------------------------------
 
@@ -88,6 +96,14 @@ cam.sgnmt.decoding.heuristics module
 ------------------------------------
 
 .. automodule:: cam.sgnmt.decoding.heuristics
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+cam.sgnmt.decoding.interpolation module
+---------------------------------------
+
+.. automodule:: cam.sgnmt.decoding.interpolation
     :members:
     :undoc-members:
     :show-inheritance:

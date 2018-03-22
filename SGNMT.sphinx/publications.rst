@@ -11,6 +11,10 @@ If you use SGNMT in your work, please cite the following paper:
 
 Additionally, SGNMT has been used in the following publications: 
 
+* Felix Stahlberg, Danielle Saunders, Gonzalo Iglesias, Bill Byrne.
+  Why not be versatile? Applications of the SGNMT decoder for machine translation.
+  In *Proceedings of the 13th biennial conference by the Association for Machine Translation in the Americas (AMTA 2018)*, March 2018. Boston, USA.
+  `arXiv/1803.07204 <https://arxiv.org/abs/1803.07204>`_
 * Felix Stahlberg and Bill Byrne.
   Unfolding and shrinking neural machine translation ensembles.
   In *Proceedings of the 2017 Conference on Empirical Methods in Natural Language Processing (EMNLP 17)*, September 2017. Copenhagen, Denmark.

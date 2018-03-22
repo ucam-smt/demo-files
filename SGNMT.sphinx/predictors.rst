@@ -50,7 +50,7 @@ The following predictors are available:
   Options: ``trg_test``
 * **forcedlst**: Forced decoding with a Moses n-best list (n-best list rescoring) 
 
-  Options: ``trg_test``, ``forcedlst_sparse_feat``, ``use_nbest_weights`` 
+  Options: ``trg_test``, ``forcedlst_match_unk``, ``forcedlst_sparse_feat``, ``use_nbest_weights`` 
 * **bow**: Forced decoding with one bag-of-words ref.
 
   Options: ``trg_test``, ``heuristic_scores_file``, ``bow_heuristic_strategies``, ``bow_accept_subsets``, ``bow_accept_duplicates``, ``pred_trg_vocab_size``

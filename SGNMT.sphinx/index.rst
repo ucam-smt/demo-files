@@ -72,6 +72,12 @@ Project links
 - Issue tracker: http://github.com/ucam-smt/sgnmt/issues
 - Source code: http://github.com/ucam-smt/sgnmt
 
+Contributors
+------------
+
+- Felix Stahlberg, University of Cambridge
+- Eva Hasler, SDL Research
+
 License
 ---------
 
