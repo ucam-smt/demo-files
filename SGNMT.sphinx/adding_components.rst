@@ -214,8 +214,6 @@ implementation:
         def set_state(self, state):
             self.n_consumed = state
 
-        def reset(self):
-            pass
 
 The state of the predictor is the number of target tokens consumed so far (``self.n_consumed``). ``predict_next()``
 sets the score of the end-of-sentence symbol to 0.0 (optimal score) if this matches the required length ``self.src_length``,
