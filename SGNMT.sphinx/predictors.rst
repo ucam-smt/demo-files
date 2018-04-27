@@ -71,7 +71,7 @@ The following predictors are available:
   Options: ``rules_path``, ``grammar_feature_weights``, ``use_grammar_weights``
 * **wc**: Number of words feature. 
 
-  Options: ``wc_word``
+  Options: ``wc_word``, ``wc_nonterminal_penalty``, ``syntax_nonterminal_ids``, ``syntax_min_terminal_id``, ``syntax_max_terminal_id``, ``pred_trg_vocab_size``
 * **unkc**: Poisson model for number of UNKs.
 
   Options: ``unk_count_lambdas``, ``pred_trg_vocab_size``
@@ -87,6 +87,9 @@ The following predictors are available:
 
 All predictors can be combined with one or more wrapper predictors by adding the wrapper name separated by a _ symbol. Following wrappers are available: 
 
+* **parse**: Internal beam search over a representation which contains some pre-defined non-terminal ids, which should not appear in the output.
+
+  Options: ``parse_tok_grammar``, ``parse_bpe_path``, ``syntax_path``, ``syntax_bpe_path``, ``syntax_word_out``, ``normalize_fst_weights``, ``syntax_norm_alpha``, ``syntax_internal_beam``, ``syntax_max_internal_len``, ``syntax_allow_early_eos``, ``syntax_consume_ooc``, ``syntax_terminal_restrict``, ``syntax_internal_only``, ``syntax_eow_ids``, ``syntax_terminal_ids``
 * **idxmap**: Add this wrapper to predictors which use an alternative word map. 
 
   Options: ``src_idxmap``, ``trg_idxmap`` 
@@ -202,6 +205,15 @@ cam.sgnmt.predictors.ngram module
 ****************************************
 
 .. automodule:: cam.sgnmt.predictors.ngram
+    :members:
+    :undoc-members:
+    :show-inheritance:
+    :noindex:
+
+cam.sgnmt.predictors.parse module
+****************************************
+
+.. automodule:: cam.sgnmt.predictors.parse
     :members:
     :undoc-members:
     :show-inheritance:

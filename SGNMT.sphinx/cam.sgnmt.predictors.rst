@@ -84,6 +84,14 @@ cam.sgnmt.predictors.ngram module
     :undoc-members:
     :show-inheritance:
 
+cam.sgnmt.predictors.parse module
+---------------------------------
+
+.. automodule:: cam.sgnmt.predictors.parse
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 cam.sgnmt.predictors.structure module
 -------------------------------------
 

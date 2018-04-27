@@ -51,6 +51,7 @@ Features
 
 - Syntactically guided neural machine translation (NMT lattice rescoring)
 - NMT support in Theano (Blocks) and TensorFlow (Tensor2Tensor)
+- Target-side syntax for NMT
 - n-best list rescoring with NMT
 - Integrating external n-gram posterior probabilities used in MBR
 - Ensemble NMT decoding
@@ -77,6 +78,7 @@ Contributors
 
 - Felix Stahlberg, University of Cambridge
 - Eva Hasler, SDL Research
+- Danielle Saunders, University of Cambridge
 
 License
 ---------
