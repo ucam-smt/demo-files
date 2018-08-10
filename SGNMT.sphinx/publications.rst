@@ -11,6 +11,16 @@ If you use SGNMT in your work, please cite the following paper:
 
 Additionally, SGNMT has been used in the following publications: 
 
+* Danielle Saunders, Felix Stahlberg, Adria de Gispert, and Bill Byrne.
+  Multi-representation ensembles and delayed SGD updates improve syntax-based NMT.
+  In *Proceedings of the 56th annual meeting of the Association for Computational Linguistics (ACL 18)*, July 2018. Melbourne, Australia.
+  `arXiv/1805.00456 <https://arxiv.org/abs/1805.00456>`_
+* Gregory Kell.
+  Overcoming catastrophic forgetting in neural machine translation.
+  *MPhil* dissertation, University of Cambridge, 2018.
+* Zhiwei Wang.
+  Simultaneous neural machine translation.
+  4th year project, University of Cambridge, 2018.
 * Felix Stahlberg, Danielle Saunders, Gonzalo Iglesias, Bill Byrne.
   Why not be versatile? Applications of the SGNMT decoder for machine translation.
   In *Proceedings of the 13th biennial conference by the Association for Machine Translation in the Americas (AMTA 2018)*, March 2018. Boston, USA.

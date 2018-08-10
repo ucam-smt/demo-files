@@ -10,6 +10,11 @@ Common issues
       If you don't find an answer here, check out the `issue tracker on Github <http://github.com/ucam-smt/sgnmt/issues>`_.
 
 
+Config files are ignored
+-------------------------
+
+Install PyYAML with ``pip install pyyaml``.
+
 Decoding continues after the end-of-sentence symbol
 ---------------------------------------------------
 

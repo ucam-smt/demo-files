@@ -13,7 +13,7 @@ See the :ref:`tutorial-label` page for examples how to use predictors for decodi
 Available predictors
 ----------------------
 
-The following predictors are available:
+The following predictors are available. The installation of additional (optional) software required by some of the predictors is described on the :ref:`setup-label` page.
 
 * **nmt**: neural machine translation predictor. Requires Blocks/Theano or TensorFlow.
 
@@ -27,9 +27,12 @@ The following predictors are available:
 * **lexnizza**: Uses Nizza lexical scores to check coverage. Requires Nizza.
 
   Options: ``nizza_model``, ``nizza_hparams_set``, ``nizza_checkpoint_dir``, ``pred_src_vocab_size``, ``pred_trg_vocab_size``, ``lexnizza_alpha``, ``lexnizza_beta``, ``lexnizza_shortlist_strategies``, ``lexnizza_max_shortlist_length``
-* **srilm**: n-gram language model. Requires swig-srilm.
+* **kenlm**: Count-based n-gram language model in ARPA format. Requires KenLM.
 
-  Options: ``srilm_path``, ``srilm_order``
+  Options: ``lm_path``
+* **srilm**: Count-based n-gram language model in ARPA format. Requires swig-srilm.
+
+  Options: ``lm_path``, ``ngramc_order``, ``srilm_convert_to_ln``
 * **nplm**: neural n-gram language model. Requires nplm.
 
   Options: ``nplm_path``, ``normalize_nplm_probs`` 

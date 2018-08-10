@@ -15,10 +15,11 @@ Installing dependencies
 SGNMT depends on the following libraries:
 
 * `OpenFST <http://openfst.org/>`_ for reading and writing FSTs (e.g. translation lattices) (>=1.5.4)
-* Optional: `Tensor2Tensor <https://github.com/tensorflow/tensor2tensor>`_ for a wide range of different sequence models (=1.3.x)
+* Optional: `Tensor2Tensor <https://github.com/tensorflow/tensor2tensor>`_ for a wide range of different sequence models (=1.7.x)
 * Optional: `Eva Hasler's TensorFlow fork <https://github.com/ehasler/tensorflow>`_ for an extended version of TensorFlow's seq2seq tutorial (latest)
 * Optional: `Blocks <http://blocks.readthedocs.io/en/latest/>`_ for neural machine translation support based on Theano (>=0.1)
-* Optional: `srilm-swig <https://github.com/desilinguist/swig-srilm>`_ for reading ARPA language model files
+* Optional: `KenLM <https://github.com/kpu/kenlm>`_ for reading ARPA language model files with KenLM backend (latest)
+* Optional: `srilm-swig <https://github.com/desilinguist/swig-srilm>`_ for reading ARPA language model files with SRI-LM backend (>=1.7.1)
 * Optional: `NPLM <http://nlg.isi.edu/software/nplm/>`_ for using feed-forward neural language models (>=0.3)
 
 
@@ -54,7 +55,7 @@ registry of T2T to your custom directory.
       The Tensor2Tensor code base is still under constant change, and SGNMT might not be compatible with the latest version.
       The latest tensor2tensor version which is supported by SGNMT is available in `this fork <https://github.com/fstahlberg/tensor2tensor>`_.
 
-*Tested versions: Tensor2Tensor 1.3.1, TensorFlow 1.4*
+*Tested versions: Tensor2Tensor 1.7.0, TensorFlow 1.9*
 
 
 Installing TensorFlow (not T2T)
@@ -96,6 +97,16 @@ You'll also need to add ``on_unused_input='ignore'`` to your Theano flags as dis
     $ export THEANO_FLAGS="on_unused_input='ignore'"
 
 *Tested versions: Blocks 0.1-0.2, Theano 0.8-0.9*
+
+
+Installing KenLM
+************************
+
+Follow the instructions on the `KenLM Github page <https://github.com/kpu/kenlm>`_ to install KenLM::
+
+    pip install https://github.com/kpu/kenlm/archive/master.zip
+
+*Tested versions: latest*
 
 
 Installing SRILM
@@ -141,7 +152,7 @@ Try to replace *nplm.py* in the *python/* directory of your NPLM installation wi
 Setting up SGNMT
 ------------------
 
-Update your environment variables to reflect the locations of OpenFST, SRILM, and NPLM. On Ubuntu, it might be necessary to
+Update your environment variables to reflect the locations of OpenFST, SRILM/KenLM, and NPLM. On Ubuntu, it might be necessary to
 add */usr/local/lib* to your ``LD_LIBRARY_PATH`` (default location for OpenFST)::
 
     $ export LD_LIBRARY_PATH=/usr/local/lib/:/path/to/swig-srilm/:/path/to/nplm/src/python:$LD_LIBRARY_PATH
