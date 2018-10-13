@@ -47,7 +47,7 @@ The following predictors are available. The installation of additional (optional
   Options: ``syntax_pop_id`` , ``syntax_max_terminal_id``, ``syntax_max_depth``, ``extlength_path``
 * **osm**: Constraints output to valid OSM sequences 
 
-  Options: None
+  Options: ``osm_type``
 * **forcedosm**: Forced alignment with an OSM model
 
   Options: ``trg_test``

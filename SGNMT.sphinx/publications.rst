@@ -11,6 +11,14 @@ If you use SGNMT in your work, please cite the following paper:
 
 Additionally, SGNMT has been used in the following publications: 
 
+* Felix Stahlberg, Danielle Saunders, Bill Byrne.
+  An operation sequence model for explainable neural machine translation.
+  In *Proceedings of the EMNLP 2018 BlackboxNLP workshop*, November 2018. Brussels, Belgium.
+  `arXiv/1808.09688 <http://arxiv.org/abs/1808.09688>`_
+* Felix Stahlberg, Adria de Gispert, and Bill Byrne. 
+  The University of Cambridge's machine translation systems for WMT18.
+  In *Proceedings of the 3rd conference on machine translation (WMT 18)*, November 2018. Brussels, Belgium.
+  `arXiv/1808.09465 <http://arxiv.org/abs/1808.09465>`_
 * Danielle Saunders, Felix Stahlberg, Adria de Gispert, and Bill Byrne.
   Multi-representation ensembles and delayed SGD updates improve syntax-based NMT.
   In *Proceedings of the 56th annual meeting of the Association for Computational Linguistics (ACL 18)*, July 2018. Melbourne, Australia.

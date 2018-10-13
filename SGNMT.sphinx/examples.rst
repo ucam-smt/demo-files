@@ -160,6 +160,7 @@ vocabulary sizes and word maps::
     predictors: nmt,nmt,nmt,nmt,nmt,nmt,nmt,nmt,idxmap_nmt,idxmap_nmt
     predictor_weights: 0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1
     combination_scheme: bayesian
+    decoder: combibeam
     nmt_config2: saveto=./train.reshuffle
     nmt_config3: saveto=./train.adria,src_vocab_size=30003,trg_vocab_size=30003
     nmt_config4: saveto=./train.fixembedding,src_vocab_size=50003,trg_vocab_size=50003

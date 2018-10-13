@@ -15,7 +15,7 @@ Installing dependencies
 SGNMT depends on the following libraries:
 
 * `OpenFST <http://openfst.org/>`_ for reading and writing FSTs (e.g. translation lattices) (>=1.5.4)
-* Optional: `Tensor2Tensor <https://github.com/tensorflow/tensor2tensor>`_ for a wide range of different sequence models (=1.7.x)
+* Optional: `Tensor2Tensor <https://github.com/tensorflow/tensor2tensor>`_ for a wide range of different sequence models (>=1.7.0)
 * Optional: `Eva Hasler's TensorFlow fork <https://github.com/ehasler/tensorflow>`_ for an extended version of TensorFlow's seq2seq tutorial (latest)
 * Optional: `Blocks <http://blocks.readthedocs.io/en/latest/>`_ for neural machine translation support based on Theano (>=0.1)
 * Optional: `KenLM <https://github.com/kpu/kenlm>`_ for reading ARPA language model files with KenLM backend (latest)
@@ -55,7 +55,7 @@ registry of T2T to your custom directory.
       The Tensor2Tensor code base is still under constant change, and SGNMT might not be compatible with the latest version.
       The latest tensor2tensor version which is supported by SGNMT is available in `this fork <https://github.com/fstahlberg/tensor2tensor>`_.
 
-*Tested versions: Tensor2Tensor 1.7.0, TensorFlow 1.9*
+*Tested versions: Tensor2Tensor 1.7.0-1.9.0, TensorFlow 1.9-1.10.1*
 
 
 Installing TensorFlow (not T2T)
@@ -64,7 +64,7 @@ Installing TensorFlow (not T2T)
 The TensorFlow-based ``nmt`` and ``rnnlm`` predictors are based on `Eva Hasler's TensorFlow fork <https://github.com/ehasler/tensorflow>`_
 which extends the seq2seq tutorial to reproduce the Bahdanau-style architecture.
 
-**Note**: You don't need this fork if you access TensorFlow only over the Tensor2Tensor library.
+**Note**: You don't need this fork if you access TensorFlow only via the Tensor2Tensor library.
 
 *Tested versions: latest*
 
