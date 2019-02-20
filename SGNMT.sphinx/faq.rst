@@ -38,7 +38,7 @@ in your models.
 'int' object is not callable (fst, nfst, rtn predictors)
 --------------------------------------------------------
 
-You are likely to use an outdated OpenFST version. The required version is 1.5.4.
+You are likely to use an outdated OpenFST version. The minimum required version is 1.5.4.
 
 'Dimension mismatch' warnings with neural models
 -------------------------------------------------

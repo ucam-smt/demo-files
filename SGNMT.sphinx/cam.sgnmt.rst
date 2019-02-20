@@ -47,6 +47,14 @@ cam.sgnmt.output module
     :undoc-members:
     :show-inheritance:
 
+cam.sgnmt.tf_utils module
+-------------------------
+
+.. automodule:: cam.sgnmt.tf_utils
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 cam.sgnmt.ui module
 -------------------
 

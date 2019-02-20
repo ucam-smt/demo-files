@@ -9,6 +9,93 @@ to very different results. This page contains a list of SGNMT configuration file
 in our group. Details such as paths and vocabulary sizes are exemplary as we do not provide model files,
 but we hope that this list is still useful as blueprint for your own experiments.
 
+University of Cambridge submission to WMT18 (Tensor2Tensor)
+***********************************************************
+
+These are the ini-files for the final decoding passes. Please write to fs439@cam.ac.uk for
+access to the trained models.
+
+English-German::
+
+    predictors: t2t,t2t,ngramc,ngramc,ngramc,ngramc,wc
+    predictor_weights: 5.7,4.3,0.1,0.1,1.0,0.75,1.5
+    src_test: /data/mifs_scratch/fs439/data/wmt18/test/indexed_bpe/test18ts.ende.bpe.en
+    beam: 8
+    early_stopping: false
+
+    pred_src_vocab_size: 35627
+    pred_trg_vocab_size: 35627
+    indexing_scheme: t2t
+    t2t_problem: translate_ende_wmt18
+
+    # Relative transformer model
+    t2t_checkpoint_dir: t2t_train/translate_ende_wmt18/transformer-transformer_relative_big_large_batch4/average.1000k/
+    t2t_model: transformer
+    t2t_hparams_set: transformer_relative_big
+
+    # Transformer model
+    t2t_checkpoint_dir2: t2t_train/translate_ende_wmt18/transformer-transformer_big_large_batch4/average.1000k
+    t2t_model2: transformer
+    t2t_hparams_set2: transformer_big
+
+    # slicenet ngram posteriors
+    ngramc_path: supplementary/ende2/ss.ngramc_test18ts/%d.txt
+
+    # rnn ngram posteriors
+    ngramc_path2: supplementary/ende2/rr.ngramc_test18ts/%d.txt
+
+    # r2l ngram posteriors
+    ngramc_path3: supplementary/ende2/ender.ngramc_test18ts/%d.txt
+
+    # SDL posteriors
+    ngramc_path4: supplementary/ende/sdl.ngramc_test18ts/%d.txt
+
+    outputs: nbest,text,ngram
+
+German-English::
+
+    (like English-German with the following predictor weights)
+    predictor_weights: 4.2,3.8,0.1,0.125,0.75,1.5,-1.2
+
+Chinese-English::
+
+    verbosity: debug
+    predictors: t2t,t2t,ngramc,ngramc,ngramc,ngramc,wc
+    predictor_weights: 6.5,5.5,0.375,0.375,0.375,0.5,-0.5
+    src_test: /data/mifs_scratch/fs439/data/wmt18/test/indexed_bpe/test18.enzh.bpe.zh
+    beam: 8
+    early_stopping: false
+
+    pred_src_vocab_size: 43738
+    pred_trg_vocab_size: 34306
+    indexing_scheme: t2t
+    t2t_problem: translate_zhen_wmt18
+
+    # Relative transformer model
+    t2t_checkpoint_dir: t2t_train/translate_zhen_wmt18/transformer-transformer_relative_big_large_batch4/average.1000k/
+    t2t_model: transformer
+    t2t_hparams_set: transformer_relative_big
+
+    # Transformer model
+    t2t_checkpoint_dir2: t2t_train/translate_zhen_wmt18/transformer-transformer_big_large_batch4/average.1000k
+    t2t_model2: transformer
+    t2t_hparams_set2: transformer_big
+
+    # slicenet ngram posteriors
+    ngramc_path: supplementary/zhen2/ss.ngramc_test18/%d.txt
+
+    # rnn ngram posteriors
+    ngramc_path2: supplementary/zhen2/rr.ngramc_test18/%d.txt
+
+    # r2l ngram posteriors
+    ngramc_path3: supplementary/zhen2/zhenr.ngramc_test18/%d.txt
+
+    # SDL posteriors
+    ngramc_path4: supplementary/zhen/sdl.ngramc_test18/%d.txt
+
+    outputs: nbest,text,ngram
+
+
 Joint Word/BPE decoding with multisegbeam (Blocks/Theano)
 ***********************************************************
 

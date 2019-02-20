@@ -21,6 +21,15 @@ The following predictors are available. The installation of additional (optional
 * **t2t**: Predictor for tensor2tensor models. Requires Tensor2Tensor.
 
   Options: ``t2t_usr_dir``, ``t2t_model``, ``t2t_problem``, ``t2t_hparams_set``, ``t2t_checkpoint_dir``, ``pred_src_vocab_size``, ``pred_trg_vocab_size``
+* **editt2t**: Predictor for searching over t2t models via edit operations. Requires Tensor2Tensor.
+
+  Options: ``t2t_usr_dir``, ``t2t_model``, ``t2t_problem``, ``t2t_hparams_set``, ``t2t_checkpoint_dir``, ``pred_src_vocab_size``, ``pred_trg_vocab_size``, ``trg_test``, ``beam``
+* **fertt2t**: Predictor for tensor2tensor models predicting source token fertilities. Requires Tensor2Tensor.
+
+  Options: ``t2t_usr_dir``, ``t2t_model``, ``t2t_problem``, ``t2t_hparams_set``, ``t2t_checkpoint_dir``, ``pred_src_vocab_size``, ``pred_trg_vocab_size``
+* **segt2t**: Predictor for tensor2tensor models with ``_seg`` and ``_pos`` features. Requires Tensor2Tensor.
+
+  Options: ``t2t_usr_dir``, ``t2t_model``, ``t2t_problem``, ``t2t_hparams_set``, ``t2t_checkpoint_dir``, ``pred_src_vocab_size``, ``pred_trg_vocab_size``
 * **nizza**: Nizza alignment models. Requires Nizza.
 
   Options: ``nizza_model``, ``nizza_hparams_set``, ``nizza_checkpoint_dir``, ``pred_src_vocab_size``, ``pred_trg_vocab_size``
@@ -74,7 +83,7 @@ The following predictors are available. The installation of additional (optional
   Options: ``rules_path``, ``grammar_feature_weights``, ``use_grammar_weights``
 * **wc**: Number of words feature. 
 
-  Options: ``wc_word``, ``wc_nonterminal_penalty``, ``syntax_nonterminal_ids``, ``syntax_min_terminal_id``, ``syntax_max_terminal_id``, ``pred_trg_vocab_size``
+  Options: ``wc_word``, ``negative_wc``, ``wc_nonterminal_penalty``, ``syntax_nonterminal_ids``, ``syntax_min_terminal_id``, ``syntax_max_terminal_id``, ``pred_trg_vocab_size``
 * **unkc**: Poisson model for number of UNKs.
 
   Options: ``unk_count_lambdas``, ``pred_trg_vocab_size``
@@ -99,12 +108,21 @@ All predictors can be combined with one or more wrapper predictors by adding the
 * **altsrc**: This wrapper loads source sentences from an alternative source.
 
   Options: ``altsrc_test`` 
+* **rank**: Does not use the scores of the wrapped predictor directly but the rank in the scores table.
+
+  Options: 
+* **glue**: Masks sentence-level predictors when SGNMT runs on the document level.
+
+  Options: 
 * **ngramize**: Extracts n-gram posteriors from a predictor without feedback loop.
 
   Options: ``min_ngram_order``, ``max_ngram_order``, ``max_len_factor``
 * **skipvocab**: Uses internal beam search to skip a subset of the predictor vocabulary.
 
   Options: ``beam``, ``skipvocab_max_id``, ``skipvocab_stop_size`` 
+* **maskvocab**: Hides a subset of the SGNMT vocabulary from the wrapped predictor.
+
+  Options: ``maskvocab_words`` 
 * **unkvocab**: This wrapper explicitly excludes matching word indices higher than ``pred_trg_vocab_size`` with UNK scores.
 
   Options: ``pred_trg_vocab_size``
