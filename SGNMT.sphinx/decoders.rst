@@ -11,6 +11,7 @@ Available decoders
 * **beam**: Beam search like in Bahdanau et al, 2015 .
 * **sepbeam**: Associates predictors with hypos in beam search and applies only one predictor instead of all for hypo expansion.
 * **syncbeam**: Beam search which compares after consuming a special synchronization symbol instead of after each iteration.
+* **fstbeam**: Beam search which compares hypotheses when they share the same state ID in an FST instead of after each iteration.
 * **syntaxbeam**: Beam search which ensures diversity amongst terminal symbol histories.
 * **mbrbeam**: Diversity encouraging beam search which maximizes the expected BLEU.
 * **combibeam**: Beam search which applies ``--combination_scheme`` at each time step.
@@ -19,10 +20,12 @@ Available decoders
   but it cannot be used if the search space is too large (like for unrestricted NMT) as it performs exhaustive search. 
   If you have not only negative predictor scores, set ``--early_stopping`` to false. 
 * **restarting**: Like DFS but with better admissible pruning behavior. 
+* **simpledfs**: Very fast DFS implementation for complete enumeration with a single predictor.
 * **astar**: A* search. The heuristic function is configured using the ``--heuristics options``. 
 * **bucket**: Works best for bag problems. Maintains buckets for each hypo length and extends a hypo in a bucket by one before selecting the next bucket.
 * **flip**: This decoder works only for bag problems. It traverses the search space by switching two words in the hypothesis. Do not use bow predictor.
 * **bow**: Restarting decoder optimized for bag-of-words problems.
+* **predlimitbeam**: Beam search variant with explicit limits on the culmulative predictor scores at each node expansion.
 * **bigramgreedy**: Works best for bag problems. Collects bigram statistics and constructs hypos to score by greedily selecting high scoring bigrams. Do not use bow predictor with this search strategy.
 * **vanilla**: Original Blocks beam decoder. This bypasses the predictor framework and directly performs pure NMT beam 
   decoding on the GPU. Use this when you do pure NMT decoding as this is usually faster then using a single nmt predictor 
@@ -114,6 +117,15 @@ cam.sgnmt.decoding.dfs module
     :show-inheritance:
     :noindex:
 
+cam.sgnmt.decoding.fstbeam module
+****************************************
+
+.. automodule:: cam.sgnmt.decoding.fstbeam
+    :members:
+    :undoc-members:
+    :show-inheritance:
+    :noindex:
+
 cam.sgnmt.decoding.flip module
 ****************************************
 
@@ -154,6 +166,15 @@ cam.sgnmt.decoding.multisegbeam module
 ****************************************
 
 .. automodule:: cam.sgnmt.decoding.multisegbeam
+    :members:
+    :undoc-members:
+    :show-inheritance:
+    :noindex:
+
+cam.sgnmt.decoding.predlimitbeam module
+****************************************
+
+.. automodule:: cam.sgnmt.decoding.predlimitbeam
     :members:
     :undoc-members:
     :show-inheritance:

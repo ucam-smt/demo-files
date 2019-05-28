@@ -11,6 +11,10 @@ If you use SGNMT in your work, please cite the following paper:
 
 Additionally, SGNMT has been used in the following publications: 
 
+* Felix Stahlberg, Christopher Bryant, Bill Byrne.
+  Neural grammatical error correction with finite state transducers
+  In *Proceedings of the 2019 Conference of the North American Chapter of the Association for Computational Linguistics*, June 2019. Minneapolis, USA.
+  `arXiv/1903.10625 <http://arxiv.org/abs/1903.10625>`_
 * Felix Stahlberg, Danielle Saunders, Bill Byrne.
   An operation sequence model for explainable neural machine translation.
   In *Proceedings of the EMNLP 2018 BlackboxNLP workshop*, November 2018. Brussels, Belgium.

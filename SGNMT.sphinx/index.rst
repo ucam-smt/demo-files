@@ -24,6 +24,7 @@ Contents
    tutorial
    adding_components
    kyoto_nmt
+   bea19_gec
    command_line
    predictors
    decoders

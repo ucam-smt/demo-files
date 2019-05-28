@@ -84,6 +84,14 @@ cam.sgnmt.decoding.flip module
     :undoc-members:
     :show-inheritance:
 
+cam.sgnmt.decoding.fstbeam module
+---------------------------------
+
+.. automodule:: cam.sgnmt.decoding.fstbeam
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 cam.sgnmt.decoding.greedy module
 --------------------------------
 
@@ -120,6 +128,14 @@ cam.sgnmt.decoding.multisegbeam module
 --------------------------------------
 
 .. automodule:: cam.sgnmt.decoding.multisegbeam
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+cam.sgnmt.decoding.predlimitbeam module
+---------------------------------------
+
+.. automodule:: cam.sgnmt.decoding.predlimitbeam
     :members:
     :undoc-members:
     :show-inheritance:
