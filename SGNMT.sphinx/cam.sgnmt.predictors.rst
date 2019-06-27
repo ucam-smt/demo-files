@@ -12,14 +12,6 @@ cam.sgnmt.predictors.automata module
     :undoc-members:
     :show-inheritance:
 
-cam.sgnmt.predictors.blocks_nmt module
---------------------------------------
-
-.. automodule:: cam.sgnmt.predictors.blocks_nmt
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 cam.sgnmt.predictors.bow module
 -------------------------------
 
@@ -32,14 +24,6 @@ cam.sgnmt.predictors.core module
 --------------------------------
 
 .. automodule:: cam.sgnmt.predictors.core
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-cam.sgnmt.predictors.ffnnlm module
-----------------------------------
-
-.. automodule:: cam.sgnmt.predictors.ffnnlm
     :members:
     :undoc-members:
     :show-inheritance:
@@ -92,6 +76,14 @@ cam.sgnmt.predictors.parse module
     :undoc-members:
     :show-inheritance:
 
+cam.sgnmt.predictors.pytorch_fairseq module
+-------------------------------------------
+
+.. automodule:: cam.sgnmt.predictors.pytorch_fairseq
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 cam.sgnmt.predictors.structure module
 -------------------------------------
 
@@ -104,22 +96,6 @@ cam.sgnmt.predictors.tf_nizza module
 ------------------------------------
 
 .. automodule:: cam.sgnmt.predictors.tf_nizza
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-cam.sgnmt.predictors.tf_nmt module
-----------------------------------
-
-.. automodule:: cam.sgnmt.predictors.tf_nmt
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
-cam.sgnmt.predictors.tf_rnnlm module
-------------------------------------
-
-.. automodule:: cam.sgnmt.predictors.tf_rnnlm
     :members:
     :undoc-members:
     :show-inheritance:

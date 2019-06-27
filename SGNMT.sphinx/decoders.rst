@@ -2,39 +2,56 @@ Decoders
 ==========================
 
 Decoders are search strategies for traversing the search space which is spanned by the predictors.
-Decoders are specified using the ``--decoder`` arguments.
+Decoders are specified using the ``--decoder`` argument.
 
-Available decoders
+Remember to set the ``--early_stopping`` option correctly depending on your predictor constellation. Decoders often improve
+search efficiency when ``early_stopping=True`` (default) under the assumption that predictor scores are non-positive. Set
+``early_stopping=False`` if your predictors can yield positive scores (e.g.\ the ``ngramc`` predictor).
+
+Main decoders
 ----------------------
+
+For a more detailed description of the decoders, search for the name of the decoder in the :ref:`decoder-modules-label` section.
 
 * **greedy**: Greedy decoding (similar to beam=1) 
 * **beam**: Beam search like in Bahdanau et al, 2015 .
+* **combibeam**: Beam search which applies ``--combination_scheme`` at each time step.
+* **dfs**: Depth-first search. This should be used for exact decoding or the complete enumeration of the search space. 
+  but it cannot be used if the search space is too large (like for unrestricted NMT) as it performs exhaustive search. 
+* **astar**: A* search. The heuristic function is configured using the ``--heuristics`` option. 
+
+Experimental decoders
+------------------------
+
+Experimental decoders are less frequently used search strategies for special cases.
+
 * **sepbeam**: Associates predictors with hypos in beam search and applies only one predictor instead of all for hypo expansion.
 * **syncbeam**: Beam search which compares after consuming a special synchronization symbol instead of after each iteration.
 * **fstbeam**: Beam search which compares hypotheses when they share the same state ID in an FST instead of after each iteration.
 * **syntaxbeam**: Beam search which ensures diversity amongst terminal symbol histories.
 * **mbrbeam**: Diversity encouraging beam search which maximizes the expected BLEU.
-* **combibeam**: Beam search which applies ``--combination_scheme`` at each time step.
 * **multisegbeam**: Beam search with multiple segmentations. 
-* **dfs**: Depth-first search. This should be used for exact decoding or the complete enumeration of the search space. 
-  but it cannot be used if the search space is too large (like for unrestricted NMT) as it performs exhaustive search. 
-  If you have not only negative predictor scores, set ``--early_stopping`` to false. 
 * **restarting**: Like DFS but with better admissible pruning behavior. 
 * **simpledfs**: Very fast DFS implementation for complete enumeration with a single predictor.
-* **astar**: A* search. The heuristic function is configured using the ``--heuristics options``. 
 * **bucket**: Works best for bag problems. Maintains buckets for each hypo length and extends a hypo in a bucket by one before selecting the next bucket.
 * **flip**: This decoder works only for bag problems. It traverses the search space by switching two words in the hypothesis. Do not use bow predictor.
-* **bow**: Restarting decoder optimized for bag-of-words problems.
 * **predlimitbeam**: Beam search variant with explicit limits on the culmulative predictor scores at each node expansion.
 * **bigramgreedy**: Works best for bag problems. Collects bigram statistics and constructs hypos to score by greedily selecting high scoring bigrams. Do not use bow predictor with this search strategy.
-* **vanilla**: Original Blocks beam decoder. This bypasses the predictor framework and directly performs pure NMT beam 
-  decoding on the GPU. Use this when you do pure NMT decoding as this is usually faster then using a single nmt predictor 
-  as the search can be parallelized on the GPU.
 
-Detailed descriptions are available below in the modules.
+.. _decoder-modules-label:
 
-Relevant modules
+Decoder modules
 -------------------
+
+Module contents
+****************************************
+
+.. automodule:: cam.sgnmt.decoding
+    :members:
+    :undoc-members:
+    :show-inheritance:
+    :noindex:
+
 
 cam.sgnmt.decoding.astar module
 ****************************************
@@ -63,15 +80,6 @@ cam.sgnmt.decoding.bigramgreedy module
     :show-inheritance:
     :noindex:
 
-cam.sgnmt.decoding.bow module
-****************************************
-
-.. automodule:: cam.sgnmt.decoding.bow
-    :members:
-    :undoc-members:
-    :show-inheritance:
-    :noindex:
-
 cam.sgnmt.decoding.bucket module
 ****************************************
 
@@ -94,15 +102,6 @@ cam.sgnmt.decoding.core module
 ****************************************
 
 .. automodule:: cam.sgnmt.decoding.core
-    :members:
-    :undoc-members:
-    :show-inheritance:
-    :noindex:
-
-cam.sgnmt.decoding.decoder module
-****************************************
-
-.. automodule:: cam.sgnmt.decoding.decoder
     :members:
     :undoc-members:
     :show-inheritance:
@@ -211,15 +210,6 @@ cam.sgnmt.decoding.syntaxbeam module
 ****************************************
 
 .. automodule:: cam.sgnmt.decoding.syntaxbeam
-    :members:
-    :undoc-members:
-    :show-inheritance:
-    :noindex:
-
-Module contents
-****************************************
-
-.. automodule:: cam.sgnmt.decoding
     :members:
     :undoc-members:
     :show-inheritance:

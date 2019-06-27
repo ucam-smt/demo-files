@@ -6,8 +6,10 @@ Examples
 
 SGNMT supports many different options, and small changes in the decoder configuration sometimes lead
 to very different results. This page contains a list of SGNMT configuration files which have been used
-in our group. Details such as paths and vocabulary sizes are exemplary as we do not provide model files,
-but we hope that this list is still useful as blueprint for your own experiments.
+in our group. Details such as paths and vocabulary sizes are exemplary as we do not provide model files.
+Some of the examples are not comparable to the SGNMT 1.0 and higher as they rely on Theano/Blocks
+or NPLM backends that are not supported anymore. 
+However, we hope that this list is still useful as a blueprint for your own experiments.
 
 University of Cambridge submission to WMT18 (Tensor2Tensor)
 ***********************************************************
@@ -108,19 +110,6 @@ decoding strategy, tested on WAT (ja-en)::
     decoder: multisegbeam
     multiseg_tokenizations: '30003:data/wmap.en,eow:data/wmap.bpe.en'
 
-Ensemble of three BPE-based models (Blocks/Theano)
-**************************************************
-
-Fast decoding of three BPE-based NMT systems on ja-en WAT with GNMT coverage penalty::
-
-    predictors: nmt,nmt,nmt
-    src_test: data/dev.bpe.ja
-    decoder: vanilla
-
-    gnmt_beta: 0.01
-    nmt_config: src_vocab_size=32081,trg_vocab_size=30123
-    nmt_path2: ../jaen-wat-bpe2/train
-    nmt_path3: ../jaen-wat-bpe3/train
 
 Lattice rescoring with three NMT systems (Blocks/Theano)
 ********************************************************
@@ -235,30 +224,4 @@ translation lattices with the mix. The lattice and the LM use alternative word m
     length_model_weights: 0.252503399924538,1.26556504208994,0.0476145832475248,0.507108282728234,0.0706249583462012,0.00156446527534046,-0.0114873442886072,0.00724551243039656,-0.108343582699869,-0.225865854796484,0.183585648431748,-0.367378141618226
     src_test_raw: data/test15.en
     nplm_path: nplm/news12-14.de.nnlm.news12-14.5gram-model.large_8.50000.0.10.24.3186.10
-
-10-Ensemble of diverse NMT systems (Blocks/Theano)
-***************************************************************
-
-Combining 10 NMT system under the Bayesian combination scheme, each with different
-vocabulary sizes and word maps::
-
-    src_test: data/test15.ids.en
-    early_stopping: false
-    predictors: nmt,nmt,nmt,nmt,nmt,nmt,nmt,nmt,idxmap_nmt,idxmap_nmt
-    predictor_weights: 0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1,0.1
-    combination_scheme: bayesian
-    decoder: combibeam
-    nmt_config2: saveto=./train.reshuffle
-    nmt_config3: saveto=./train.adria,src_vocab_size=30003,trg_vocab_size=30003
-    nmt_config4: saveto=./train.fixembedding,src_vocab_size=50003,trg_vocab_size=50003
-    nmt_config5: saveto=./train.mteval2
-    nmt_config6: saveto=./train.mteval3
-    nmt_config7: saveto=./train.large,src_vocab_size=60003,trg_vocab_size=60003
-    nmt_config8: saveto=./train.mteval4,src_vocab_size=50003,trg_vocab_size=50003
-    nmt_config9: saveto=./train.ext100k1
-    nmt_config10: saveto=./train.ext100k2
-    src_idxmap: ../ende-wmt15-ext100k1/data/idxmap.ext100k1.test15.en
-    trg_idxmap: ../ende-wmt15-ext100k1/data/idxmap.ext100k1.test15.de
-    src_idxmap2: ../ende-wmt15-ext100k2/data/idxmap.ext100k2.test15.en
-    trg_idxmap2: ../ende-wmt15-ext100k2/data/idxmap.ext100k2.test15.de
 

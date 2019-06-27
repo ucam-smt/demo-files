@@ -6,11 +6,9 @@ Subpackages
 
 .. toctree::
 
-    cam.sgnmt.blocks
     cam.sgnmt.decoding
     cam.sgnmt.misc
     cam.sgnmt.predictors
-    cam.sgnmt.tf
 
 Submodules
 ----------
@@ -35,6 +33,14 @@ cam.sgnmt.extract_scores_along_reference module
 -----------------------------------------------
 
 .. automodule:: cam.sgnmt.extract_scores_along_reference
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
+cam.sgnmt.io module
+-------------------
+
+.. automodule:: cam.sgnmt.io
     :members:
     :undoc-members:
     :show-inheritance:

@@ -223,7 +223,7 @@ We assign negative infinity to all tokens besides end-of-sentence if the hypothe
 score of 0.0 otherwise.
 
 
-Verify that your new predictor works by trying the following command in the :ref:`tutorial-label` setup::
+Verify that your new predictor works by trying the following command::
 
     $ python $SGNMT/decode.py --predictors eqlen,nmt --config_file tut.ini
     2017-10-15 14:13:31,049 INFO: Next sentence (ID: 1): 1543 7 1491 1359 1532 692 9 6173

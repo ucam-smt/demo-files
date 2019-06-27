@@ -14,9 +14,9 @@ Besides ``decode.py`` following additional scripts are available:
 
   * ``extract_scores_along_reference.py``: Generates a JSON file which contains the complete posteriors of all
     predictors along a reference decoding path. Can be used for tuning predictor weights. Same arguments as ``decode.py``.
-  * ``train.py``: NMT training and shrinking script for attentional RNN models (Blocks/Theano only).
-  * ``batch_decode.py``: Very fast beam decoder (over 800 words per second on a Titan X GPU) for pure NMT decoding (Blocks/Theano only).
-  * ``align.py``: Neural word alignment using attentional RNN seq2seq models (Blocks/Theano only).
+  * ``scripts/apply_wmap.py``: Applies word maps to strings.
+  * ``scripts/mert.py``: Basic MERT script for tuning SGNMT predictor weights on 1-best translations.
+  * ``scripts/sge/``: Script for distributed SGNMT decoding on the Sun Grid Engine.
 
 Decoding
 ---------

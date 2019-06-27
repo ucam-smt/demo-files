@@ -28,14 +28,6 @@ cam.sgnmt.decoding.bigramgreedy module
     :undoc-members:
     :show-inheritance:
 
-cam.sgnmt.decoding.bow module
------------------------------
-
-.. automodule:: cam.sgnmt.decoding.bow
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 cam.sgnmt.decoding.bucket module
 --------------------------------
 

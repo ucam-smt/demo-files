@@ -1,46 +1,42 @@
 
 .. _tutorial-label:
 
-Tutorial: Basics
-================
+Tutorial: Basics (T2T)
+======================
 
-This tutorial describes common use cases of SGNMT. We will use the Blocks NMT implementation (not TensorFlow) in this
-tutorial. Please make sure that you have installed (at least) OpenFST and Blocks correctly as described 
-on the :ref:`setup-label` page.
+This tutorial describes common use cases of SGNMT. We will use SGNMT with Tensor2Tensor backend in this
+tutorial. Please make sure that you have installed (at least) OpenFST and Tensor2Tensor as described 
+on the :ref:`setup-label` page. Verify your setup with::
 
-If you are not willing to install Blocks, you are still encouraged to at least read through this tutorial since it
+  $ python $SGNMT/decode.py --run_diagnostics
+  Checking Python3.... OK
+  Checking PyYAML.... OK
+  Checking TensorFlow.... OK (1.13.1)
+  Checking Tensor2Tensor.... OK
+  Checking OpenFST.... OK (openfst_python)
+  (...)
+
+If you are not willing to install these dependencies, you are still encouraged to read through this tutorial since it
 illustrates a number of general concepts in SGNMT.
 
 The tutorial data is available under the following DOI:
 
-http://dx.doi.org/10.17863/CAM.282
+http://dx.doi.org/TODO (We are in the process of publishing the data under a DOI. In the meantime, please write fs439@cam.ac.uk to get access to this data)
 
 Please download the archive and extract it::
 
-  $ tar xzf tutorial-ende-wmt15.tar.gz
-  $ cd tutorial-ende-wmt15
+  $ tar xzf tutorial-ende-wmt19.tar.gz
+  $ cd tutorial-ende-wmt19
 
-This tarball contains NMT model files and translation lattices for replicating some of our results on the 
-WMT'15 test set (English-German) in our `ACL 2016 paper <http://arxiv.org/abs/1605.04569>`_. The
-directory structure is as follows:
+This tarball contains NMT model files and translation lattices for replicating some of our results in
+our `WMT'19 English-German submission <https://arxiv.org/abs/1906.05447>`_. The directory structure is as follows:
 
-* *./data/* contains the source and target sentences for news-test2015 and word maps.
-* *./train/* contains the NMT model file ``params.npz``.
-* *./train2/* contains a second NMT model for ensembling.
-* *./lm/* contains language model files
-* *./hiero/lats/* contains the Hiero translation lattices.
-* *./hiero/ngramc/* contains n-gram posteriors for MBR extracted from the Hiero translation lattices.
-* *./hiero/100best.txt* is an n-best list generated with Hiero.
-* *./scripts/* contains helper scripts for creating lattice directories or applying word maps.
+* *./data/*: Preprocessed news-test2018 test set, word maps and BPE files.
+* *./ini/*: Example SGNMT configuration files.
+* *./models/ende/*: Tensor2Tensor English-German Transformer models.
+* *./supplementary/*: SMT translation lattices and n-gram posteriors for MBR. The `ucam-smt tutorial <http://ucam-smt.github.io/tutorial/nmt.html>`_ explains how to generate translation lattices for SGNMT.
+* *./scripts/*: contains helper scripts for preprocessing.
 
-This structure is intended to be used as starting point for your own experiments.
-
-The `ucam-smt tutorial <http://ucam-smt.github.io/tutorial/nmt.html>`_ explains how to generate translation lattices
-for SGNMT in general.
-
-For this tutorial, we assume that you set the ``$SGNMT`` environment variable to the location of your SGNMT installation::
-
-  $ export SGNMT=/path/to/sgnmt
 
 Introduction
 ----------------------------------------
@@ -55,317 +51,321 @@ complex decoding tasks.
 search tree traversal algorithms like beam search. Since decoders differ in runtime complexity and the kind of search errors they make,
 different decoders are appropriate for different predictor constellations.
 
+Preprocessing
+----------------------------------------
+
+The models in this tutorial are trained on preprocessed data (Moses tokenization + truecasing). Preprocessed files are provided in 
+the tarball. Alternatively, the ``./scripts/preprocess_??.sh`` scripts can be used for preprocessing::
+
+  echo 'A mental asylum, where today young people are said to meet.' | ./scripts/preprocess_en.sh
+  a mental asylum , where today young people are said to meet . 
+
+Note that in order to use the preprocessing scripts you need to change the paths to Moses in the scripts.
+
 Pure NMT decoding (single)
 ----------------------------------------
 
-Start the NMT decoder with the following command::
+All SGNMT options can be specified either as command line arguments or in configuration files. Options in configuration files are prioritized over command line arguments.
+Simple NMT decoding needs a single ``t2t`` predictor::
 
-  $ python $SGNMT/decode.py --predictors nmt --src_test data/test15.ids.en --range 1:1 --nmt_config src_vocab_size=50003,trg_vocab_size=50003
-  2016-05-19 12:59:07,348 INFO: Creating theano variables
-  2016-05-19 12:59:07,350 INFO: Building RNN encoder-decoder
+  predictors: t2t
+
+The ``t2t`` predictor itself requires additional options that set the vocabulary sizes, model location, and t2t problem and hparams set::
+
+  pred_src_vocab_size: 35627
+  pred_trg_vocab_size: 35627
+  t2t_model: transformer
+  t2t_checkpoint_dir: models/ende/base/
+  t2t_problem: translate_ende_wmt32k
+  t2t_hparams_set: transformer_base_v2
+
+These options are summarized in ``ini/base.ini``. Use the ``src_test`` and ``range`` options to translate the first two sentences of the test set::
+
+  $ python $SGNMT/decode.py --config_file ini/base.ini --src_test data/test18.ende.bpe.en --range 1:2
   (...)
-  2016-05-19 12:59:21,492 INFO: Loading the model from ./train/params.npz
+  2019-06-24 11:32:47,344 INFO: Next sentence (ID: 1): 14828 5524 16148 3851 7721 22779 3739 3910 5314 4104 4905 3675 3646 5390
+  2019-06-24 11:32:51,181 INFO: Decoded (ID: 1): 15351 5524 16148 3851 7909 15056 3637 3674 6738 8516 3789 3674 6043 16507 3880
+  2019-06-24 11:32:51,181 INFO: Stats (ID: 1): score=-5.486438 num_expansions=51 time=3.84
+  2019-06-24 11:32:51,181 INFO: Next sentence (ID: 2): 3667 6203 13502 3637 4678 5149 7703 4499 3771 5598 3678 8087 3642
+  2019-06-24 11:32:54,017 INFO: Decoded (ID: 2): 3787 15786 4602 30449 3637 5478 4909 13833 5058 7373 3896 8681 3642
+  2019-06-24 11:32:54,018 INFO: Stats (ID: 2): score=-8.179755 num_expansions=50 time=2.84
+  2019-06-24 11:32:54,018 INFO: Decoding finished. Time: 6.67
+
+Here, sentences are in *indexed* representation as sequence of numerical token IDs on the subword level. The ``apply_wmap.py`` script can be used to
+convert between indexed and plain text representations::
+
+  # Preserve subword segmentation
+  $ echo '15351 5524 16148 3851 7909 15056 3637 3674 6738 8516 3789 3674 6043 16507 3880' | python $SGNMT/scripts/apply_wmap.py -m data/wmap.bpe.ende -d i2s
+  München</w> 18 56</w> :</w> vier</w> Karten</w> ,</w> die</w> Ihren</w> Blick</w> auf</w> die</w> Stadt</w> verändern</w> werden</w>
+
+  # Generate original (word-level) segmentation
+  echo '15351 5524 16148 3851 7909 15056 3637 3674 6738 8516 3789 3674 6043 16507 3880' | python $SGNMT/scripts/apply_wmap.py -m data/wmap.bpe.ende -d i2s -t eow
+  München 1856 : vier Karten , die Ihren Blick auf die Stadt verändern werden
+
+Processing indexed files often leads to a clearer setup, especially when many external supplementary files are involved to help decoding as in lattice or n-best 
+rescoring or MBR-based NMT. However, for convenience, SGNMT can also operate on string representations by using ``ini/bpe.ini``::
+
+  wmap: data/wmap.bpe.ende
+  bpe_codes: data/bpe.train.ende
+  preprocessing: bpe
+  postprocessing: bpe
+
+Decode with both ini files::
+
+  $ python $SGNMT/decode.py --config_file ini/base.ini,ini/bpe.ini --src_test data/test18.ende.preprocess.en --range 1:2
   (...)
-  2016-05-19 12:59:28,028 INFO: Start time: 1463659168.03
-  2016-05-19 12:59:28,028 INFO: Next sentence (ID: 1): 1543 7 1491 1359 1532 692 9 6173
-  2016-05-19 12:59:59,183 INFO: Decoded (ID: 1): 1511 7 1422 894 30 8 10453
-  2016-05-19 12:59:59,183 INFO: Stats (ID: 1): score=-3.700894 num_expansions=85 time=31.15
-  2016-05-19 12:59:59,183 INFO: Decoding finished. Time: 31.16
+  2019-06-24 11:58:16,067 INFO: Next sentence (ID: 1): Munich 1856 : four maps that will change your view of the city
+  2019-06-24 11:58:19,923 INFO: Decoded (ID: 1): München 1856 : vier Karten , die Ihren Blick auf die Stadt verändern werden
+  2019-06-24 11:58:19,923 INFO: Stats (ID: 1): score=-5.486438 num_expansions=51 time=3.86
+  2019-06-24 11:58:19,923 INFO: Next sentence (ID: 2): a mental asylum , where today young people are said to meet .
+  2019-06-24 11:58:22,734 INFO: Decoded (ID: 2): ein geistiges Asyl , wo heute junge Menschen sollen sich treffen .
+  2019-06-24 11:58:22,734 INFO: Stats (ID: 2): score=-8.179755 num_expansions=50 time=2.81
+  2019-06-24 11:58:22,734 INFO: Decoding finished. Time: 6.67
 
-The ``--predictors nmt`` argument tells SGNMT to use the NMT scoring module. The ``--src_test`` option defines the location of the
-source sentences to translate (words are represented by IDs), and ``--range 1:1`` limits the decoding to the first sentence. SGNMT will
-search for NMT model files in the default location *./train/*. The arguments ``src_vocab_size`` and ``trg_vocab_size`` specify that the 
-NMT model has been trained with vocabulary sizes of 50003. Since we will use the last four options throughout this tutorial, we load them
-from a configuration file instead of adding them separately::
+SGNMT also supports a shell mode for interactive use::
 
-  $ cat tut.ini
-  src_test: data/test15.ids.en
-  range: '1:1'
-  nmt_config: src_vocab_size=50003,trg_vocab_size: 50003
-  $ python $SGNMT/decode.py --predictors nmt --config_file tut.ini
+  $ python $SGNMT/decode.py --config_file ini/base.ini,ini/bpe.ini --input_method shell
   (...)
-  2016-05-19 12:59:59,183 INFO: Decoded (ID: 1): 1511 7 1422 894 30 8 10453
-
-
-You can look at our first translation by using the *apply_wmap.py* script::
-
-  $ echo '1511 7 1422 894 30 8 10453' | python scripts/apply_wmap.py -m data/wmap.test15.de -d i2s
-  Indien und Japan treffen sich in Tokio
-
-For NMT decoding, you have the option to use an optimised version of the beam decoder::
-
-  $ python $SGNMT/decode.py --decoder vanilla --config_file tut.ini
+  Starting interactive mode...
+  PID: 9395
+  Display help with 'help'
+  Quit with ctrl-d or 'quit'
+  sgnmt> a mental asylum , where today young people are said to meet .
+  2019-06-24 12:02:01,986 INFO: Start time: 1561374121.986785
+  2019-06-24 12:02:01,987 INFO: Next sentence (ID: 1): a mental asylum , where today young people are said to meet .
+  2019-06-24 12:02:05,769 INFO: Decoded (ID: 1): ein geistiges Asyl , wo heute junge Menschen sollen sich treffen .
+  2019-06-24 12:02:05,769 INFO: Stats (ID: 1): score=-8.179755 num_expansions=50 time=3.78
+  2019-06-24 12:02:05,769 INFO: Decoding finished. Time: 3.78
+  sgnmt> config beam 10
+  Setting beam=10...
   (...)
-  2016-05-19 13:14:27,040 INFO: Next sentence (ID: 1): 1543 7 1491 1359 1532 692 9 6173
-  2016-05-19 13:14:34,009 INFO: Decoded (ID: 1): 1511 7 1422 894 30 8 10453
-  2016-05-19 13:14:34,009 INFO: Stats (ID: 1): score=-3.700894 num_expansions=120 time=6.97
-  2016-05-19 13:14:34,009 INFO: Decoding finished. Time: 6.97
+  sgnmt> a mental asylum , where today young people are said to meet .
+  2019-06-24 12:03:01,519 INFO: Start time: 1561374181.5197287
+  2019-06-24 12:03:01,520 INFO: Next sentence (ID: 1): a mental asylum , where today young people are said to meet .
+  2019-06-24 12:03:09,498 INFO: Decoded (ID: 1): ein geistiges Asyl , wo sich heute junge Menschen treffen sollen .
+  2019-06-24 12:03:09,498 INFO: Stats (ID: 1): score=-7.389152 num_expansions=123 time=7.98
+  2019-06-24 12:03:09,498 INFO: Decoding finished. Time: 7.98
+  
 
-SGNMT also offers a batch decoding script for pure NMT::
-
-  $ python $SGNMT/batch_decode.py --src_test data/test15.ids.en --src_vocab_size 50003 --trg_vocab_size 50003
-  Using gpu device 0: GeForce GTX TITAN X (CNMeM is enabled with initial size: 95.0% of memory, cuDNN 5110)
-  (...)
-  2017-04-13 18:32:59,959 INFO: Decoding finished. Time: 53.550469
-
-Batch decoding translates the entire test set in 53.55 seconds on a Titan X GPU (831.6 words per second).
-
-However, the vanilla decoder and the ``batch_decode.py`` script bypass the predictor framework. Therefore, they cannot be used in combination with other
-predictors, e.g. for lattice rescoring. Furthermore, they are only available for Theano.
-
-
-Ensemble NMT decoding
+Pure NMT decoding (ensemble)
 ----------------------------------------
 
-NMT ensembling can be done by simply adding a second NMT predictor. However, we need to override the NMT configuration
-for the second NMT predictor to load a different NMT model. We can use ``--nmt_config2`` for changing the second NMT
-configuration in general, or ``--nmt_path2`` to only change the model path::
+Ensemble decoding can be realized by using multiple ``t2t`` predictors and overriding some of the predictor-specific options::
 
-  $ python $SGNMT/decode.py --predictors nmt,nmt --nmt_path2 train2 --config_file tut.ini
-  (...)
-  2016-05-19 13:24:36,060 INFO: Loading the model from ./train/params.npz
-  (...)
-  2016-05-19 13:24:56,942 INFO: Loading the model from train2/params.npz
-  (...)
-  2016-05-19 13:25:10,937 INFO: Next sentence (ID: 1): 1543 7 1491 1359 1532 692 9 6173
-  2016-05-19 13:25:56,787 INFO: Decoded (ID: 1): 1511 7 1422 894 30 8 10453
-  2016-05-19 13:25:56,787 INFO: Stats (ID: 1): score=-6.195214 num_expansions=83 time=45.85
-  2016-05-19 13:25:56,787 INFO: Decoding finished. Time: 45.87
+  predictors: t2t, t2t
 
-The first NMT predictor still uses the default NMT training directory location *./train/*, but the second NMT instance loads the
-NMT model from *train2/params.npz*. The faster *vanilla* search strategy can also be used for ensembles.
+  t2t_checkpoint_dir: models/ende/base/
+  t2t_hparams_set: transformer_base_v2
 
-Lattice rescoring (SGNMT)
+  t2t_checkpoint_dir2: models/ende/big/
+  t2t_hparams_set2: transformer_big
+
+This config file ensembles a base and a big Transformer model::
+
+  $ python $SGNMT/decode.py --config_file ini/ensemble.ini,ini/bpe.ini --src_test data/test18.ende.preprocess.en --range 1:2
+  (...)
+  2019-06-24 12:27:56,752 INFO: Next sentence (ID: 1): Munich 1856 : four maps that will change your view of the city
+  2019-06-24 12:28:10,596 INFO: Decoded (ID: 1): München 1856 : vier Karten , die Ihren Blick auf die Stadt verändern werden 
+  2019-06-24 12:28:10,596 INFO: Stats (ID: 1): score=-10.303408 num_expansions=52 time=13.84
+  2019-06-24 12:28:10,596 INFO: Next sentence (ID: 2): a mental asylum , where today young people are said to meet .
+  2019-06-24 12:28:21,765 INFO: Decoded (ID: 2): ein geistiges Asyl , wo sich heute junge Menschen treffen sollen . 
+  2019-06-24 12:28:21,766 INFO: Stats (ID: 2): score=-14.571033 num_expansions=50 time=11.17
+  2019-06-24 12:28:21,766 INFO: Decoding finished. Time: 25.01
+
+
+Generating output files
 ----------------------------------------
 
-For restricting NMT to a translation lattice, we need the *fst* predictor::
+SGNMT supports a number of output formats to dump the explored search space to the file system:
 
-  $ python $SGNMT/decode.py --predictors nmt,fst --fst_path hiero/lats/%d.fst --config_file tut.ini
-  (...)
-  2016-05-19 15:37:29,601 INFO: Next sentence (ID: 1): 1543 7 1491 1359 1532 692 9 6173
-  2016-05-19 15:37:36,437 INFO: Decoded (ID: 1): 1511 7 1422 84829 894 30 8 10453
-  2016-05-19 15:37:36,437 INFO: Stats (ID: 1): score=-4.779791 num_expansions=64 time=6.84
-  2016-05-19 15:37:36,437 INFO: Decoding finished. Time: 6.84
-
-  $ echo '1511 7 1422 84829 894 30 8 10453' | python scripts/apply_wmap.py -m data/wmap.test15.de -d i2s
-  Indien und Japan Premierministern treffen sich in Tokio
-
-
-This command loads the determinised lattice *./hiero/lats/1.fst* from the file system and runs the NMT beam search decoder on it. For non-deterministic lattices use
-the *nfst* predictor instead. Per default, SGNMT ignores the scores in the translation lattices. To change this, use ``--use_fst_weights``::
-
-  $ python $SGNMT/decode.py --predictors nmt,fst --fst_path hiero/lats/%d.fst --use_fst_weights true --predictor_weights 2.7,24.4 --config_file tut.ini
-  (...)
-  2016-05-19 15:41:19,878 INFO: Next sentence (ID: 1): 1543 7 1491 1359 1532 692 9 6173
-  2016-05-19 15:41:28,228 INFO: Decoded (ID: 1): 1511 7 1422 3278 7 2830 894 30 8 10453
-  2016-05-19 15:41:28,229 INFO: Stats (ID: 1): score=-50.385922 num_expansions=72 time=8.35
-  2016-05-19 15:41:28,229 INFO: Decoding finished. Time: 8.35
-
-  $ echo '1511 7 1422 3278 7 2830 894 30 8 10453' | python scripts/apply_wmap.py -m data/wmap.test15.de -d i2s   
-  Indien und Japan Staats- und Regierungschefs treffen sich in Tokio
-
-This command uses ``--predictor_weights`` to weight the NMT scores against the lattice scores (corresponds to the lambdas in the `ACL 2016 paper <http://arxiv.org/abs/1605.04569>`_).
-
-So far, we applied beam decoding as search strategy. However, the beam decoder introduces search errors. SGNMT supports a variety of decoding strategies such 
-as greedy, beam, depth-first search, and A* search. To do an exhaustive search over the lattice, use the depth-first search decoder::
-
-  $ python $SGNMT/decode.py --decoder dfs --predictors nmt,fst --fst_path hiero/lats/%d.fst --config_file tut.ini --nmt_config tut.ini
-  (...)
-  2016-05-19 15:43:33,713 INFO: Next sentence (ID: 1): 1543 7 1491 1359 1532 692 9 6173
-  2016-05-19 15:43:35,926 INFO: Decoded (ID: 1): 1511 7 1422 84829 894 30 8 10453
-  2016-05-19 15:43:35,926 INFO: Stats (ID: 1): score=-4.779791 num_expansions=17 time=2.21
-  2016-05-19 15:43:35,926 INFO: Decoding finished. Time: 2.21
-
-In this case, the exact decoding was very fast because DFS automatically enables admissible pruning of branches in the search tree with accumulated scores
-worse than the current best hypothesis. If we disable this feature with ``--early_stopping false``, we see that SGNMT finds the same hypothesis but with 
-much more node expansions::
-
-  $ python $SGNMT/decode.py --decoder dfs --early_stopping false --predictors nmt,fst --fst_path hiero/lats/%d.fst --config_file tut.ini --nmt_config tut.ini
-  (...)
-  2016-05-19 15:44:28,765 INFO: Next sentence (ID: 1): 1543 7 1491 1359 1532 692 9 6173
-  2016-05-19 15:45:12,650 INFO: Decoded (ID: 1): 1511 7 1422 84829 894 30 8 10453
-  2016-05-19 15:45:12,650 INFO: Stats (ID: 1): score=-4.779791 num_expansions=334 time=43.88
-  2016-05-19 15:45:12,650 INFO: Decoding finished. Time: 43.89
-
-Informed search is implemented by the *astar* search strategy::
-
-  $ python $SGNMT/decode.py --decoder astar --heuristics predictor --predictors nmt,fst --fst_path hiero/lats/%d.fst --use_fst_weights true --predictor_weights 2.7,24.4 --config_file tut.ini
-  (...)
-  2016-05-19 18:28:05,618 INFO: Next sentence (ID: 1): 1543 7 1491 1359 1532 692 9 6173
-  2016-05-19 18:28:06,897 INFO: Decoded (ID: 1): 1511 7 1422 3278 7 2830 894 30 8 10453
-  2016-05-19 18:28:06,898 INFO: Stats (ID: 1): score=-50.385922 num_expansions=11 time=1.28
-  2016-05-19 18:28:06,898 INFO: Decoding finished. Time: 1.28
-
-The option ``--heuristics predictor`` enables the predictor specific heuristics. In this example, this uses the shortest distances in the lattice as 
-future cost estimates. This is a very weak heuristic as the *fst* predictor has a small weight, but it already speeds up decoding. Alternatively,
-``--heuristics greedy`` performs greedy decoding with all predictors to estimate future cost (expensive but more accurate).
-
-
-N-best list rescoring
-----------------------------------------
-
-The *forced* predictor implements single best rescoring (i.e. forced decoding). The ``--trg_test`` option needs to point to a plain text file with
-the reference sentences::
-
-  $ python $SGNMT/decode.py --predictors nmt,forced --trg_test data/test15.ids.de --config_file tut.ini
-  (...)
-  2016-05-20 10:21:07,916 INFO: Next sentence (ID: 1): 1543 7 1491 1359 1532 692 9 6173
-  2016-05-20 10:21:09,200 INFO: Decoded (ID: 1): 5 3316 7930 7 7312 9864 30 8 10453 4
-  2016-05-20 10:21:09,200 INFO: Stats (ID: 1): score=-23.736977 num_expansions=11 time=1.28
-  2016-05-20 10:21:09,200 INFO: Decoding finished. Time: 1.28
-
-For NMT n-best list rescoring, use the *forcedlst* predictor::
-
-  $ python $SGNMT/decode.py --predictors nmt,forcedlst --decoder dfs --trg_test hiero/100best.txt --config_file tut.ini
-  (...)
-  2016-05-20 10:46:12,884 INFO: Next sentence (ID: 1): 1543 7 1491 1359 1532 692 9 6173
-  2016-05-20 10:46:15,049 INFO: Decoded (ID: 1): 1511 7 1422 84829 894 30 8 10453
-  2016-05-20 10:46:15,049 INFO: Stats (ID: 1): score=-4.779791 num_expansions=17 time=2.17
-  2016-05-20 10:46:15,049 INFO: Decoding finished. Time: 2.17
-
-
-The n-best list needs to be stored in `Moses format <http://www.statmt.org/moses/?n=Advanced.Search#ntoc1>`_. The *dfs* decoder efficiently
-traverses the search space spanned by the n-best list by reusing predictor states for the same histories. If you are interested in rescoring 
-the full n-best list and not only in the single best translation, use ``--early_stopping false``. In order to use the scores provided in the 
-n-best list, add ``--use_nbest_weights true``.
-
-
-Working with language models
-----------------------------------------
-
-Language model scores can be added to the lattices before passing them through to SGNMT. This is the approach we took in the
-`ACL 2016 paper <http://arxiv.org/abs/1605.04569>`_. Alternatively, the nplm predictor can be used directly in SGNMT for incorporating a
-feedforward neural language model trained with `NPLM <http://nlg.isi.edu/software/nplm/>`_. A German NPLM model file
-can be found in *./lm/nplm*. However, this model has been trained with a different word map. Therefore, we add the *idxmap* wrapper predictor
-to the *nplm* predictor. This wrapper translates between word indices used by SGNMT, and indices used by the NPLM predictor. The mapping between
-indices is defined with the ``--src_idxmap`` and ``--trg_idxmap`` arguments::
-
-  $ python $SGNMT/decode.py --predictors nmt,fst,idxmap_nplm --fst_path hiero/lats/%d.fst --nplm_path lm/nplm --src_idxmap data/idxmap.nplm.en --trg_idxmap data/idxmap.nplm.de --config_file tut.ini
-  2016-05-19 16:24:47,811 INFO: Start time: 1463671487.81
-  2016-05-19 16:24:47,811 INFO: Next sentence (ID: 1): 1543 7 1491 1359 1532 692 9 6173
-  2016-05-19 16:24:54,768 INFO: Decoded (ID: 1): 1511 7 1422 84829 8 10453
-  2016-05-19 16:24:54,768 INFO: Stats (ID: 1): score=-43.008210 num_expansions=56 time=6.96
-  2016-05-19 16:24:54,768 INFO: Decoding finished. Time: 6.96
-
-  echo '1511 7 1422 84829 8 10453' | python scripts/apply_wmap.py -m data/wmap.test15.de -d i2s 
-  Indien und Japan Premierministern in Tokio
-
-This results in a translation which is too short, because the language model prefers short hypotheses. To counteract that, adjust the weight between NMT and LM with ``--predictor_weights``,
-or add a word count feature with the *wc* predictor. The *srilm* predictor supports loading Kneser-Ney language models in ARPA format.
-
-MBR-based NMT
-----------------------------------------
-
-In our `EACL 2017 paper <http://arxiv.org/abs/1612.03791>`_ we described how to use n-gram posteriors extracted from a Hiero lattice to improve NMT. 
-External n-gram probabilities can be introduced to SGNMT via the *ngramc* predictor::
-
-  $ python $SGNMT/decode.py --predictors nmt,ngramc,wc --ngramc_path hiero/ngramc/%d.txt --predictor_weights 0.625,0.375,0.375 --config_file tut.ini
-  (...)
-  2017-04-13 19:01:47,753 INFO: Next sentence (ID: 1): 1543 7 1491 1359 1532 692 9 6173
-  2017-04-13 19:02:06,987 INFO: Decoded (ID: 1): 1511 7 1422 894 30 8 10453
-  2017-04-13 19:02:06,987 INFO: Stats (ID: 1): score=1.414550 num_expansions=64 time=19.23
-  2017-04-13 19:02:06,987 INFO: Decoding finished. Time: 19.23
-
-The *wc* predictor is a simple word penalty which is often denoted as Theta_0 in the MBR literature. Note that the n-gram posterior files can
-be generated with the ``--logger.verbose`` options of `HiFST's lmbr tool <http://ucam-smt.github.io/tutorial/basictrans.html#lmbr>`_.
-
-Creating output files
-----------------------------------------
-
-SGNMT supports four different output formats:
-
-* *text*: Plain text file with the translations
-* *nbest*: n-best list in 
+* *text*: First best translations in plain text
+* *nbest*: n-best list in Moses format
 * *sfst*: OpenFST translation lattices with standard arcs
 * *fst*: OpenFST translation lattices with sparse tuple arcs
 * *ngram*: MBR-style n-gram posteriors
 * *timecsv*: CSV with predictor scores over time
 
-They can be activated with ``--outputs``. For example, this adds NMT scores to the Hiero n-best list *hiero/100best.txt*::
+The ``outputs`` option activates the different output formats, and ``output_path`` sets the path to the output files::
 
-  $ python $SGNMT/decode.py --outputs text,nbest --predictors nmt,forcedlst --use_nbest_weights true --trg_test hiero/100best.txt --decoder dfs --early_stopping false --config_file tut.ini
+  $ python $SGNMT/decode.py --config_file ini/ensemble.ini,ini/bpe.ini \
+       --outputs text,nbest,sfst,timecsv \
+       --output_path ensemble-output.%s \
+       --src_test data/test18.ende.preprocess.en --range 1:2
+
+The above command generates the files ``ensemble-output.text`` that contains the translations in plain text, and ``ensemble-output.nbest``
+that is an n-best list in Moses format that keeps the scores of both predictors (i.e. ensembled models) separate::
+
+  $ cat ensemble-output.nbest
+  0 ||| München 1856 : vier Karten , die Ihren Blick auf die Stadt verändern werden  ||| t2t= -5.486438 t2t2= -4.816970 ||| -10.303408
+  0 ||| München 1856 : vier Karten , die Ihre Sicht auf die Stadt verändern werden  ||| t2t= -6.245763 t2t2= -4.711694 ||| -10.957457
+  0 ||| München 1856 : vier Karten , die Ihren Blick auf die Stadt verändern .  ||| t2t= -6.356879 t2t2= -6.373269 ||| -12.730148
+  1 ||| ein geistiges Asyl , wo sich heute junge Menschen treffen sollen .  ||| t2t= -7.389152 t2t2= -7.181882 ||| -14.571033
+  1 ||| ein geistiges Asyl , wo sich heute junge Leute treffen sollen .  ||| t2t= -8.740399 t2t2= -7.823516 ||| -16.563915
+  1 ||| ein geistiges Asyl , wo heute junge Menschen sich treffen sollen .  ||| t2t= -8.870988 t2t2= -8.109677 ||| -16.980665
+
+Additionally, two directories are created. ``ensemble-output.timecsv`` contains CSV files with predictor scores in each time step for each hypothesis. ``ensemble-output.sfst``
+consists of output translation lattices in OpenFST format::
+
+  $ fstprint --isymbols=data/wmap.bpe.ende --acceptor ensemble-output.sfst/1.fst
+  0	1	<s>	10.3034077
+  1	2	München</w>
+  2	3	18
+  3	4	56</w>
+  4	5	:</w>
+  5	6	vier</w>
+  6	7	Karten</w>
+  7	8	,</w>
+  8	9	die</w>
+  9	10	Ihre</w>	0.654048979
+  9	11	Ihren</w>
+  10	12	Sicht</w>
+  11	13	Blick</w>
+  12	14	auf</w>
+  13	15	auf</w>
+  14	16	die</w>
+  15	17	die</w>
+  16	18	Stadt</w>
+  17	19	Stadt</w>
+  18	20	verändern</w>
+  19	21	verändern</w>
+  20	22	werden</w>
+  21	22	werden</w>
+  21	22	.</w>	2.42674088
+  22	23	</s>
+  23
+
+
+Lattice rescoring
+----------------------------------------
+
+For restricting NMT to an (SMT) translation lattice as proposed in our `ACL'16 paper <https://arxiv.org/abs/1605.04569>`_, use the *fst* predictor::
+
+  predictors: t2t, fst
+  fst_path: supplementary/smt.lats_test18/%d.fst
   (...)
-  $ head sgnmt-out.*
-  ==> sgnmt-out.nbest <==
-  0 ||| 1511 7 1422 6284 894 30 8 10453 ||| nmt= -5.695894 forcedlst= 10.681800 ||| 4.985906
-  0 ||| 1511 7 1422 3316 894 30 8 10453 ||| nmt= -5.125271 forcedlst= 7.244780 ||| 2.119509
-  0 ||| 1511 7 1422 6284 894 8 10453 ||| nmt= -7.310516 forcedlst= 9.359490 ||| 2.048974
-  0 ||| 1511 7 1422 84829 894 30 8 10453 ||| nmt= -4.779791 forcedlst= 6.022160 ||| 1.242369
-  0 ||| 1511 7 1422 13997 2153 894 30 8 10453 ||| nmt= -9.046590 forcedlst= 9.643540 ||| 0.596950
-  0 ||| 1511 7 1422 3278 7 2830 894 30 8 10453 ||| nmt= -11.577704 forcedlst= 11.586500 ||| 0.008796
-  0 ||| 1511 7 1422 3316 894 8 10453 ||| nmt= -6.950797 forcedlst= 6.573870 ||| -0.376927
-  0 ||| 1511 7 1422 84829 894 8 10453 ||| nmt= -6.364513 forcedlst= 5.350270 ||| -1.014243
-  0 ||| 1511 7 1422 2830 894 30 8 10453 ||| nmt= -8.984533 forcedlst= 7.901030 ||| -1.083503
-  0 ||| 1511 7 7312 6284 894 30 8 10453 ||| nmt= -7.913851 forcedlst= 5.823900 ||| -2.089951
 
-  ==> sgnmt-out.text <==
-  1511 7 1422 6284 894 30 8 10453
+Decode with::
 
-The default output path is *sgnmt-out.%s* (can be changed with ``--output_path``). The generated n-best file *sgnmt-out.nbest* does not only show
-the combined score, but also the separated predictor scores. In this case, *nmt=* contains the NMT log-likelihood, and *forcedlst=* corresponds
-to the hypothesis score in the Hiero n-best list *hiero/100best.txt*.
-
-Simple NMT translation lattices can be generated with the *sfst* output format::
-
-  $ python $SGNMT/decode.py --outputs sfst --predictors nmt --config_file tut.ini 
+  $ python $SGNMT/decode.py --config_file ini/rescoring.ini --range 1:2
   (...)
-  $ fstprint sgnmt-out.sfst/1.fst | head
-  0 1 1 1 3.70089412
-  0 10  1 1 4.99342918
-  0 18  1 1 5.3186779
-  0 26  1 1 5.67907906
-  1 2 1511  1511
-  2 3 7 7
-  3 4 1422  1422
-  4 5 894 894
-  5 6 30  30
-  6 7 8 8
+  2019-06-24 13:48:18,317 INFO: Next sentence (ID: 1): Munich 1856 : four maps that will change your view of the city
+  2019-06-24 13:48:22,418 INFO: Decoded (ID: 1): München 1856 : vier Karten , die Ihre Sicht auf die Stadt verändern werden .
+  2019-06-24 13:48:22,418 INFO: Stats (ID: 1): score=-7.547943 num_expansions=53 time=4.10
+  2019-06-24 13:48:22,418 INFO: Next sentence (ID: 2): a mental asylum , where today young people are said to meet .
+  2019-06-24 13:48:25,212 INFO: Decoded (ID: 2): ein geistiges Asyl , wo heute junge Menschen sollen sich treffen .
+  2019-06-24 13:48:25,213 INFO: Stats (ID: 2): score=-8.179755 num_expansions=48 time=2.79
 
-If you wish to keep predictor scores separated in the generated lattices, use the *fst* output format to create lattices with 
-`sparse tuple arcs <http://ucam-smt.github.io/tutorial/basictrans.html#lmert_veclats_tst>`_.
-You'll need to `install HiFST <http://ucam-smt.github.io/tutorial/build.html>`_ to enable support for the tropicalsparsetuple arc type::
+This command loads the determinised lattice ``./supplementary/smt.lats_test18/?.fst`` from the file system and runs the NMT beam search decoder on it. For non-deterministic lattices 
+use the ``nfst`` predictor instead. By default, SGNMT ignores the scores in the translation lattices and uses the FST as unweighted constrained. To also take the FST weights
+into account, set ``use_fst_weights`` to true and balance NMT vs. SMT score with ``predictor_weights``::
 
-  $ python $SGNMT/decode.py --outputs fst --predictors nmt,fst --fst_path hiero/lats/%d.fst --use_fst_weights true --predictor_weights 2.7,24.4 --config_file tut.ini
+  python $SGNMT/decode.py --config_file ini/rescoring.ini --predictor_weights 2.0,1.0 --use_fst_weights true --range 1:2
   (...)
-  $ TUPLEARC_WEIGHT_VECTOR=2.7,24.4 fstshortestpath sgnmt-out.fst/1.fst | fsttopsort | fstprint
-  0 1 1 1
-  1 2 1511  1511  0,1,0.420832008,2,0.00846654177
-  2 3 7 7 0,1,0.129989997
-  3 4 1422  1422  0,1,0.0673521981,2,0.00468987226
-  4 5 3278  3278  0,1,9.95738029,2,0.680079401
-  5 6 7 7 0,1,0.0128448997
-  6 7 2830  2830  0,1,0.0604516007
-  7 8 894 894 0,1,0.287970006,2,0.0195894614
-  8 9 30  30  0,1,0.173721001,2,0.0528452434
-  9 10  8 8 0,1,0.354806006,2,0.000487923622
-  10  11  10453 10453 0,1,0.0348698013,2,0.017698925
-  11  12  2 2 0,1,0.0774876028
-  12
+  2019-06-24 13:50:01,530 INFO: Initialized predictor t2t (weight: 2.0)
+  2019-06-24 13:50:01,530 INFO: Initialized predictor fst (weight: 1.0)
+  2019-06-24 13:50:01,531 INFO: Start time: 1561380601.5318987
+  2019-06-24 13:50:01,531 INFO: Next sentence (ID: 1): Munich 1856 : four maps that will change your view of the city
+  2019-06-24 13:50:05,488 INFO: Decoded (ID: 1): München 1856 : vier Karten , die Ihre Sicht auf die Stadt verändern werden .
+  2019-06-24 13:50:05,488 INFO: Stats (ID: 1): score=-30.180038 num_expansions=51 time=3.96
+  2019-06-24 13:50:05,488 INFO: Next sentence (ID: 2): a mental asylum , where today young people are said to meet .
+  2019-06-24 13:50:08,385 INFO: Decoded (ID: 2): ein geistiges Asyl , wo heute junge Menschen sollen zusammenkommen .
+  2019-06-24 13:50:08,385 INFO: Stats (ID: 2): score=-23.774222 num_expansions=50 time=2.90
+  2019-06-24 13:50:08,385 INFO: Decoding finished. Time: 6.85
 
-The weights in the generated FST correspond to the unweighted predictor scores in order of how they are defined in ``--predictors``.
+
+Decoders
+----------------------------------------
+
+Different search strategies (*decoders*) can be used to explore the space spanned by the predictors. The default is beam decoding
+with beam size of 4 (change beam size with ``beam`` option). Alternative decoders can be selected with the ``decoder`` option::
+
+  $ python $SGNMT/decode.py --config_file ini/rescoring.ini --decoder greedy --range 1:2
+  (...)
+  2019-06-24 14:24:15,744 INFO: Start time: 1561382655.7441242
+  2019-06-24 14:24:15,744 INFO: Next sentence (ID: 1): Munich 1856 : four maps that will change your view of the city
+  2019-06-24 14:24:17,693 INFO: Decoded (ID: 1): München 1856 : vier Karten , die Ihre Sicht auf die Stadt verändern werden .
+  2019-06-24 14:24:17,693 INFO: Stats (ID: 1): score=-7.547943 num_expansions=17 time=1.95
+  2019-06-24 14:24:17,693 INFO: Next sentence (ID: 2): a mental asylum , where today young people are said to meet .
+  2019-06-24 14:24:18,511 INFO: Decoded (ID: 2): ein geistiges Asyl , wo heute junge Menschen sollen sich treffen .
+  2019-06-24 14:24:18,511 INFO: Stats (ID: 2): score=-8.179755 num_expansions=14 time=0.82
+  2019-06-24 14:24:18,511 INFO: Decoding finished. Time: 2.77
+
+Greedy decoding requires fewer node expansions (compare ``num_expansions`` with the previous section), but is more prone to search errors. Depth-first search
+is an exact inference scheme that is guaranteed to find the global best score::
+
+  $ python $SGNMT/decode.py --config_file ini/rescoring.ini --decoder dfs --range 1:2
+  (...)
+  2019-06-24 14:28:10,696 INFO: Start time: 1561382890.6964235
+  2019-06-24 14:28:10,696 INFO: Next sentence (ID: 1): Munich 1856 : four maps that will change your view of the city
+  2019-06-24 14:28:15,261 INFO: Decoded (ID: 1): München 1856 : vier Karten , die Ihre Sicht auf die Stadt verändern werden .
+  2019-06-24 14:28:15,261 INFO: Stats (ID: 1): score=-7.547943 num_expansions=61 time=4.56
+  2019-06-24 14:28:15,261 INFO: Next sentence (ID: 2): a mental asylum , where today young people are said to meet .
+  2019-06-24 14:28:21,248 INFO: Decoded (ID: 2): ein geistiges Asyl , wo heute junge Menschen sollen sich treffen .
+  2019-06-24 14:28:21,248 INFO: Stats (ID: 2): score=-8.179755 num_expansions=104 time=5.99
+  2019-06-24 14:28:21,248 INFO: Decoding finished. Time: 10.55
+
+In this case, even greedy decoding finds the global best hypotheses.
+
+
+MBR-based NMT (UCAM at WMT19)
+----------------------------------------
+
+In our `EACL 2017 paper <http://arxiv.org/abs/1612.03791>`_ we described how to use n-gram posteriors extracted from a Hiero lattice to improve NMT. 
+External n-gram probabilities can be introduced to SGNMT via the ``ngramc`` predictor. Since ``ngramc`` can yield positive scores, ``early_stopping``
+needs to be set to ``false`` for MBR-based decoding. The ``ini/ucam-wmt19-base.ini`` config file additionally ensembles with a Transformer
+language model to reproduce our base single system in our WMT19 submission::
+
+  $ python $SGNMT/decode.py --config_file ini/ucam-wmt19-base.ini --range 1:2
+  (...)
+  2019-06-25 11:03:42,207 INFO: Next sentence (ID: 1): 14828 5524 16148 3851 7721 22779 3739 3910 5314 4104 4905 3675 3646 5390
+  2019-06-25 11:03:42,207 DEBUG: Loading n-gram scores from supplementary/smt.ngramc_test18/1.txt...
+  2019-06-25 11:03:59,037 INFO: Decoded (ID: 1): 15351 5524 16148
+  2019-06-25 11:03:59,037 INFO: Stats (ID: 1): score=-11.173564 num_expansions=108 time=16.83
+  2019-06-25 11:03:59,037 INFO: Next sentence (ID: 2): 3667 6203 13502 3637 4678 5149 7703 4499 3771 5598 3678 8087 3642
+  2019-06-25 11:03:59,038 DEBUG: Loading n-gram scores from supplementary/smt.ngramc_test18/2.txt...
+  2019-06-25 11:04:13,880 INFO: Decoded (ID: 2): 3787 15786 4602 30449 3637 5478 3896 4909 22992 8681 7373 3642
+  2019-06-25 11:04:13,881 INFO: Stats (ID: 2): score=-25.113689 num_expansions=104 time=14.84
+
 
 
 Distributed decoding using the Grid Engine
 -------------------------------------------
 
-Large decoding jobs can be distributed over multiple nodes with the Grid Engine using the ``--range`` argument. First, we create a configuration file for SGNMT
-which specifies the decoding parameters. Here is a example .ini file for distributing lattice rescoring on the WMT'15 English-German test set::
+Large decoding jobs can be distributed over multiple nodes with queueing systems like the Sun Grid Engine. SGNMT comes with an example script
+for distributed decoding::
 
-  $ cat scripts/grid/example.ini 
-  src_test: data/test15.ids.en
-  nmt_config: src_vocab_size=50003,trg_vocab_size=50003
-  predictors: nmt,fst
-  fst_path: hiero/lats/%d.fst
-  use_fst_weights: true
-  predictor_weights: 2.7,24.4
+  $ bash $SGNMT/scripts/sge/decode_cpu.sh 100 ini/rescoring.ini output-sge
+
+This will submit an array of 100 jobs to the grid, and each worker calls ``$SGNMT/decode.py`` with the ``range`` option pointing to a file that assigns
+sentence IDs to workers. Worker jobs write their output files to ``output-sge/<worker-id>``, and their logs to ``output-sge/logs``. When all workers are finished, the combination job
+combines the output files, writes the requested output formats to ``output-sge/out.%s``, and touches ``output-sge/DONE``.
+
+This script works on the air-stack of the Cambridge Engineering Department speech group, and can serve as template for setting up distributed
+decoding elsewhere. Consider changing the ``-l`` options of the ``qsub`` commands in ``decode_cpu.sh`` and pointing the ``source`` command in
+``decode_cpu_worker.sh`` to your ``<ACTIVATE.SH>`` script.
 
 
-Make sure that the .ini file does not contain ``output_path`` or ``range``. Next, open *scripts/grid/decode_on_grid_cpu_worker.sh* and, if
-necessary, change the environment variables PATH, LD_LIBRARY_PATH, and PYTHONPATH as described on the :ref:`setup-label` page. Start the
-distributed decoding with the following command::
+BLEU scores
+-------------------------------------------
 
-  $ bash scripts/grid/decode_on_grid_cpu.sh 40 1:2169 scripts/grid/example.ini grid-output
+The tutorial tarball contains the ``./scripts/eval_test18_ende.sh`` script that can be used to compute BLEU scores from indexed subword-level translations that
+are comparable to `official WMT results <http://matrix.statmt.org/>`_ (adjust path to Moses before use)::
 
-This will submit an array of 40 jobs to the grid, and each worker calls decode.py with a different ``--range``. Worker jobs write their
-output files to *grid-output/<worker-id>*, and their logs to *grid-output/logs*. When all workers are finished, the combination job
-combines the output files and writes the requested output formats to *grid-output/out.%s*.
+  # e.g. out.text from ini/ucam-wmt19-big.ini 
+  $ cat output-sge/out.text | ./scripts/eval_test18_ende.sh 
+  (...)
+  BLEU = 47.95, 74.42/53.76/41.42/32.67 (BP=0.994164, ratio=0.994181342958491, hyp_len=63902, ref_len=64276)
+
+The script generates a number of ``tmp.*`` files for closer inspection. Here are the expected BLEU scores for the ini files in this tutorial:
+
+====================   ============
+Config File            BLEU
+====================   ============
+base.ini               43.8
+ucam-wmt19-base.ini    45.1
+big.ini                47.8
+ucam-wmt19-big.ini     48.0
+====================   ============
+
+These results correspond to the single system results in rows 2 and 4 of Table 6 in our `WMT19 system description paper <https://arxiv.org/abs/1906.05447>`_.
+Note that our single NMT result (48.0 BLEU) is very close to the winning WMT18 system (Microsoft-Marian: 48.3 BLEU) that was an ensemble of four NMT systems.
