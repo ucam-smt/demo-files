@@ -8,7 +8,7 @@ This tutorial reproduces the single system results of the Cambridge University E
 `BEA-2019 shared task on grammatical error correction <https://www.cl.cam.ac.uk/research/nl/bea2019st/>`_. Details about the
 submissions can be found in the system description paper:
 
-  https://arxiv.org/TODO
+  https://arxiv.org/abs/1907.00168
 
 The tutorial data is available under the following DOI:
 

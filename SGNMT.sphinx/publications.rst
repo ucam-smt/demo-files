@@ -14,7 +14,7 @@ Additionally, SGNMT has been used in the following publications:
 * Felix Stahlberg and Bill Byrne. 
   The CUED's Grammatical Error Correction Systems for BEA-2019.
   In *Proceedings of the 14th workshop on innovative use of NLP for building educational applications (ACL 2019 workshop)*, August 2019. Florence, Italy.
-  `arXiv/TBD <https://arxiv.org/abs/TBD>`_
+  `arXiv/1907.00168 <https://arxiv.org/abs/1907.00168>`_
 * Zheng Yuan, Felix Stahlberg, Marek Rei, Bill Byrne, Helen Yannakoudakis.
   Neural and FST-based approaches to grammatical error correction.
   In *Proceedings of the 14th workshop on innovative use of NLP for building educational applications (ACL 2019 workshop)*, August 2019. Florence, Italy.
