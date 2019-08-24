@@ -18,6 +18,7 @@ Additionally, SGNMT has been used in the following publications:
 * Zheng Yuan, Felix Stahlberg, Marek Rei, Bill Byrne, Helen Yannakoudakis.
   Neural and FST-based approaches to grammatical error correction.
   In *Proceedings of the 14th workshop on innovative use of NLP for building educational applications (ACL 2019 workshop)*, August 2019. Florence, Italy.
+  `Anthology W19-4424 <https://www.aclweb.org/anthology/W19-4424>`_
 * Danielle Saunders, Felix Stahlberg, Bill Byrne. 
   UCAM Biomedical translation at WMT19: Transfer learning multi-domain ensembles.
   In *Proceedings of the 4th conference on machine translation (WMT 19)*, August 2019. Florence, Italy.
@@ -75,11 +76,9 @@ Additionally, SGNMT has been used in the following publications:
 * Marcin Tomczak. 
   Bachbot.
   *MPhil* dissertation, University of Cambridge, 2016.
-  `Bachbot <http://www.mlsalt.eng.cam.ac.uk/foswiki/pub/Main/CurrentMPhils/Marcin_Tomczak_8224841_assignsubmission_file_Tomczak_dissertation.pdf>`_
 * Jiameng Gao.
   Variable length word encodings for neural translation models.
   *MPhil* dissertation, University of Cambridge, 2016.
-  `Variable length encodings <http://www.mlsalt.eng.cam.ac.uk/foswiki/pub/Main/CurrentMPhils/Jiameng_Gao_8224881_assignsubmission_file_J_Gao_MPhil_dissertation.pdf>`_
 * Felix Stahlberg, Eva Hasler, Bill Byrne. 
   The edit distance transducer in action: the University of Cambridge English-German system at WMT16.
   In *Proceedings of the 1st conference on machine translation (WMT 16)*, August 2016. Berlin, Germany.

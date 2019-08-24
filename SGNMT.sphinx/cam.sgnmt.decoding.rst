@@ -108,6 +108,14 @@ cam.sgnmt.decoding.interpolation module
     :undoc-members:
     :show-inheritance:
 
+cam.sgnmt.decoding.lenbeam module
+---------------------------------
+
+.. automodule:: cam.sgnmt.decoding.lenbeam
+    :members:
+    :undoc-members:
+    :show-inheritance:
+
 cam.sgnmt.decoding.mbrbeam module
 ---------------------------------
 

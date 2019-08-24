@@ -31,8 +31,10 @@ Experimental decoders are less frequently used search strategies for special cas
 * **syntaxbeam**: Beam search which ensures diversity amongst terminal symbol histories.
 * **mbrbeam**: Diversity encouraging beam search which maximizes the expected BLEU.
 * **multisegbeam**: Beam search with multiple segmentations. 
+* **lenbeam**: Beam search varaint that generates EOS extensions at each time step.
 * **restarting**: Like DFS but with better admissible pruning behavior. 
 * **simpledfs**: Very fast DFS implementation for complete enumeration with a single predictor.
+* **simplelendfs**: Variant of simpledfs with length constraints.
 * **bucket**: Works best for bag problems. Maintains buckets for each hypo length and extends a hypo in a bucket by one before selecting the next bucket.
 * **flip**: This decoder works only for bag problems. It traverses the search space by switching two words in the hypothesis. Do not use bow predictor.
 * **predlimitbeam**: Beam search variant with explicit limits on the culmulative predictor scores at each node expansion.
@@ -147,6 +149,15 @@ cam.sgnmt.decoding.heuristics module
 ****************************************
 
 .. automodule:: cam.sgnmt.decoding.heuristics
+    :members:
+    :undoc-members:
+    :show-inheritance:
+    :noindex:
+
+cam.sgnmt.decoding.lenbeam module
+****************************************
+
+.. automodule:: cam.sgnmt.decoding.lenbeam
     :members:
     :undoc-members:
     :show-inheritance:
