@@ -12,6 +12,10 @@ If you use SGNMT in your work, please cite the following paper:
 Additionally, SGNMT has been used in the following publications: 
 
 * Felix Stahlberg and Bill Byrne. 
+  On NMT Search Errors and Model Errors: Cat Got Your Tongue?
+  In *Proceedings of the 2019 Conference on Empirical Methods in Natural Language Processing (EMNLP 19)*, November 2019. Hong Kong.
+  `arXiv/1908.10090 <http://arxiv.org/abs/1908.10090>`_
+* Felix Stahlberg and Bill Byrne. 
   The CUED's Grammatical Error Correction Systems for BEA-2019.
   In *Proceedings of the 14th workshop on innovative use of NLP for building educational applications (ACL 2019 workshop)*, August 2019. Florence, Italy.
   `arXiv/1907.00168 <https://arxiv.org/abs/1907.00168>`_
